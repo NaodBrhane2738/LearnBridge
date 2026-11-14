@@ -1,0 +1,185 @@
+{
+  "timestamp": "2026-11-14T03:54:16.317Z",
+  "browsersTested": {
+    "chromium": {
+      "status": "PASS",
+      "criticalAxeViolations": 0,
+      "consoleErrorsCount": 0
+    },
+    "firefox": {
+      "status": "PASS",
+      "criticalAxeViolations": 0,
+      "consoleErrorsCount": 0
+    },
+    "webkit": {
+      "status": "PASS",
+      "criticalAxeViolations": 0,
+      "consoleErrorsCount": 0
+    }
+  },
+  "userJourneys": {},
+  "responsiveMatrix": {
+    "chromium-desktop-1440x900": {
+      "width": 1440,
+      "height": 900,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "chromium-laptop-1280x800": {
+      "width": 1280,
+      "height": 800,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "chromium-tablet-landscape-1024x768": {
+      "width": 1024,
+      "height": 768,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "chromium-tablet-portrait-768x1024": {
+      "width": 768,
+      "height": 1024,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "chromium-mobile-390x844": {
+      "width": 390,
+      "height": 844,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "chromium-reflow-320x700": {
+      "width": 320,
+      "height": 700,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "firefox-desktop-1440x900": {
+      "width": 1440,
+      "height": 900,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "firefox-laptop-1280x800": {
+      "width": 1280,
+      "height": 800,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "firefox-tablet-landscape-1024x768": {
+      "width": 1024,
+      "height": 768,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "firefox-tablet-portrait-768x1024": {
+      "width": 768,
+      "height": 1024,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "firefox-mobile-390x844": {
+      "width": 390,
+      "height": 844,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "firefox-reflow-320x700": {
+      "width": 320,
+      "height": 700,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "webkit-desktop-1440x900": {
+      "width": 1440,
+      "height": 900,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "webkit-laptop-1280x800": {
+      "width": 1280,
+      "height": 800,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "webkit-tablet-landscape-1024x768": {
+      "width": 1024,
+      "height": 768,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "webkit-tablet-portrait-768x1024": {
+      "width": 768,
+      "height": 1024,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "webkit-mobile-390x844": {
+      "width": 390,
+      "height": 844,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    "webkit-reflow-320x700": {
+      "width": 320,
+      "height": 700,
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    }
+  },
+  "accessibilitySummary": {},
+  "performanceMetrics": {
+    "dnsTimeMs": 2.0999999940395355,
+    "tcpTimeMs": 1.1000000089406967,
+    "requestTimeMs": 2,
+    "domContentLoadedMs": 496.5,
+    "loadCompleteMs": 1105.1000000089407,
+    "fcpMs": 572,
+    "totalResourceCount": 27,
+    "totalTransferBytes": 413062
+  },
+  "offlineAudit": {
+    "supported": true,
+    "hasServiceWorker": true,
+    "swState": "activated",
+    "cacheKeys": [
+      "learnbridge-shell-v4",
+      "learnbridge-media-v4"
+    ],
+    "cacheDetails": {
+      "learnbridge-shell-v4": [
+        "http://127.0.0.1:4173/",
+        "http://127.0.0.1:4173/index.html",
+        "http://127.0.0.1:4173/player-lab.html",
+        "http://127.0.0.1:4173/styles.css",
+        "http://127.0.0.1:4173/app.js",
+        "http://127.0.0.1:4173/dist/learnbridge.js",
+        "http://127.0.0.1:4173/components/learnbridge-player.js",
+        "http://127.0.0.1:4173/components/learnbridge-transcript.js",
+        "http://127.0.0.1:4173/components/learnbridge-interpreter.js",
+        "http://127.0.0.1:4173/components/learnbridge-job-card.js",
+        "http://127.0.0.1:4173/components/learnbridge-certificate.js",
+        "http://127.0.0.1:4173/components/learnbridge-resource-list.js",
+        "http://127.0.0.1:4173/media/poster.jpg",
+        "http://127.0.0.1:4173/assets/living-room-bg.webp",
+        "http://127.0.0.1:4173/media/captions-en.vtt",
+        "http://127.0.0.1:4173/media/captions-am.vtt",
+        "http://127.0.0.1:4173/media/transcript.json"
+      ],
+      "learnbridge-media-v4": [
+        "http://127.0.0.1:4173/media/sample-lesson.mp4",
+        "http://127.0.0.1:4173/media/audio-description.mp3",
+        "http://127.0.0.1:4173/media/captions-en.vtt",
+        "http://127.0.0.1:4173/media/captions-am.vtt",
+        "http://127.0.0.1:4173/media/transcript.json",
+        "http://127.0.0.1:4173/media/learnbridge-lesson-pack.zip"
+      ]
+    }
+  },
+  "securityAudit": {
+    "payloadTested": "<img src=\"x\" onerror=\"window.__xssTriggered=true\">",
+    "xssExecuted": false,
+    "safe": true
+  }
+}

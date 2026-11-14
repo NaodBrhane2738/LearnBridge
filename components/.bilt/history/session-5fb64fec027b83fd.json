@@ -1,0 +1,29 @@
+{
+  "sessionId": "5fb64fec027b83fd",
+  "records": [
+    {
+      "sessionId": "5fb64fec027b83fd",
+      "iteration": 1,
+      "timestamp": "2026-11-14T03:14:24.896Z",
+      "beforeFingerprints": [],
+      "afterFingerprints": [
+        "unsupported-stack-authorization",
+        "unsupported-stack-api-abuse-and-cost",
+        "461f970b5c96ca9f",
+        "e412b90258d82622af84e2c853ecc6ffc5da28d1af4156d851303fd3a07f94ad"
+      ],
+      "changedFiles": [],
+      "resolved": [],
+      "introduced": [
+        "unsupported-stack-authorization",
+        "unsupported-stack-api-abuse-and-cost",
+        "461f970b5c96ca9f",
+        "e412b90258d82622af84e2c853ecc6ffc5da28d1af4156d851303fd3a07f94ad"
+      ],
+      "unchanged": [],
+      "regressions": [],
+      "state": "regressed"
+    }
+  ],
+  "allHistoricalResolved": []
+}

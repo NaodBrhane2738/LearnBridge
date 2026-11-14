@@ -1,0 +1,15 @@
+{
+  "name": "learnbridge-qa-toolkit",
+  "version": "1.0.0",
+  "description": "LearnBridge isolated accessibility QA environment",
+  "private": true,
+  "scripts": {
+    "test": "npx playwright test",
+    "test:smoke": "npx playwright test smoke-test.spec.js",
+    "test:report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1"
+  }
+}

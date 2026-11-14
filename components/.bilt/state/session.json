@@ -1,0 +1,27 @@
+{
+  "id": "5fb64fec027b83fd",
+  "startedAt": "2026-11-14T03:14:24.889Z",
+  "projectRoot": "D:\\LearnBridge\\components",
+  "agent": "ai-agent",
+  "iteration": 1,
+  "previousFingerprints": [],
+  "currentFingerprints": [
+    "unsupported-stack-authorization",
+    "unsupported-stack-api-abuse-and-cost",
+    "461f970b5c96ca9f",
+    "e412b90258d82622af84e2c853ecc6ffc5da28d1af4156d851303fd3a07f94ad"
+  ],
+  "resolvedFingerprints": [],
+  "introducedFingerprints": [
+    "unsupported-stack-authorization",
+    "unsupported-stack-api-abuse-and-cost",
+    "461f970b5c96ca9f",
+    "e412b90258d82622af84e2c853ecc6ffc5da28d1af4156d851303fd3a07f94ad"
+  ],
+  "unchangedFingerprints": [],
+  "allHistoricalResolved": [],
+  "regressions": [],
+  "consecutiveNoProgressCount": 0,
+  "status": "failed",
+  "lastUpdated": "2026-11-14T03:14:24.895Z"
+}

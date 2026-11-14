@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b2420">
+  <title>ALX Savanna — LearnBridge Embed Integration Sandbox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" src="./dist/learnbridge.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #071311;
+      --surface: rgba(18, 42, 37, 0.75);
+      --line: rgba(221, 243, 230, 0.14);
+      --accent: #c5f18e;
+      --seafoam: #85d7bb;
+      --text: #f0f6f2;
+      --muted: #9bb5a4;
+      font-family: 'DM Sans', 'Noto Sans Ethiopic', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: clamp(16px, 3.5vw, 48px);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    header.savanna-host-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .host-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .host-logo-badge {
+      background: linear-gradient(135deg, #168d74, #0b5446);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      letter-spacing: 0.8px;
+    }
+
+    .host-title strong {
+      font-size: 20px;
+      color: #ffffff;
+      display: block;
+    }
+
+    .host-title span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .integration-note {
+      padding: 16px 20px;
+      border-radius: 14px;
+      background: rgba(197, 241, 142, 0.08);
+      border: 1px solid rgba(197, 241, 142, 0.22);
+      font-size: 13px;
+      color: #d8ece0;
+    }
+
+    .integration-note code {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--accent);
+      font-family: monospace;
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-header h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .component-badge {
+      font-size: 10px;
+      font-family: monospace;
+      color: var(--accent);
+      background: rgba(197, 241, 142, 0.12);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .events-log {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 12px;
+      background: #040c0b;
+      border: 1px solid var(--line);
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--muted);
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .events-log div {
+      margin-bottom: 3px;
+    }
+
+    .events-log .time {
+      color: var(--accent);
+    }
+
+    .code-sample {
+      background: #040c0b;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #d1e5d7;
+      overflow-x: auto;
+    }
+
+    @media (max-width: 860px) {
+      .layout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="savanna-host-header">
+      <div class="host-brand">
+        <span class="host-logo-badge">ALX SAVANNA</span>
+        <div class="host-title">
+          <strong>LearnBridge Web Component Integration Sandbox</strong>
+          <span>Zero-runtime dependency embed proof for Track 2 (Accessible Learning Media)</span>
+        </div>
+      </div>
+      <div>
+        <a href="./index.html" style="color:var(--accent); text-decoration:none; font-size:13px; font-weight:700;">← Open Main Glass Experience</a>
+      </div>
+    </header>
+
+    <div class="integration-note">
+      <strong>Host Integration Architecture:</strong> LearnBridge components are native Custom Elements with Shadow DOM encapsulation. Any web application (Vanilla JS, Savanna LMS, or standard HTML) can embed them using a single script tag: <code>&lt;script type="module" src="./dist/learnbridge.js"&gt;&lt;/script&gt;</code> without introducing React, bundler friction, or global CSS conflicts.
+    </div>
+
+    <div class="layout-grid">
+      <!-- Left Column: Embedded Player -->
+      <section class="panel" aria-labelledby="playerHeading">
+        <div class="panel-header">
+          <h2 id="playerHeading">Accessible Learning Stage</h2>
+          <span class="component-badge">&lt;learnbridge-player&gt;</span>
+        </div>
+
+        <learnbridge-player 
+          id="sandboxPlayer"
+          src="./media/sample-lesson.mp4"
+          poster="./media/poster.jpg"
+          captions-en="./media/captions-en.vtt"
+          captions-am="./media/captions-am.vtt"
+          audio-desc="./media/audio-description.mp3">
+        </learnbridge-player>
+
+        <div style="margin-top:16px;">
+          <h3 style="font-size:13px; font-weight:700; color:var(--seafoam); margin-bottom:6px;">Host Event Telemetry</h3>
+          <div class="events-log" id="eventsLog" aria-live="polite">
+            <div><span class="time">[00:00:00]</span> Sandbox initialized. Waiting for player events...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Embedded Transcript & Resources -->
+      <aside class="panel" aria-labelledby="transcriptHeading">
+        <div class="panel-header">
+          <h2 id="transcriptHeading">Synchronized Transcript</h2>
+          <span class="component-badge">&lt;learnbridge-transcript&gt;</span>
+        </div>
+
+        <learnbridge-transcript 
+          id="sandboxTranscript"
+          src="./media/transcript.json"
+          language="en">
+        </learnbridge-transcript>
+      </aside>
+    </div>
+
+    <!-- Supporting Components: Career & Certificate -->
+    <div class="layout-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Accessible Career Card</h2>
+          <span class="component-badge">&lt;learnbridge-job-card&gt;</span>
+        </div>
+        <learnbridge-job-card
+          role-title="Junior Accessibility QA Engineer"
+          organization="ALX Digital Bridge Ethiopian Partner"
+          location="Addis Ababa · Hybrid"
+          level="Entry level"
+          description="Test and verify inclusive web applications, screen reader flows, and Ethiopian Sign Language media integrations across Ethiopian digital platforms.">
+        </learnbridge-job-card>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Verified Learning Credential</h2>
+          <span class="component-badge">&lt;learnbridge-certificate&gt;</span>
+        </div>
+        <learnbridge-certificate
+          learner-name="Selamawit Tadesse"
+          course-title="Digital Bridge Track 2: Accessible Media Engineering"
+          certificate-id="ALX-ETH-LB-2026-9842"
+          issue-date="November 2026">
+        </learnbridge-certificate>
+      </div>
+    </div>
+
+    <!-- Integration Code Sample for Savanna Engineers -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Integration Snippet for ALX Savanna Developers</h2>
+        <span class="component-badge">HTML / Vanilla JS</span>
+      </div>
+      <pre class="code-sample">&lt;!-- 1. Include LearnBridge Web Components bundle in Savanna's &lt;head&gt; --&gt;
+&lt;script type="module" src="https://savanna.alx.et/cdn/learnbridge.js"&gt;&lt;/script&gt;
+
+&lt;!-- 2. Place components anywhere in the lesson template --&gt;
+&lt;learnbridge-player 
+  id="player"
+  src="/media/lessons/04-accessibility.mp4"
+  captions-en="/media/captions/04-en.vtt"
+  captions-am="/media/captions/04-am.vtt"
+  audio-desc="/media/audio/04-desc.mp3"&gt;
+&lt;/learnbridge-player&gt;
+
+&lt;learnbridge-transcript 
+  id="transcript"
+  src="/media/transcripts/04.json"&gt;
+&lt;/learnbridge-transcript&gt;
+
+&lt;!-- 3. Wire host events with 3 lines of JavaScript --&gt;
+&lt;script&gt;
+  const player = document.getElementById('player');
+  const transcript = document.getElementById('transcript');
+
+  // Player updates transcript time
+  player.addEventListener('lb-timeupdate', (e) => {
+    transcript.setTime(e.detail.currentTime);
+  });
+
+  // Transcript click seeks player
+  transcript.addEventListener('lb-seek-request', (e) => {
+    player.seek(e.detail.time);
+  });
+&lt;/script&gt;</pre>
+    </section>
+  </div>
+
+  <script>
+    const player = document.getElementById('sandboxPlayer');
+    const transcript = document.getElementById('sandboxTranscript');
+    const log = document.getElementById('eventsLog');
+
+    function logEvent(name, detail) {
+      const now = new Date().toTimeString().split(' ')[0];
+      const entry = document.createElement('div');
+      entry.innerHTML = `<span class="time">[${now}]</span> <strong>${name}</strong>: ${JSON.stringify(detail)}`;
+      log.prepend(entry);
+    }
+
+    if (player && transcript) {
+      player.addEventListener('lb-timeupdate', (e) => {
+        transcript.setTime(e.detail.currentTime);
+      });
+
+      player.addEventListener('lb-play', (e) => {
+        logEvent('lb-play', { time: e.detail.currentTime.toFixed(2) });
+      });
+
+      player.addEventListener('lb-pause', (e) => {
+        logEvent('lb-pause', { time: e.detail.currentTime.toFixed(2) });
+      });
+
+      player.addEventListener('lb-caption-change', (e) => {
+        logEvent('lb-caption-change', e.detail);
+        if (e.detail.language) {
+          transcript.setLanguage(e.detail.language);
+        }
+      });
+
+      player.addEventListener('lb-ad-change', (e) => {
+        logEvent('lb-ad-change', e.detail);
+      });
+
+      player.addEventListener('lb-interpreter-change', (e) => {
+        logEvent('lb-interpreter-change', e.detail);
+      });
+
+      transcript.addEventListener('lb-seek-request', (e) => {
+        logEvent('lb-seek-request', { targetTime: e.detail.time });
+        player.seek(e.detail.time);
+      });
+
+      transcript.addEventListener('lb-language-change', (e) => {
+        logEvent('lb-language-change', { language: e.detail.language });
+        player.setLanguage(e.detail.language);
+      });
+    }
+  </script>
+</body>
+</html>

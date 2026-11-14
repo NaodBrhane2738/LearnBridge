@@ -1,0 +1,38 @@
+{
+  "supported": true,
+  "hasServiceWorker": true,
+  "swState": "activated",
+  "cacheKeys": [
+    "learnbridge-shell-v4",
+    "learnbridge-media-v4"
+  ],
+  "cacheDetails": {
+    "learnbridge-shell-v4": [
+      "http://127.0.0.1:4173/",
+      "http://127.0.0.1:4173/index.html",
+      "http://127.0.0.1:4173/player-lab.html",
+      "http://127.0.0.1:4173/styles.css",
+      "http://127.0.0.1:4173/app.js",
+      "http://127.0.0.1:4173/dist/learnbridge.js",
+      "http://127.0.0.1:4173/components/learnbridge-player.js",
+      "http://127.0.0.1:4173/components/learnbridge-transcript.js",
+      "http://127.0.0.1:4173/components/learnbridge-interpreter.js",
+      "http://127.0.0.1:4173/components/learnbridge-job-card.js",
+      "http://127.0.0.1:4173/components/learnbridge-certificate.js",
+      "http://127.0.0.1:4173/components/learnbridge-resource-list.js",
+      "http://127.0.0.1:4173/media/poster.jpg",
+      "http://127.0.0.1:4173/assets/living-room-bg.webp",
+      "http://127.0.0.1:4173/media/captions-en.vtt",
+      "http://127.0.0.1:4173/media/captions-am.vtt",
+      "http://127.0.0.1:4173/media/transcript.json"
+    ],
+    "learnbridge-media-v4": [
+      "http://127.0.0.1:4173/media/sample-lesson.mp4",
+      "http://127.0.0.1:4173/media/audio-description.mp3",
+      "http://127.0.0.1:4173/media/captions-en.vtt",
+      "http://127.0.0.1:4173/media/captions-am.vtt",
+      "http://127.0.0.1:4173/media/transcript.json",
+      "http://127.0.0.1:4173/media/learnbridge-lesson-pack.zip"
+    ]
+  }
+}

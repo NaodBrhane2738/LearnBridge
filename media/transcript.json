@@ -1,0 +1,10 @@
+{
+  "lessonId": "lb-accessibility-04",
+  "language": "en",
+  "segments": [
+    {"start":0.6,"end":4.3,"en":"Good design starts by removing barriers.","am":"ጥሩ ንድፍ መሰናክሎችን በማስወገድ ይጀምራል።"},
+    {"start":4.3,"end":8.3,"en":"A learning experience should be perceivable and operable.","am":"የትምህርት ልምድ ሊታይ፣ ሊሰማ እና ሊጠቀምበት የሚቻል መሆን አለበት።"},
+    {"start":8.3,"end":12.4,"en":"It should be understandable and robust.","am":"ግልጽ እና የታመነ መሆን አለበት።"},
+    {"start":12.4,"end":17.7,"en":"Accessibility is not an extra layer. It is the foundation of the experience.","am":"ተደራሽነት ተጨማሪ ነገር አይደለም። የተሞክሮው መሠረት ነው።"}
+  ]
+}
