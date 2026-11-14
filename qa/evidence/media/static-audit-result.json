@@ -1,0 +1,109 @@
+{
+  "timestamp": "2026-11-14T03:31:30.204Z",
+  "jsSyntax": {
+    "app.js": {
+      "status": "PASS",
+      "error": null
+    },
+    "sw.js": {
+      "status": "PASS",
+      "error": null
+    },
+    "dist/learnbridge.js": {
+      "status": "PASS",
+      "error": null
+    },
+    "components/learnbridge-player.js": {
+      "status": "PASS",
+      "error": null
+    },
+    "components/learnbridge-transcript.js": {
+      "status": "PASS",
+      "error": null
+    },
+    "components/learnbridge-interpreter.js": {
+      "status": "PASS",
+      "error": null
+    },
+    "components/learnbridge-job-card.js": {
+      "status": "PASS",
+      "error": null
+    },
+    "components/learnbridge-certificate.js": {
+      "status": "PASS",
+      "error": null
+    },
+    "components/learnbridge-resource-list.js": {
+      "status": "PASS",
+      "error": null
+    }
+  },
+  "webVtt": {
+    "captions-en.vtt": {
+      "status": "PASS",
+      "isVttHeader": true,
+      "cueCount": 4,
+      "lengthBytes": 347
+    },
+    "captions-am.vtt": {
+      "status": "PASS",
+      "isVttHeader": true,
+      "cueCount": 4,
+      "lengthBytes": 484
+    }
+  },
+  "transcriptJson": {
+    "status": "PASS",
+    "segmentCount": 4,
+    "isChronological": true,
+    "keys": [
+      "lessonId",
+      "language",
+      "segments"
+    ]
+  },
+  "mediaAssets": {
+    "sample-lesson.mp4": {
+      "exists": true,
+      "sizeBytes": 628701,
+      "status": "PASS"
+    },
+    "audio-description.mp3": {
+      "exists": true,
+      "sizeBytes": 180811,
+      "status": "PASS"
+    },
+    "poster.jpg": {
+      "exists": true,
+      "sizeBytes": 60898,
+      "status": "PASS"
+    },
+    "learnbridge-lesson-pack.zip": {
+      "exists": true,
+      "sizeBytes": 841321,
+      "status": "PASS"
+    }
+  },
+  "htmlAudit": {
+    "index.html": {
+      "hasLang": true,
+      "hasTitle": true,
+      "externalLinksCount": 0,
+      "unsafeLinksCount": 0,
+      "imagesCount": 0,
+      "imagesMissingAlt": 0,
+      "status": "PASS"
+    },
+    "savanna-embed-demo.html": {
+      "hasLang": true,
+      "hasTitle": true,
+      "externalLinksCount": 0,
+      "unsafeLinksCount": 0,
+      "imagesCount": 0,
+      "imagesMissingAlt": 0,
+      "status": "PASS"
+    }
+  },
+  "cssAudit": {},
+  "customElements": {}
+}

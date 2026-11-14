@@ -1,0 +1,5 @@
+{
+  "payloadTested": "<img src=\"x\" onerror=\"window.__xssTriggered=true\">",
+  "xssExecuted": false,
+  "safe": true
+}

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1413">
+  <title>LearnBridge · Frosted Player Lab</title>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.4.0/video.js"></script>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1413;--text:#f0f6f0;--muted:#9caea3;--accent:#c5f18e;--line:rgba(221,243,230,.12);--glass:rgba(24,43,38,.68);--shadow:0 30px 90px rgba(0,0,0,.36);font-family:Inter,"Noto Sans Ethiopic","Segoe UI",system-ui,sans-serif}
+    *{box-sizing:border-box}
+    body{margin:0;min-width:320px;min-height:100vh;color:var(--text);background:radial-gradient(ellipse at 68% -5%,rgba(71,145,108,.25),transparent 34%),radial-gradient(ellipse at 5% 65%,rgba(25,95,79,.16),transparent 32%),linear-gradient(145deg,#0a1412,#0d1b18 58%,#101c17);padding:clamp(16px,4vw,56px)}
+    body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(211,238,221,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(211,238,221,.04) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(to bottom,#000,transparent 84%)}
+    .shell{width:min(1160px,100%);margin:0 auto}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:34px}
+    .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text);font-weight:800;letter-spacing:-.6px}
+    .mark{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;border:1px solid rgba(197,241,142,.3);background:linear-gradient(145deg,rgba(197,241,142,.17),rgba(133,215,187,.07));color:var(--accent);box-shadow:0 0 25px rgba(197,241,142,.08)}
+    .mark svg{width:18px;height:18px}
+    .back{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 14px;border:1px solid var(--line);border-radius:12px;color:#dce9df;text-decoration:none;background:rgba(255,255,255,.045);backdrop-filter:blur(16px);font-size:13px;font-weight:650;transition:.2s}
+    .back:hover{border-color:rgba(197,241,142,.32);background:rgba(197,241,142,.08);transform:translateY(-1px)}
+    h1{font-size:clamp(34px,5.2vw,58px);line-height:1.03;letter-spacing:-2.7px;margin:0;color:#f1f7f1}
+    h1 em{font-style:normal;color:var(--accent)}
+    .lede{max-width:710px;color:var(--muted);font-size:clamp(14px,1.7vw,17px);line-height:1.75;margin:16px 0 30px}
+    .frame{padding:clamp(10px,1.5vw,17px);border:1px solid var(--line);border-radius:25px;background:linear-gradient(145deg,rgba(30,53,46,.78),rgba(14,29,25,.78));box-shadow:var(--shadow),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);position:relative;overflow:hidden}
+    .frame:before{content:"";position:absolute;right:18%;top:-100px;width:300px;height:160px;filter:blur(70px);background:rgba(148,221,153,.13);pointer-events:none}
+    .player-wrap{position:relative;z-index:1;overflow:hidden;border-radius:18px;background:#07100f;border:1px solid rgba(229,245,233,.12);box-shadow:0 20px 55px rgba(0,0,0,.3)}
+    video-player{display:block;width:100%;--media-accent-color:#c5f18e;--media-accent-text-color:#14241b;--media-border-color:rgba(226,245,232,.18);--media-border-radius:1.15rem;--media-controls-before-start:visible;--media-font-family:Inter,"Noto Sans Ethiopic","Segoe UI",system-ui,sans-serif;--media-object-fit:cover;--media-scale-unit:1rem}
+    video-skin{display:block;width:100%;aspect-ratio:16/9}
+    video{width:100%;height:100%;object-fit:cover}
+    .under-player{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;padding:22px 8px 6px;position:relative;z-index:1}
+    .under-player h2{font-size:16px;letter-spacing:-.3px;margin:0 0 7px}
+    .under-player p{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
+    .track-note{padding:15px 16px;border:1px solid rgba(197,241,142,.16);border-radius:15px;background:rgba(197,241,142,.055);color:#ccddce;font-size:12px;line-height:1.65}
+    .track-note strong{display:block;color:var(--accent);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+    .transcript{margin-top:24px;padding:22px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.035);backdrop-filter:blur(18px)}
+    .transcript-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .transcript-head h2{font-size:16px;margin:0}
+    .transcript-head span{font-size:11px;color:var(--muted);letter-spacing:.8px}
+    .cue-list{display:grid;gap:7px}
+    .cue{width:100%;display:grid;grid-template-columns:58px 1fr;gap:12px;text-align:left;padding:12px 13px;border:1px solid transparent;border-radius:12px;background:rgba(255,255,255,.025);color:#dce8de;cursor:pointer;font:inherit;transition:background .2s,border-color .2s,transform .2s}
+    .cue:hover{background:rgba(197,241,142,.065);transform:translateX(2px)}
+    .cue.active{border-color:rgba(197,241,142,.22);background:rgba(197,241,142,.075)}
+    .cue time{color:var(--accent);font-size:12px;font-variant-numeric:tabular-nums}
+    .cue span{font-size:13px;line-height:1.55}
+    :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    @media(max-width:760px){.under-player{grid-template-columns:1fr}.top{margin-bottom:25px}.back{font-size:12px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="top">
+      <a class="brand" href="./index.html"><span class="mark" aria-hidden="true">✳</span><span>learnbridge <small style="display:block;font-size:9px;letter-spacing:1.6px;color:#9caea3;font-weight:650;margin-top:3px">PLAYER LAB</small></span></a>
+      <a class="back" href="./index.html">← Back to learning studio</a>
+    </header>
+    <div class="eyebrow" style="font-size:10px;letter-spacing:1.7px;color:#9bb4a4;font-weight:750;margin-bottom:12px">VIDEO.JS 10.4 · DEFAULT FROSTED SKIN</div>
+    <h1>A player that feels<br><em>part of the experience.</em></h1>
+    <p class="lede">A second player direction using Video.js 10.4’s official frosted-glass skin, branded with LearnBridge’s emerald and soft-citron palette. Compare its playback controls and caption menu with the custom player in the main prototype.</p>
+
+    <section class="frame" aria-label="Video.js frosted-glass player demonstration">
+      <div class="player-wrap">
+        <video-player>
+          <video-skin style="display:block;width:100%;aspect-ratio:16/9;--media-accent-color:#c5f18e;--media-accent-text-color:#14241b;--media-border-color:rgba(226,245,232,.18);--media-border-radius:1.15rem;--media-controls-before-start:visible;--media-font-family:Inter,system-ui,sans-serif;--media-object-fit:cover;--media-scale-unit:1rem;">
+            <video id="labVideo" src="./media/sample-lesson.mp4" playsinline preload="metadata" poster="./media/poster.jpg" aria-label="Sample lesson video: Design for every mind">
+              <track kind="captions" src="./media/captions-en.vtt" srclang="en" label="English" default>
+              <track kind="captions" src="./media/captions-am.vtt" srclang="am" label="አማርኛ">
+              Your browser does not support HTML video. <a href="./media/sample-lesson.mp4">Download the sample lesson</a>.
+            </video>
+          </video-skin>
+        </video-player>
+      </div>
+      <div class="under-player">
+        <div>
+          <h2>Design for every mind.</h2>
+          <p>Video.js supplies the playback surface; LearnBridge supplies the lesson context, transcript, caption assets and accessibility workflow. The frosted controls can be branded through public CSS custom properties.</p>
+        </div>
+        <div class="track-note"><strong>Prototype note</strong>This page uses the Video.js CDN and needs an internet connection to load the player components. Open the main prototype for the fully local custom player. The media and caption files are local.</div>
+      </div>
+    </section>
+
+    <section class="transcript" aria-labelledby="transcriptHeading">
+      <div class="transcript-head"><h2 id="transcriptHeading">Lesson transcript</h2><span>SELECT A LINE TO SEEK</span></div>
+      <div class="cue-list" id="cueList">
+        <button class="cue" type="button" data-time="0.6"><time>00:00</time><span>Good design starts by removing barriers.</span></button>
+        <button class="cue" type="button" data-time="4.3"><time>00:04</time><span>A learning experience should be perceivable and operable.</span></button>
+        <button class="cue" type="button" data-time="8.3"><time>00:08</time><span>It should be understandable and robust.</span></button>
+        <button class="cue" type="button" data-time="12.4"><time>00:12</time><span>Accessibility is not an extra layer. It is the foundation of the experience.</span></button>
+      </div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const video = document.querySelector('#labVideo');
+      const cues = [...document.querySelectorAll('.cue')];
+      cues.forEach(cue => cue.addEventListener('click', () => { video.currentTime = Number(cue.dataset.time); video.play().catch(() => {}); }));
+      video.addEventListener('timeupdate', () => {
+        const t = video.currentTime;
+        let active = -1;
+        cues.forEach((cue, i) => {
+          const start = Number(cue.dataset.time);
+          const end = i < cues.length - 1 ? Number(cues[i + 1].dataset.time) : 18;
+          const on = t >= start && t < end;
+          cue.classList.toggle('active', on);
+          if (on) active = i;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

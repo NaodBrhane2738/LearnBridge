@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1",
+  "createdAt": "2026-11-14T02:42:11.336Z",
+  "updatedAt": "2026-11-14T02:42:11.336Z",
+  "purpose": {
+    "value": "Accessible learning media layer for ALX Savanna in Ethiopia",
+    "source": "developer"
+  },
+  "audience": {
+    "value": null,
+    "source": "not-provided"
+  },
+  "visualDirection": {
+    "value": [
+      "Cinematic",
+      "glassmorphism",
+      "over",
+      "living-room",
+      "interior"
+    ],
+    "source": "developer"
+  },
+  "brandColors": {
+    "value": [
+      "Deep",
+      "teal",
+      "#0b3e3b",
+      "dark",
+      "emerald",
+      "#0d2822",
+      "soft",
+      "seafoam",
+      "#85d7bb",
+      "soft",
+      "citron",
+      "#c5f18e"
+    ],
+    "source": "developer",
+    "type": "requirement"
+  },
+  "desiredFeeling": {
+    "value": [
+      "Intelligent",
+      "calm",
+      "inclusive",
+      "focused"
+    ],
+    "source": "developer"
+  },
+  "creativeFreedom": "guided"
+}

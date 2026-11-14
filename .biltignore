@@ -1,0 +1,6 @@
+node_modules/
+tools/
+logs/
+.git/
+qa-toolkit/test-results/
+qa-toolkit/playwright-report/

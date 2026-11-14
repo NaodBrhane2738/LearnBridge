@@ -1,0 +1,9 @@
+node_modules/
+tools/
+logs/
+*.log
+.git/
+qa-toolkit/node_modules/
+qa-toolkit/test-results/
+qa-toolkit/playwright-report/
+_backup_pre_audit/

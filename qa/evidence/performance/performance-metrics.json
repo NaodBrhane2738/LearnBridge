@@ -1,0 +1,10 @@
+{
+  "dnsTimeMs": 2.0999999940395355,
+  "tcpTimeMs": 1.1000000089406967,
+  "requestTimeMs": 2,
+  "domContentLoadedMs": 496.5,
+  "loadCompleteMs": 1105.1000000089407,
+  "fcpMs": 572,
+  "totalResourceCount": 27,
+  "totalTransferBytes": 413062
+}

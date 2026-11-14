@@ -1,0 +1,10 @@
+LearnBridge installation log
+Installed: 2026-11-14T01:04:14+03:00
+Target: D:\.LearnBridge-staging-pwwp3jz1\learnbridge-glass-demo
+Source archive: D:\learnbridge-windows-setup\learnbridge-glass-reference.zip
+Archive SHA-256: 13a3e6afbaddff226d4236f498aa29ed5401d83552a89ef3dc8386dbdc1c46b7
+Python: 3.13.13
+Platform: Windows-11-10.0.26300-SP0
+Backup: No previous installation existed (or backup path is shown in installer output).
+Python packages installed: none (project uses Python standard library only).
+Node/npm packages installed: none (not required by the current static prototype).
