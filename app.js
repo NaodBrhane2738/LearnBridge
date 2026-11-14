@@ -48,7 +48,7 @@
   const toastText = $('#toastText');
 
   const fallbackSegments = [
-    { start: 0.6, end: 4.3, en: 'Good design starts by removing barriers.', am: 'ጥሩ ንድፍ መሰናክሎችን በማስወገድ ይጀምራል።' },
+    { start: 0.0, end: 4.3, en: 'Good design starts by removing barriers.', am: 'ጥሩ ንድፍ መሰናክሎችን በማስወገድ ይጀምራል።' },
     { start: 4.3, end: 8.3, en: 'A learning experience should be perceivable and operable.', am: 'የትምህርት ልምድ ሊታይ፣ ሊሰማ እና ሊጠቀምበት የሚቻል መሆን አለበት።' },
     { start: 8.3, end: 12.4, en: 'It should be understandable and robust.', am: 'ግልጽ እና የታመነ መሆን አለበት።' },
     { start: 12.4, end: 17.7, en: 'Accessibility is not an extra layer. It is the foundation of the experience.', am: 'ተደራሽነት ተጨማሪ ነገር አይደለም። የተሞክሮው መሠረት ነው።' }
@@ -127,7 +127,10 @@
       return;
     }
     const current = video.currentTime || 0;
-    const cue = segments.find(s => current >= s.start && current < s.end);
+    let cue = segments.find(s => current >= s.start && current < s.end);
+    if (!cue && current < (segments[0]?.start || 0)) {
+      cue = segments[0];
+    }
     if (!cue) {
       captionOverlay.hidden = true;
       return;
@@ -595,8 +598,31 @@
   }
 
   /* ========================================================
-     1. ACCESSIBLE ONBOARDING & 6-SECOND AUTOMATIC FALLBACK
+     1. UNIVERSAL ACCESS GATEWAY & TAILORED EXPERIENCES
      ======================================================== */
+  const gatewayScreen = $('#gatewayScreen');
+  const gatewayStep1 = $('#gatewayStep1');
+  const gatewayStep2 = $('#gatewayStep2');
+  const gatewayCountdownSeconds = $('#gatewayCountdownSeconds');
+  const gatewayProgressBar = $('#gatewayProgressBar');
+  const gatewayPauseTimerBtn = $('#gatewayPauseTimerBtn');
+  const gatewayCountdownLabel = $('#gatewayCountdownLabel');
+  const ttsLiveStatus = $('#ttsLiveStatus');
+  const ttsStatusText = $('#ttsStatusText');
+  const btnGatewayBack = $('#btnGatewayBack');
+  const btnChooseBlind = $('#btnChooseBlind');
+  const btnChooseDeaf = $('#btnChooseDeaf');
+  const btnChooseStandard = $('#btnChooseStandard');
+  const blindKeyboardBanner = $('#blindKeyboardBanner');
+  const deafGuideModal = $('#deafGuideModal');
+  const closeDeafGuideBtn = $('#closeDeafGuideBtn');
+  const mainResources = $('#mainResources');
+  const modeLabel = $('#modeLabel');
+  const modeIcon = $('#modeIcon');
+  const quickChangeModeBtn = $('#quickChangeModeBtn');
+  const quickShortcutsBtn = $('#quickShortcutsBtn');
+
+  // Secondary legacy dialog support
   const onboardingDialog = $('#onboardingDialog');
   const onboardingAriaLive = $('#onboardingAriaLive');
   const countdownSeconds = $('#countdownSeconds');
@@ -608,189 +634,410 @@
   const onboardingTriggerBtn = $('#onboardingTriggerBtn');
   const heroOnboardingBtn = $('#heroOnboardingBtn');
 
-  let countdownRemaining = 6.0;
-  let countdownTimer = null;
-  let countdownInterval = null;
-  let countdownActive = false;
+  let currentSelectedLang = 'en';
+  let isMuted = false;
+  let gatewayCountdownRemaining = 10.0;
+  let gatewayInterval = null;
+  let gatewayActive = false;
+  let activeProfile = 'standard';
 
-  function announceOnboarding(msg) {
+  // Speech Synthesis TTS Engine
+  function speakVoice(text, cancelPrevious = true) {
+    if (isMuted) return;
+    if (ttsStatusText) {
+      ttsStatusText.textContent = text;
+    }
     if (onboardingAriaLive) {
-      onboardingAriaLive.textContent = msg;
+      onboardingAriaLive.textContent = text;
+    }
+    if ('speechSynthesis' in window) {
+      if (cancelPrevious) {
+        window.speechSynthesis.cancel();
+      }
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.0;
+      utter.pitch = 1.0;
+      window.speechSynthesis.speak(utter);
     }
   }
 
-  function pauseCountdown() {
-    countdownActive = false;
-    clearTimeout(countdownTimer);
-    clearInterval(countdownInterval);
-    if (countdownLabel) {
-      countdownLabel.textContent = 'Countdown paused. Select your preferred experience below.';
+  function pauseGatewayTimer() {
+    gatewayActive = !gatewayActive;
+    if (gatewayPauseTimerBtn) {
+      gatewayPauseTimerBtn.textContent = gatewayActive ? 'Pause Timer (Space)' : 'Resume Timer (Space)';
     }
-    if (pauseCountdownBtn) {
-      pauseCountdownBtn.textContent = 'Paused';
-      pauseCountdownBtn.disabled = true;
+    if (gatewayCountdownLabel) {
+      gatewayCountdownLabel.innerHTML = gatewayActive 
+        ? '<span>Activating Vision-Assisted mode in </span><strong>' + Math.ceil(gatewayCountdownRemaining) + '</strong><span> seconds. Press Space to pause.</span>'
+        : '<span>Timer paused. Select your preferred accessibility option below.</span>';
     }
-    if (onboardingProgressBar) {
-      onboardingProgressBar.style.width = '100%';
-      onboardingProgressBar.style.background = '#94a3b8';
-    }
-    announceOnboarding('Onboarding countdown paused. You can now select your preferred accessibility profile.');
+    speakVoice(gatewayActive ? "Countdown resumed." : "Countdown paused. Select your option with B, D, or S.", true);
   }
 
-  function applyProfileSettings(profileId) {
-    switch (profileId) {
-      case 'screen_reader':
-        document.body.classList.add('screen-reader-mode', 'high-contrast');
-        showToast('Screen reader assistance enabled.');
-        break;
-      case 'low_vision':
-        document.body.classList.add('high-contrast');
-        document.documentElement.style.setProperty('--caption-scale', '1.3');
-        showToast('High contrast and enlarged text enabled.');
-        break;
-      case 'deaf_hard_of_hearing':
-        setCaptions(true);
-        setInterpreter(true);
-        showToast('Bilingual captions and Ethiopian Sign Language enabled.');
-        break;
-      case 'motor_accessible':
-        document.body.classList.add('motor-mode');
-        showToast('Keyboard navigation and expanded touch targets enabled.');
-        break;
-      case 'cognitive_accessible':
-        document.body.classList.add('reduce-motion', 'cognitive-mode');
-        showToast('Simplified distraction-free layout enabled.');
-        break;
-      case 'custom':
-        openPreferences();
-        break;
-      case 'default':
-      default:
-        showToast('Standard accessible profile loaded.');
-        break;
+  function enterGatewayStep1() {
+    if (!gatewayScreen) return;
+    gatewayScreen.hidden = false;
+    if (gatewayStep1) gatewayStep1.hidden = false;
+    if (gatewayStep2) gatewayStep2.hidden = true;
+    if (btnGatewayBack) btnGatewayBack.hidden = true;
+    clearInterval(gatewayInterval);
+    gatewayActive = false;
+
+    // Spoken guidance out loud for language selection
+    speakVoice("Welcome to LearnBridge. Please choose your language. Press E for English, A for Amharic, O for Afaan Oromoo, T for Tigrinya, S for Somali, F for Afar, or H for Harari. Or click any language button.");
+  }
+
+  function enterGatewayStep2() {
+    if (gatewayStep1) gatewayStep1.hidden = true;
+    if (gatewayStep2) gatewayStep2.hidden = false;
+    if (btnGatewayBack) btnGatewayBack.hidden = false;
+
+    gatewayCountdownRemaining = 10.0;
+    gatewayActive = true;
+    if (gatewayProgressBar) {
+      gatewayProgressBar.style.width = '100%';
+      gatewayProgressBar.style.background = '#ffd600';
     }
+    if (gatewayCountdownSeconds) gatewayCountdownSeconds.textContent = '10';
+
+    const step2Prompts = {
+      en: "Step 2: Understanding your preferences. If you are blind or have vision difficulties, press B or hold on for 10 seconds. If you are deaf or have hearing difficulties, press D or click I am deaf. If you want the standard view, press S.",
+      am: "ደረጃ 2፡ የእርስዎን ምርጫዎች መረዳት። ማየት የተሳናቸው ከሆኑ B ይጫኑ ወይም 10 ሰከንዶች ይጠብቁ። መስማት የተሳናቸው ከሆኑ D ይጫኑ። መደበኛ እይታ ከፈለጉ S ይጫኑ።",
+      om: "Tarkaanfii 2ffaa: Yoo qaro-dhabeessa taatan B dhiibaa ykn sekondii 10 eegaa. Yoo dhageettii hin qabne taatan D dhiibaa. Haala idileef S dhiibaa.",
+      ti: "ደረጃ 2፡ ዓይነ-ስዉር እንተኾይንኩም B ጽዓኑ ወይ 10 ካልኢት ተጸበዩ። ጸማም እንተኾይንኩም D ጽዓኑ። ልሙድ S ጽዓኑ።",
+      so: "Tallaabada 2aad: Haddii aad tahay indhool riix B ama sug 10 ilbiriqsi. Haddii aad tahay dhegoole riix D. Caadiga riix S.",
+      aa: "2 Haytoh xaylo: Inti cindiyok B killi hinnay 10 ilbiriqsi gaba caxa. Ayti cindiyok D killi. Meqe caadak S killi.",
+      har: "2-ኛ ደረጃ፡ ኢንቲ ማበራክ B ጫተቂ ወላ 10 ሰከንድ ቂበቡ። ኡዝን ማበራክ D ጫተቂ። መደበኛሌ S ጫተቂ።"
+    };
+    speakVoice(step2Prompts[currentSelectedLang] || step2Prompts.en, true);
+
+    const stepMs = 100;
+    clearInterval(gatewayInterval);
+    gatewayInterval = setInterval(() => {
+      if (!gatewayActive) return;
+      gatewayCountdownRemaining = Math.max(0, gatewayCountdownRemaining - (stepMs / 1000));
+      if (gatewayCountdownSeconds) {
+        gatewayCountdownSeconds.textContent = String(Math.ceil(gatewayCountdownRemaining));
+      }
+      if (gatewayProgressBar) {
+        const pct = (gatewayCountdownRemaining / 10.0) * 100;
+        gatewayProgressBar.style.width = `${pct}%`;
+      }
+      if (gatewayCountdownRemaining <= 0) {
+        clearInterval(gatewayInterval);
+        gatewayActive = false;
+        // Automatic 10-Second Fallback -> Defaults to Vision-Assisted (Blind) mode!
+        applyTailoredProfile('blind', true);
+      }
+    }, stepMs);
+  }
+
+  function selectGatewayLanguage(langCode) {
+    currentSelectedLang = langCode;
+    try {
+      localStorage.setItem('learnbridge_lang', langCode);
+    } catch (_) {}
+    if (langSelect) langSelect.value = langCode;
+    loadTranslations(langCode);
+
+    const confirmations = {
+      en: "Language set to English.",
+      am: "ቋንቋ ወደ አማርኛ ተቀይሯል።",
+      om: "Afaan gara Afaan Oromootti jijjiirameera.",
+      ti: "ቋንቋ ናብ ትግርኛ ተቐይሩ ኣሎ።",
+      so: "Luuqadda waxaa loo beddelay Af-Soomaali.",
+      aa: "Afa Qafar afah biddilite.",
+      har: "ሲናን ሐረሪሌ ተቀየረ።"
+    };
+    speakVoice(confirmations[langCode] || `Language set to ${langCode}.`, true);
+
+    setTimeout(() => {
+      enterGatewayStep2();
+    }, 600);
+  }
+
+  function applyTailoredProfile(profile, wasFallback = false) {
+    activeProfile = profile;
+    clearInterval(gatewayInterval);
+    gatewayActive = false;
+    if (gatewayScreen) gatewayScreen.hidden = true;
+
+    try {
+      localStorage.setItem('learnbridge_user_profile', profile);
+      localStorage.setItem('learnbridge_gateway_done', 'true');
+      localStorage.setItem('learnbridge_onboarding_done', 'true');
+    } catch (_) {}
 
     // Persist to REST API asynchronously
-    fetch('/api/v1/accessibility/preferences', {
-      method: 'POST',
+    fetch('/api/v1/accessibility/preferences/me', {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': 'lb_live_savanna_9842a1b7c'
       },
       body: JSON.stringify({
-        userId: 'local-learner',
-        profileId: profileId,
-        source: 'onboarding-wizard'
+        userId: 'savanna-student-1',
+        profile: profile,
+        highContrast: profile === 'blind',
+        captions: profile === 'deaf',
+        signLanguage: profile === 'deaf',
+        language: currentSelectedLang
       })
     }).catch(() => {});
-  }
 
-  function triggerAutomaticFallback() {
-    countdownActive = false;
-    clearTimeout(countdownTimer);
-    clearInterval(countdownInterval);
+    if (profile === 'blind') {
+      // 1. High contrast & blind mode classes
+      document.body.classList.add('high-contrast', 'blind-mode');
+      document.body.classList.remove('deaf-mode');
 
-    // ZERO FALSE BLINDNESS DETECTION:
-    // Inform user politely that non-visual assistance was automatically enabled without diagnosing or labeling them.
-    applyProfileSettings('screen_reader');
-
-    if (onboardingDialog && onboardingDialog.open) {
-      onboardingDialog.close();
-    }
-    try {
-      localStorage.setItem('learnbridge_onboarding_done', 'true');
-    } catch (_) {}
-
-    announceOnboarding('Automatic screen reader assistance enabled after no interaction. You can change this anytime in Settings.');
-    showToast('Automatic screen reader assistance enabled.');
-  }
-
-  function startOnboardingCountdown() {
-    if (!onboardingDialog) return;
-    countdownRemaining = 6.0;
-    countdownActive = true;
-    if (onboardingProgressBar) {
-      onboardingProgressBar.style.width = '100%';
-      onboardingProgressBar.style.background = '#16a34a';
-    }
-    if (countdownSeconds) countdownSeconds.textContent = '6';
-
-    announceOnboarding('Welcome to LearnBridge. Accessible onboarding will automatically activate non-visual assistance in 6 seconds unless you press any key or interact with the screen.');
-
-    const stepMs = 100;
-    countdownInterval = setInterval(() => {
-      countdownRemaining = Math.max(0, countdownRemaining - (stepMs / 1000));
-      if (countdownSeconds) {
-        countdownSeconds.textContent = String(Math.ceil(countdownRemaining));
+      // 2. Hide interpreter window & interpreter toggle button completely
+      setInterpreter(false);
+      if (interpreterButton) {
+        interpreterButton.style.display = 'none';
       }
-      if (onboardingProgressBar) {
-        const pct = (countdownRemaining / 6.0) * 100;
-        onboardingProgressBar.style.width = `${pct}%`;
-      }
-      if (countdownRemaining <= 0) {
-        clearInterval(countdownInterval);
-        triggerAutomaticFallback();
-      }
-    }, stepMs);
 
-    // Cancel on ANY explicit user interaction (keydown, click, touch, mouse wheel)
-    const cancelInteractions = ['keydown', 'pointerdown', 'mousedown', 'touchstart', 'wheel'];
-    const handleInteraction = () => {
-      pauseCountdown();
-      cancelInteractions.forEach(ev => {
-        window.removeEventListener(ev, handleInteraction, true);
-        document.removeEventListener(ev, handleInteraction, true);
-        if (onboardingDialog) onboardingDialog.removeEventListener(ev, handleInteraction, true);
-      });
-    };
-    cancelInteractions.forEach(ev => {
-      window.addEventListener(ev, handleInteraction, { capture: true, once: true });
-      document.addEventListener(ev, handleInteraction, { capture: true, once: true });
-      if (onboardingDialog) onboardingDialog.addEventListener(ev, handleInteraction, { capture: true, once: true });
-    });
-  }
-
-  function showOnboarding(forceInteractive = false) {
-    if (!onboardingDialog || typeof onboardingDialog.showModal !== 'function') return;
-    try {
-      if (!onboardingDialog.open) {
-        onboardingDialog.showModal();
+      // 3. Show persistent keyboard shortcuts banner
+      if (blindKeyboardBanner) {
+        blindKeyboardBanner.hidden = false;
       }
-    } catch (_) {}
-    if (forceInteractive) {
-      pauseCountdown();
+
+      // 4. Update header quick bar
+      if (modeIcon) modeIcon.textContent = '👁️';
+      if (modeLabel) modeLabel.textContent = 'Vision-Assisted (Blind)';
+
+      // 5. Tailor downloads: Braille and Audio MP3 included, video-only excluded
+      if (mainResources && typeof mainResources.filterByMode === 'function') {
+        mainResources.filterByMode('blind');
+      }
+
+      // 6. Speak the guided keyboard walkthrough out loud
+      const guideText = "Welcome to your audio-optimized learning dashboard. Here are your keyboard shortcuts: Press L to start learning and play the lesson video. Press P to pause. Press D to return to your dashboard. Press T to hear the audio transcript. Press M to mute. Press Question Mark to repeat this guide anytime.";
+      speakVoice(guideText, true);
+      showToast('Vision-Assisted Mode activated. Audio guide speaking.');
+
+    } else if (profile === 'deaf') {
+      // 1. Deaf mode classes
+      document.body.classList.remove('blind-mode');
+      document.body.classList.add('deaf-mode');
+
+      // 2. Hide blind keyboard banner
+      if (blindKeyboardBanner) {
+        blindKeyboardBanner.hidden = true;
+      }
+
+      // 3. Dock and enable Ethiopian Sign Language interpreter window & button
+      setInterpreter(true);
+      if (interpreterButton) {
+        interpreterButton.style.display = '';
+        interpreterButton.setAttribute('aria-pressed', 'true');
+      }
+
+      // 4. Enable captions overlay
+      setCaptions(true);
+
+      // 5. Update header quick bar
+      if (modeIcon) modeIcon.textContent = '🤟';
+      if (modeLabel) modeLabel.textContent = 'Hearing-Assisted (Deaf)';
+
+      // 6. Tailor downloads: Signed Video, PDF Transcript, Slides included; Braille and Audio MP3 removed!
+      if (mainResources && typeof mainResources.filterByMode === 'function') {
+        mainResources.filterByMode('deaf');
+      }
+
+      // 7. Pop up the visual instructions guide modal
+      if (deafGuideModal && typeof deafGuideModal.showModal === 'function') {
+        try {
+          deafGuideModal.showModal();
+        } catch (_) {}
+      }
+      showToast('Hearing-Assisted Mode activated. Ethiopian Sign Language & captions enabled.');
+
     } else {
-      startOnboardingCountdown();
+      // Standard mode
+      document.body.classList.remove('high-contrast', 'blind-mode', 'deaf-mode');
+      if (blindKeyboardBanner) blindKeyboardBanner.hidden = true;
+      if (interpreterButton) interpreterButton.style.display = '';
+      if (modeIcon) modeIcon.textContent = '🎓';
+      if (modeLabel) modeLabel.textContent = 'Standard Mode';
+      if (mainResources && typeof mainResources.filterByMode === 'function') {
+        mainResources.filterByMode('standard');
+      }
+      showToast('Standard mode loaded.');
     }
   }
 
-  pauseCountdownBtn?.addEventListener('click', pauseCountdown);
-
-  dismissOnboardingBtn?.addEventListener('click', () => {
-    pauseCountdown();
-    if (onboardingDialog.open) onboardingDialog.close();
-    try { localStorage.setItem('learnbridge_onboarding_done', 'true'); } catch (_) {}
+  // Gateway Event Listeners
+  $$('.lang-card', gatewayStep1).forEach(card => {
+    card.addEventListener('click', () => {
+      const lang = card.getAttribute('data-lang');
+      if (lang) selectGatewayLanguage(lang);
+    });
   });
 
-  submitOnboardingBtn?.addEventListener('click', () => {
-    pauseCountdown();
-    const checked = $('input[name="onboardingChoice"]:checked', onboardingDialog);
-    const choice = checked ? checked.value : 'default';
-    applyProfileSettings(choice);
-    if (onboardingDialog.open) onboardingDialog.close();
-    try { localStorage.setItem('learnbridge_onboarding_done', 'true'); } catch (_) {}
+  btnChooseBlind?.addEventListener('click', () => applyTailoredProfile('blind'));
+  btnChooseDeaf?.addEventListener('click', () => applyTailoredProfile('deaf'));
+  btnChooseStandard?.addEventListener('click', () => applyTailoredProfile('standard'));
+  gatewayPauseTimerBtn?.addEventListener('click', pauseGatewayTimer);
+  btnGatewayBack?.addEventListener('click', enterGatewayStep1);
+
+  closeDeafGuideBtn?.addEventListener('click', () => {
+    if (deafGuideModal && deafGuideModal.open) deafGuideModal.close();
   });
 
-  onboardingTriggerBtn?.addEventListener('click', () => showOnboarding(true));
-  heroOnboardingBtn?.addEventListener('click', () => showOnboarding(true));
-
-  // Check if initial onboarding should be shown
-  try {
-    const done = localStorage.getItem('learnbridge_onboarding_done');
-    if (!done) {
-      showOnboarding(false);
+  quickChangeModeBtn?.addEventListener('click', () => enterGatewayStep1());
+  quickShortcutsBtn?.addEventListener('click', () => {
+    if (activeProfile === 'blind') {
+      const guideText = "Shortcuts: Press L to learn, P to pause, D for dashboard, T for transcript, M to mute audio, O to change language or mode.";
+      speakVoice(guideText, true);
+    } else if (activeProfile === 'deaf') {
+      if (deafGuideModal && typeof deafGuideModal.showModal === 'function') deafGuideModal.showModal();
+    } else {
+      showToast("Hotkeys: L = Learn, P = Pause, D = Dashboard, T = Transcript, M = Mute, O = Onboarding");
     }
-  } catch (_) {}
+  });
+
+  // Global Keyboard Shortcuts Listener
+  window.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, textarea, select')) return;
+
+    const key = e.key.toUpperCase();
+
+    // 1. Inside Gateway Screen
+    if (gatewayScreen && !gatewayScreen.hidden) {
+      if (!gatewayStep1.hidden) {
+        const langMap = {
+          'E': 'en',
+          'A': 'am',
+          'O': 'om',
+          'T': 'ti',
+          'S': 'so',
+          'F': 'aa',
+          'H': 'har'
+        };
+        if (langMap[key]) {
+          e.preventDefault();
+          selectGatewayLanguage(langMap[key]);
+          return;
+        }
+      }
+      if (!gatewayStep2.hidden) {
+        if (key === 'B') {
+          e.preventDefault();
+          applyTailoredProfile('blind');
+          return;
+        }
+        if (key === 'D') {
+          e.preventDefault();
+          applyTailoredProfile('deaf');
+          return;
+        }
+        if (key === 'S') {
+          e.preventDefault();
+          applyTailoredProfile('standard');
+          return;
+        }
+        if (e.code === 'Space' || key === 'P') {
+          e.preventDefault();
+          pauseGatewayTimer();
+          return;
+        }
+      }
+      return;
+    }
+
+    // 2. In Main Workspace / Player
+    if (key === 'L') {
+      e.preventDefault();
+      if (video) {
+        video.play();
+        const ws = $('#lesson-workspace');
+        if (ws) ws.scrollIntoView({ behavior: 'smooth' });
+        speakVoice("Lesson playing.", true);
+      }
+      return;
+    }
+
+    if (key === 'P') {
+      e.preventDefault();
+      if (video) {
+        if (video.paused) {
+          video.play();
+          speakVoice("Lesson playing.", true);
+        } else {
+          video.pause();
+          speakVoice("Lesson paused.", true);
+        }
+      }
+      return;
+    }
+
+    if (key === 'D') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      speakVoice("Returned to dashboard.", true);
+      return;
+    }
+
+    if (key === 'T') {
+      e.preventDefault();
+      const currentText = captionOverlay?.textContent || "Good design starts by removing barriers.";
+      speakVoice("Current lecture dialogue: " + currentText, true);
+      return;
+    }
+
+    if (key === 'M') {
+      e.preventDefault();
+      isMuted = !isMuted;
+      if (isMuted && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      showToast(isMuted ? "Audio guide muted" : "Audio guide unmuted");
+      if (!isMuted) speakVoice("Audio guidance unmuted.", true);
+      return;
+    }
+
+    if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+      e.preventDefault();
+      if (activeProfile === 'blind') {
+        const guideText = "Keyboard shortcuts guide: Press L to start learning and play the lesson video. Press P to pause. Press D to return to dashboard. Press T to hear transcript. Press M to mute. Press O to reset language or preferences.";
+        speakVoice(guideText, true);
+      } else if (activeProfile === 'deaf') {
+        if (deafGuideModal && typeof deafGuideModal.showModal === 'function') {
+          deafGuideModal.showModal();
+        }
+      } else {
+        showToast("Hotkeys: L = Learn, P = Pause, D = Dashboard, T = Transcript, M = Mute, O = Onboarding");
+      }
+      return;
+    }
+
+    if (key === 'O') {
+      e.preventDefault();
+      enterGatewayStep1();
+      return;
+    }
+  });
+
+  // Secondary legacy dialog support
+  function showOnboarding(forceInteractive = false) {
+    enterGatewayStep1();
+  }
+
+  onboardingTriggerBtn?.addEventListener('click', () => enterGatewayStep1());
+  heroOnboardingBtn?.addEventListener('click', () => enterGatewayStep1());
+
+  // Check initial arrival
+  try {
+    const saved = localStorage.getItem('learnbridge_gateway_done');
+    const savedProf = localStorage.getItem('learnbridge_user_profile');
+    if (saved && savedProf) {
+      applyTailoredProfile(savedProf);
+    } else {
+      enterGatewayStep1();
+    }
+  } catch (_) {
+    enterGatewayStep1();
+  }
 
 
   /* ========================================================

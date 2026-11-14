@@ -69,7 +69,7 @@
     "simplified_interface": false,
     "keyboard_only": false,
     "tts_feedback": false,
-    "updatedAt": "2026-11-14T09:27:44.231Z",
+    "updatedAt": "2026-11-14T10:48:41.226Z",
     "userId": "test-learner-99"
   },
   "ethio-jobs-portal:ethio-applicant-42": {
@@ -95,7 +95,7 @@
     "simplified_interface": false,
     "keyboard_only": false,
     "tts_feedback": false,
-    "updatedAt": "2026-11-14T09:27:44.240Z",
+    "updatedAt": "2026-11-14T10:48:41.233Z",
     "userId": "ethio-applicant-42",
     "preferences": {
       "language": "en",
@@ -536,8 +536,8 @@
   "savanna-lms:savanna-student-1": {
     "language": "en",
     "profileId": "low_vision",
-    "high_contrast": true,
-    "highContrast": true,
+    "high_contrast": false,
+    "highContrast": false,
     "reduce_transparency": true,
     "captions": true,
     "captionsEnabled": true,
@@ -556,9 +556,11 @@
     "simplified_interface": false,
     "keyboard_only": false,
     "tts_feedback": true,
-    "updatedAt": "2026-11-14T09:26:53.685Z",
+    "updatedAt": "2026-11-14T10:48:16.646Z",
     "enhanced_focus": true,
     "visual_alerts": true,
-    "userId": "savanna-student-1"
+    "userId": "savanna-student-1",
+    "profile": "deaf",
+    "signLanguage": true
   }
 }

@@ -79,7 +79,7 @@ async function runApiVerification() {
     const langsRes = await request('/api/v1/localization/languages');
     assert('GET /api/v1/localization/languages returns 200 OK', langsRes.status === 200);
     const languages = langsRes.json?.data?.languages || [];
-    assert('Returns 5 priority languages (EN, AM, OM, TI, SO)', languages.length === 5);
+    assert('Returns at least 5 priority languages (EN, AM, OM, TI, SO, AA, HAR)', languages.length >= 5);
     const codes = languages.map(l => l.code);
     assert('Contains en, am, om, ti, so', ['en', 'am', 'om', 'ti', 'so'].every(c => codes.includes(c)));
 
