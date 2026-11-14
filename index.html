@@ -14,6 +14,8 @@
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to lesson content</a>
+  <!-- Global Onboarding ARIA Live Announcer -->
+  <div id="onboardingAriaLive" class="sr-only" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;"></div>
 
   <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
@@ -64,20 +66,55 @@
       <div class="header-leading">
         <a href="#main-content" class="back-button" aria-label="Back to courses"><svg><use href="#i-back"/></svg></a>
         <div class="header-course">
-          <span class="header-kicker">ALX SAVANNA · TRACK 2 ACCESSIBLE MEDIA</span>
-          <strong>Design for Every Mind</strong>
+          <span class="header-kicker" data-i18n="kicker">ALX SAVANNA · TRACK 2 ACCESSIBLE MEDIA & REST API</span>
+          <strong data-i18n="course_title">Design for Every Mind</strong>
         </div>
       </div>
       <div class="header-actions">
+        <!-- 5-Language Switcher -->
+        <select id="langSelect" class="header-lang-select" aria-label="Select language / ቋንቋ ይምረጡ">
+          <option value="en">English (US)</option>
+          <option value="am">አማርኛ (Amharic)</option>
+          <option value="om">Afaan Oromoo</option>
+          <option value="ti">ትግርኛ (Tigrinya)</option>
+          <option value="so">Af-Soomaali</option>
+        </select>
+
+        <a href="./integrations/savanna-lms/" class="header-demo-link" title="Open Savanna LMS Integration Demo">
+          <span>🎓</span> <span data-i18n="btn_lms_demo">Savanna LMS</span>
+        </a>
+        <a href="./integrations/job-portal/" class="header-demo-link" title="Open EthioCareers Job Portal Demo">
+          <span>💼</span> <span data-i18n="btn_job_demo">Job Portal</span>
+        </a>
+        <a href="./api/v1/docs" class="header-demo-link" title="Open Interactive OpenAPI Docs">
+          <span>⚡</span> <span data-i18n="btn_api_docs">API Docs</span>
+        </a>
+
         <div class="network-state" id="networkState"><span class="signal-dot"></span><span id="networkLabel">Online</span></div>
+        <button class="header-quiet" id="onboardingTriggerBtn" aria-label="Setup accessible onboarding preferences">Setup</button>
         <button class="header-icon" id="searchButton" aria-label="Find in transcript (press slash)"><svg><use href="#i-search"/></svg></button>
-        <button class="header-icon" id="bookmarkButton" aria-label="Bookmark this lesson"><svg><use href="#i-bookmark"/></svg></button>
-        <button class="header-icon" id="shareButton" aria-label="Share this lesson link"><svg><use href="#i-share"/></svg></button>
         <button class="header-icon" id="settingsButton" aria-label="Accessibility preferences"><svg><use href="#i-settings"/></svg></button>
-        <button class="header-quiet" id="takeNoteButton">Take a note</button>
         <button class="header-primary" id="nextClassButton">Next class <svg><use href="#i-chevron-right"/></svg></button>
       </div>
     </header>
+
+    <!-- Hero Platform Banner: API-First Universal Accessibility -->
+    <section class="hero-platform-section" aria-labelledby="heroHeadline">
+      <div class="hero-kicker-tag">
+        <span aria-hidden="true">⚡</span>
+        <span>Universal Accessibility Infrastructure · ALX Hackathon Track 2</span>
+      </div>
+      <h1 id="heroHeadline" data-i18n="hero_headline">Accessibility Without Boundaries</h1>
+      <p data-i18n="hero_subheadline">
+        One unified REST API providing reusable, universal accessibility infrastructure for education, employment, and digital platforms across Ethiopia and the world.
+      </p>
+      <div class="hero-cta-group">
+        <a href="./integrations/savanna-lms/" class="hero-primary-btn" data-i18n="btn_lms_demo">Savanna LMS Integration Demo</a>
+        <a href="./integrations/job-portal/" class="hero-secondary-btn" data-i18n="btn_job_demo">EthioCareers Job Portal Demo</a>
+        <a href="./api/v1/docs" class="hero-secondary-btn" data-i18n="btn_api_docs">Explore REST API Docs</a>
+        <button type="button" class="hero-secondary-btn" id="heroOnboardingBtn" style="cursor:pointer;">Accessible Onboarding Wizard</button>
+      </div>
+    </section>
 
     <!-- Main Workspace Grid (Video Stage + Course Classes Panel) -->
     <section class="workspace-grid" id="lesson-workspace" aria-label="Lesson workspace">
@@ -146,8 +183,8 @@
               </div>
               <div class="control-right">
                 <label class="volume-control" aria-label="Volume"><svg><use href="#i-volume"/></svg><input id="volumeBar" type="range" min="0" max="1" value="0.82" step="0.01" aria-label="Volume level"></label>
-                <button class="player-control" id="captionsButton" aria-label="Turn captions on (C)" aria-pressed="false"><svg><use href="#i-captions"/></svg><span class="control-label">CC</span></button>
-                <button class="player-control" id="descriptionButton" aria-label="Turn audio description on (D)" aria-pressed="false"><svg><use href="#i-headphones"/></svg><span class="control-label">AD</span></button>
+                <button class="player-control" id="captionsButton" aria-label="CC: Turn captions on (C)" aria-pressed="false"><svg><use href="#i-captions"/></svg><span class="control-label">CC</span></button>
+                <button class="player-control" id="descriptionButton" aria-label="AD: Turn audio description on (D)" aria-pressed="false"><svg><use href="#i-headphones"/></svg><span class="control-label">AD</span></button>
                 <button class="player-control" id="interpreterButton" aria-label="Show Ethiopian Sign Language window (H)" aria-pressed="false"><svg><use href="#i-hand"/></svg></button>
               </div>
             </div>
@@ -306,6 +343,92 @@
           issue-date="November 2026">
         </learnbridge-certificate>
       </section>
+
+      <!-- Universal Integrations Showcase -->
+      <section style="grid-column: 1 / -1; margin-top: 24px;" id="integrations-section" aria-labelledby="integrationsHeading">
+        <div class="section-heading-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding: 0 4px;">
+          <div>
+            <div class="section-kicker" data-i18n="how_it_works_title">HOW ORGANIZATIONS INTEGRATE LEARNBRIDGE</div>
+            <h2 id="integrationsHeading" style="margin:4px 0; font-size:22px; color:#ffffff;">Working Third-Party Client Integrations</h2>
+          </div>
+          <span style="font-size:12px; color:var(--seafoam);">REST API Reusability</span>
+        </div>
+
+        <div class="integrations-grid">
+          <!-- Integration A Card -->
+          <article class="integration-card">
+            <div>
+              <div class="integration-card-header">
+                <span style="background: rgba(211, 47, 47, 0.2); color: #ff8a80; border: 1px solid rgba(211, 47, 47, 0.4); padding: 3px 10px; border-radius: 999px; font-size: 10px; font-weight: 700;">Integration A · EdTech / LMS</span>
+                <span style="font-size: 11px; color: #4ade80; font-weight: 600;">● Live API</span>
+              </div>
+              <h3>ALX Savanna LMS Course Experience</h3>
+              <p>
+                An authentic LMS course interface consuming <code>GET /api/v1/accessibility/preferences</code> for learner <code>savanna-student-1</code>. Automatically adjusts contrast, typography scaling, Ethiopian Sign Language overlays, and captions in real-time.
+              </p>
+            </div>
+            <div class="integration-card-footer">
+              <span style="font-size: 11px; font-family: monospace; color: #94a3b8;">x-api-key: lb_live_savanna_...</span>
+              <a href="./integrations/savanna-lms/" class="hero-primary-btn" style="padding: 6px 14px; font-size: 11px; text-decoration: none;">Launch LMS Demo →</a>
+            </div>
+          </article>
+
+          <!-- Integration B Card -->
+          <article class="integration-card">
+            <div>
+              <div class="integration-card-header">
+                <span style="background: rgba(2, 132, 199, 0.2); color: #7dd3fc; border: 1px solid rgba(2, 132, 199, 0.4); padding: 3px 10px; border-radius: 999px; font-size: 10px; font-weight: 700;">Integration B · Inclusive Employment</span>
+                <span style="font-size: 11px; color: #4ade80; font-weight: 600;">● Live API</span>
+              </div>
+              <h3>EthioCareers Job Portal</h3>
+              <p>
+                An inclusive recruitment platform consuming the same REST API for applicant <code>ethio-applicant-42</code>. Features Web Speech API text-to-speech audio readouts, high-contrast themes, and bidirectional sync via <code>PATCH /api/v1/accessibility/preferences/me</code>.
+              </p>
+            </div>
+            <div class="integration-card-footer">
+              <span style="font-size: 11px; font-family: monospace; color: #94a3b8;">x-api-key: lb_live_ethiojobs_...</span>
+              <a href="./integrations/job-portal/" class="hero-primary-btn" style="background: linear-gradient(135deg, #0284c7, #0369a1); padding: 6px 14px; font-size: 11px; text-decoration: none;">Launch Job Portal →</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Live REST API Sandbox / Interactive Explorer -->
+      <section style="grid-column: 1 / -1; margin-top: 24px;" id="api-sandbox-section" aria-labelledby="sandboxHeading">
+        <div class="api-sandbox-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div class="section-kicker" data-i18n="api_explorer_title">LIVE REST API SANDBOX</div>
+              <h2 id="sandboxHeading" style="margin:4px 0; font-size:20px; color:#ffffff;">Test LearnBridge Universal API Endpoints</h2>
+            </div>
+            <a href="./api/v1/docs" class="hero-secondary-btn" style="font-size:11px; padding:6px 14px;">Open Swagger UI Explorer ↗</a>
+          </div>
+          <p style="font-size:12px; color:rgba(255,255,255,0.8); margin:8px 0 14px;" data-i18n="api_explorer_desc">
+            Execute real HTTP requests against the local LearnBridge REST API engine (running on http://127.0.0.1:4173).
+          </p>
+
+          <div class="sandbox-controls">
+            <label for="sandboxEndpointSelect" class="sr-only">Choose API Endpoint to Test</label>
+            <select id="sandboxEndpointSelect" class="sandbox-select">
+              <option value="/api/v1/health">GET /api/v1/health (System Health & Uptime)</option>
+              <option value="/api/v1/localization/languages">GET /api/v1/localization/languages (5 Priority Languages)</option>
+              <option value="/api/v1/localization/translations/am">GET /api/v1/localization/translations/am (Amharic Translations)</option>
+              <option value="/api/v1/localization/translations/om">GET /api/v1/localization/translations/om (Afaan Oromo Translations)</option>
+              <option value="/api/v1/accessibility/profiles">GET /api/v1/accessibility/profiles (6 Standard Profiles)</option>
+              <option value="/api/v1/accessibility/profiles/screen_reader">GET /api/v1/accessibility/profiles/screen_reader</option>
+              <option value="/api/v1/accessibility/preferences?userId=savanna-student-1">GET /api/v1/accessibility/preferences?userId=savanna-student-1</option>
+              <option value="/api/v1/integrations">GET /api/v1/integrations (Registered Platform Tenants)</option>
+            </select>
+            <button type="button" id="sandboxExecuteBtn" class="sandbox-exec-btn">Execute Request</button>
+            <span id="sandboxLatency" style="font-size:11px; font-family:monospace; color:#86efac;"></span>
+          </div>
+
+          <div style="font-size:11px; color:#94a3b8; margin-bottom:6px;">
+            <span>cURL Command:</span> <code id="sandboxCurlCmd" style="color:#e2e8f0; font-family:monospace; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:4px;">curl -H "x-api-key: lb_live_savanna_9842a1b7c" http://127.0.0.1:4173/api/v1/health</code>
+          </div>
+          <pre class="sandbox-response-pre" id="sandboxResponsePre">// Click 'Execute Request' to fetch live data from LearnBridge REST API...</pre>
+        </div>
+      </section>
     </section>
 
     <!-- Page Footer -->
@@ -422,6 +545,102 @@
       <div class="dialog-footer">
         <span class="dialog-note">Stored locally in your browser.</span>
         <button class="header-primary" id="saveNoteButton" value="save" type="button">Save note</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Accessible Onboarding Dialog Modal (with 6-Second Automatic Fallback) -->
+  <dialog class="onboarding-dialog" id="onboardingDialog" aria-labelledby="onboardingTitle" aria-describedby="onboardingDesc">
+    <form method="dialog" class="onboarding-content">
+      <div class="onboarding-header">
+        <h2 id="onboardingTitle" data-i18n="onboarding_title">Welcome to LearnBridge</h2>
+        <p id="onboardingDesc" data-i18n="onboarding_question">How would you prefer to experience this platform?</p>
+      </div>
+
+      <!-- 6-Second Countdown Alert Bar -->
+      <div class="countdown-box" id="countdownBox" role="status">
+        <div class="countdown-text-row">
+          <span id="countdownLabel">
+            <span data-i18n="onboarding_fallback_alert">Automatically activating accessibility defaults in</span>
+            <strong id="countdownSeconds">6</strong>
+            <span data-i18n="onboarding_seconds">seconds... Press any key or interact to pause.</span>
+          </span>
+          <button type="button" class="btn-pause-countdown" id="pauseCountdownBtn">Pause Timer</button>
+        </div>
+        <div class="countdown-progress-track" aria-hidden="true">
+          <div class="countdown-progress-bar" id="onboardingProgressBar"></div>
+        </div>
+      </div>
+
+      <!-- 7 Functional Choices -->
+      <div class="options-list" role="radiogroup" aria-labelledby="onboardingDesc">
+        <!-- 1. Screen Reader -->
+        <label class="option-tile">
+          <input type="radio" name="onboardingChoice" value="screen_reader">
+          <div class="option-info">
+            <span class="option-title" data-i18n="opt_screen_reader_title">1. I use a screen reader</span>
+            <span class="option-desc" data-i18n="opt_screen_reader_desc">Optimized semantic tree, ARIA live regions, and screen reader announcements.</span>
+          </div>
+        </label>
+
+        <!-- 2. Low Vision -->
+        <label class="option-tile">
+          <input type="radio" name="onboardingChoice" value="low_vision">
+          <div class="option-info">
+            <span class="option-title" data-i18n="opt_low_vision_title">2. I have difficulty seeing (Low Vision)</span>
+            <span class="option-desc" data-i18n="opt_low_vision_desc">High contrast, enlarged text, and clear yellow focus indicators.</span>
+          </div>
+        </label>
+
+        <!-- 3. Deaf / Hard of Hearing -->
+        <label class="option-tile">
+          <input type="radio" name="onboardingChoice" value="deaf_hard_of_hearing">
+          <div class="option-info">
+            <span class="option-title" data-i18n="opt_deaf_title">3. I am deaf or hard of hearing</span>
+            <span class="option-desc" data-i18n="opt_deaf_desc">Bilingual captions, synchronized transcripts, and Ethiopian Sign Language window.</span>
+          </div>
+        </label>
+
+        <!-- 4. Motor Accessible -->
+        <label class="option-tile">
+          <input type="radio" name="onboardingChoice" value="motor_accessible">
+          <div class="option-info">
+            <span class="option-title" data-i18n="opt_motor_title">4. I have difficulty using a mouse (Motor / Keyboard)</span>
+            <span class="option-desc" data-i18n="opt_motor_desc">Full keyboard navigation, non-drag controls, and expanded touch targets.</span>
+          </div>
+        </label>
+
+        <!-- 5. Cognitive Accessible -->
+        <label class="option-tile">
+          <input type="radio" name="onboardingChoice" value="cognitive_accessible">
+          <div class="option-info">
+            <span class="option-title" data-i18n="opt_cognitive_title">5. I prefer a simpler experience (Cognitive)</span>
+            <span class="option-desc" data-i18n="opt_cognitive_desc">Simplified visual hierarchy, distraction-free reading, and reduced motion.</span>
+          </div>
+        </label>
+
+        <!-- 6. Standard Baseline -->
+        <label class="option-tile">
+          <input type="radio" name="onboardingChoice" value="default" checked>
+          <div class="option-info">
+            <span class="option-title" data-i18n="opt_default_title">6. Continue with standard accessible defaults</span>
+            <span class="option-desc" data-i18n="opt_default_desc">WCAG 2.2 AA compliant baseline with all standard assistive layers available.</span>
+          </div>
+        </label>
+
+        <!-- 7. Custom Configuration -->
+        <label class="option-tile">
+          <input type="radio" name="onboardingChoice" value="custom">
+          <div class="option-info">
+            <span class="option-title" data-i18n="opt_custom_title">7. I want to fine-tune custom preferences</span>
+            <span class="option-desc" data-i18n="opt_custom_desc">Custom tuning for contrast, captions, audio descriptions, and display settings.</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="onboarding-actions">
+        <button type="button" class="btn-pause-countdown" id="dismissOnboardingBtn" data-i18n="btn_cancel">Dismiss</button>
+        <button type="button" class="btn-submit-onboarding" id="submitOnboardingBtn" data-i18n="btn_apply">Apply Experience</button>
       </div>
     </form>
   </dialog>

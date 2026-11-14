@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EthioCareers — Inclusive Opportunity Platform | Powered by LearnBridge API</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Noto+Sans+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./job-portal.css">
+</head>
+<body>
+  <a class="skip-link" href="#jobMainContent">Skip to job opportunities</a>
+
+  <!-- ARIA Live Announcer -->
+  <div id="jobAriaLive" class="sr-only" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;"></div>
+
+  <!-- Header -->
+  <header class="job-header" role="banner">
+    <div class="brand-wrapper">
+      <a href="./index.html" class="brand-logo-text" aria-label="EthioCareers Home">
+        Ethio<span>Careers</span>
+      </a>
+      <span class="brand-tag">Inclusive Employment</span>
+    </div>
+
+    <div class="header-meta">
+      <div class="api-live-tag" title="Connected to LearnBridge Universal Accessibility Engine">
+        <span class="pulse" aria-hidden="true"></span>
+        <span>LearnBridge Cloud Sync</span>
+      </div>
+
+      <button type="button" class="action-btn" id="openSettingsBtn">
+        <span aria-hidden="true">⚙</span>
+        <span>Profile: <strong id="applicantBadge">Loading...</strong></span>
+      </button>
+
+      <a href="../../index.html" class="action-btn" style="text-decoration:none;">
+        <span>← LearnBridge Studio</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="job-container" id="jobMainContent" role="main">
+    <section class="hero-banner">
+      <h1>Accessible Employment Opportunities</h1>
+      <p>
+        Connecting talent in Ethiopia with employers committed to universal accessibility, screen-reader readiness, and inclusive workplace accommodations.
+      </p>
+    </section>
+
+    <!-- Search & Accessibility Filters -->
+    <section class="filter-bar" aria-label="Search and filter job opportunities">
+      <label for="jobSearchInput" class="sr-only" style="position:absolute; width:1px; height:1px; overflow:hidden;">Search jobs by keyword</label>
+      <input type="search" id="jobSearchInput" class="search-field" placeholder="Search by job title, skills, or accommodation..." aria-label="Search job listings">
+
+      <div class="filter-btn-group" role="group" aria-label="Filter by accessibility accommodation">
+        <button type="button" class="filter-chip active" data-filter="all">All Roles</button>
+        <button type="button" class="filter-chip" data-filter="screen-reader">Screen-Reader Ready</button>
+        <button type="button" class="filter-chip" data-filter="sign-language">ETSL Supported</button>
+        <button type="button" class="filter-chip" data-filter="remote">100% Remote</button>
+        <button type="button" class="filter-chip" data-filter="flexible">Flexible Hours</button>
+      </div>
+    </section>
+
+    <!-- Job Cards Grid -->
+    <section class="job-grid" id="jobList" aria-label="Active job opportunities">
+      <!-- Job 1 -->
+      <article class="job-card" data-tags="screen-reader remote flexible">
+        <div class="job-card-top">
+          <div class="job-title-group">
+            <h2>Digital Accessibility QA Engineer</h2>
+            <div class="job-company">ALX Digital Bridge · Remote (Addis Ababa / Regional)</div>
+          </div>
+          <div class="job-tags">
+            <span class="tag tag-accessible">✓ Screen-Reader Tested</span>
+            <span class="tag">Remote</span>
+            <span class="tag">Full-Time</span>
+          </div>
+        </div>
+        <p class="job-desc">
+          Lead automated WCAG 2.2 AA audits using axe-core and screen readers (NVDA, VoiceOver) across educational and web applications. Assist engineering squads in remediating semantic barriers and keyboard traps.
+        </p>
+        <div class="job-actions">
+          <button type="button" class="tts-btn" aria-label="Listen to audio summary of Digital Accessibility QA Engineer job">
+            <span>🔊</span> Listen
+          </button>
+          <button type="button" class="apply-btn">Apply Now (Accessible Form)</button>
+        </div>
+      </article>
+
+      <!-- Job 2 -->
+      <article class="job-card" data-tags="sign-language remote">
+        <div class="job-card-top">
+          <div class="job-title-group">
+            <h2>Ethiopian Sign Language (ETSL) Video Specialist</h2>
+            <div class="job-company">Ministry of Innovation & Technology (MInT) · Addis Ababa</div>
+          </div>
+          <div class="job-tags">
+            <span class="tag tag-accessible">🤟 ETSL Environment</span>
+            <span class="tag">Hybrid</span>
+            <span class="tag">Contract</span>
+          </div>
+        </div>
+        <p class="job-desc">
+          Produce and sync Ethiopian Sign Language interpretation video feeds for governmental public services and digital learning curriculums. Collaborate with Deaf community advocates to establish educational sign lexicons.
+        </p>
+        <div class="job-actions">
+          <button type="button" class="tts-btn" aria-label="Listen to audio summary of ETSL Video Specialist job">
+            <span>🔊</span> Listen
+          </button>
+          <button type="button" class="apply-btn">Apply Now (Accessible Form)</button>
+        </div>
+      </article>
+
+      <!-- Job 3 -->
+      <article class="job-card" data-tags="screen-reader flexible">
+        <div class="job-card-top">
+          <div class="job-title-group">
+            <h2>Universal Design Frontend Architect</h2>
+            <div class="job-company">Ethio Telecom Digital Services · Addis Ababa</div>
+          </div>
+          <div class="job-tags">
+            <span class="tag tag-accessible">✓ Assistive Tech Ready</span>
+            <span class="tag">On-Site / Accessible Transit</span>
+            <span class="tag">Full-Time</span>
+          </div>
+        </div>
+        <p class="job-desc">
+          Architect accessible Web Components and design systems for telecommunication portals used by over 30 million citizens. Implement low-bandwidth fallbacks and multi-language support (Amharic, Afaan Oromo, Tigrinya, Somali).
+        </p>
+        <div class="job-actions">
+          <button type="button" class="tts-btn" aria-label="Listen to audio summary of Universal Design Architect job">
+            <span>🔊</span> Listen
+          </button>
+          <button type="button" class="apply-btn">Apply Now (Accessible Form)</button>
+        </div>
+      </article>
+
+      <!-- Job 4 -->
+      <article class="job-card" data-tags="remote flexible">
+        <div class="job-card-top">
+          <div class="job-title-group">
+            <h2>Accessible Data Entry & Transcription Associate</h2>
+            <div class="job-company">Inclusive Tech Ethiopia · Remote</div>
+          </div>
+          <div class="job-tags">
+            <span class="tag tag-accessible">✓ Neurodivergent Friendly</span>
+            <span class="tag">Part-Time</span>
+            <span class="tag">Flexible Schedule</span>
+          </div>
+        </div>
+        <p class="job-desc">
+          Transcribe educational lectures into bilingual Amharic and English text with timestamps. Structured work environment with clear rubrics and flexible asynchronous deadlines.
+        </p>
+        <div class="job-actions">
+          <button type="button" class="tts-btn" aria-label="Listen to audio summary of Data Entry Associate job">
+            <span>🔊</span> Listen
+          </button>
+          <button type="button" class="apply-btn">Apply Now (Accessible Form)</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Preferences Modal Dialog -->
+  <div class="settings-modal" id="settingsModal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="settings-modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Applicant Accessibility Preferences</h2>
+        <button type="button" class="modal-close" id="closeSettingsBtn" aria-label="Close preferences dialog">✕</button>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:1.25rem;">
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span>High Contrast Mode</span>
+          <input type="checkbox" id="prefHighContrast" style="width:20px; height:20px;">
+        </label>
+
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Typography Sizing</span>
+          <select id="prefFontScale" style="padding:0.4rem; border-radius:6px;">
+            <option value="1">Standard (100%)</option>
+            <option value="1.15">Medium (115%)</option>
+            <option value="1.25">Large (125%)</option>
+            <option value="1.4">Extra Large (140%)</option>
+          </select>
+        </label>
+
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Screen Reader TTS Speed</span>
+          <select id="prefSpeechRate" style="padding:0.4rem; border-radius:6px;">
+            <option value="0.8">0.8x (Slower)</option>
+            <option value="1.0" selected>1.0x (Normal)</option>
+            <option value="1.25">1.25x (Brisk)</option>
+            <option value="1.5">1.5x (Fast)</option>
+          </select>
+        </label>
+
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Reduce Motion</span>
+          <input type="checkbox" id="prefReduceMotion" style="width:20px; height:20px;">
+        </label>
+
+        <div style="margin-top:1rem; display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" id="savePrefsBtn" class="apply-btn">Save to LearnBridge Cloud</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Docked Live API Inspector -->
+  <aside class="api-inspector" id="apiInspector" aria-label="EthioCareers REST API Inspector">
+    <div class="inspector-header" id="inspectorToggle">
+      <div class="inspector-title">
+        <span aria-hidden="true">⚡</span>
+        <span>LearnBridge REST API Inspector (Job Portal)</span>
+      </div>
+      <span class="inspector-toggle-btn" aria-hidden="true" style="display:inline-block; min-width:28px; min-height:28px; line-height:28px; text-align:center;">▼</span>
+    </div>
+
+    <div class="inspector-body">
+      <div class="inspector-row">
+        <span class="inspector-label">Tenant ID:</span>
+        <span class="inspector-val">ethio-jobs-portal</span>
+      </div>
+      <div class="inspector-row">
+        <span class="inspector-label">API Endpoint:</span>
+        <span class="inspector-val" id="inspectorEndpoint">GET /api/v1/accessibility/preferences</span>
+      </div>
+      <div class="inspector-row">
+        <span class="inspector-label">Status Code:</span>
+        <span class="inspector-val" id="inspectorStatus" style="color: #4ade80;">200 OK</span>
+      </div>
+      <div class="inspector-row">
+        <span class="inspector-label">Round-Trip Latency:</span>
+        <span class="inspector-val" id="inspectorLatency">6 ms</span>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.25rem;">
+        <span class="inspector-label">Live API Response:</span>
+        <button type="button" id="refetchJobApiBtn" class="action-btn" style="background:#1e293b; color:#38bdf8; font-size:0.75rem; padding:2px 8px;">Re-fetch</button>
+      </div>
+      <pre class="inspector-code" id="inspectorPayload" tabindex="0" role="region" aria-label="JSON response payload">Connecting to REST API...</pre>
+    </div>
+  </aside>
+
+  <script src="./job-client.js" defer></script>
+</body>
+</html>

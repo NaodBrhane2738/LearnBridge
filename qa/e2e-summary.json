@@ -1,0 +1,367 @@
+{
+  "timestamp": "2026-11-14T09:23:55.155Z",
+  "tests": [
+    {
+      "name": "[chromium] Onboarding dialog opens automatically on fresh load",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Countdown starts at 6s",
+      "status": "PASS",
+      "details": "Timer value: 5"
+    },
+    {
+      "name": "[chromium] Dialog closed automatically after 6s",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Screen reader profile automatically activated",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] ARIA live announces screen reader assistance without labeling",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Countdown pauses immediately on user keydown",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Manual selection applies captions profile",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Switches to Amharic (አማርኛ)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Switches to Afaan Oromo",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Switches to Tigrinya (ትግርኛ)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Switches to Somali (Af-Soomaali)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Restores English baseline",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Sandbox executes GET /api/v1/health successfully",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Sandbox executes GET /api/v1/localization/languages",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Savanna LMS loads learner profile from REST API",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] LMS dynamically applies high contrast profile from API",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] LMS captions overlay toggles cleanly",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] EthioCareers connects to LearnBridge API for applicant",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] EthioCareers accessibility filter functions",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] EthioCareers persists preference via PATCH /api/v1/accessibility/preferences/me",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[chromium] Landing page has 0 WCAG 2.2 AA violations",
+      "status": "PASS",
+      "details": "0 violations found"
+    },
+    {
+      "name": "[chromium] Savanna LMS demo has 0 WCAG 2.2 AA violations",
+      "status": "PASS",
+      "details": "0 violations found"
+    },
+    {
+      "name": "[chromium] EthioCareers job portal has 0 WCAG 2.2 AA violations",
+      "status": "PASS",
+      "details": "0 violations found"
+    },
+    {
+      "name": "[chromium] 320px viewport has zero horizontal scroll (Reflow 1.4.10)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Onboarding dialog opens automatically on fresh load",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Countdown starts at 6s",
+      "status": "PASS",
+      "details": "Timer value: 4"
+    },
+    {
+      "name": "[firefox] Dialog closed automatically after 6s",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Screen reader profile automatically activated",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] ARIA live announces screen reader assistance without labeling",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Countdown pauses immediately on user keydown",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Manual selection applies captions profile",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Switches to Amharic (አማርኛ)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Switches to Afaan Oromo",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Switches to Tigrinya (ትግርኛ)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Switches to Somali (Af-Soomaali)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Restores English baseline",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Sandbox executes GET /api/v1/health successfully",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Sandbox executes GET /api/v1/localization/languages",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Savanna LMS loads learner profile from REST API",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] LMS dynamically applies high contrast profile from API",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] LMS captions overlay toggles cleanly",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] EthioCareers connects to LearnBridge API for applicant",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] EthioCareers accessibility filter functions",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] EthioCareers persists preference via PATCH /api/v1/accessibility/preferences/me",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[firefox] Landing page has 0 WCAG 2.2 AA violations",
+      "status": "PASS",
+      "details": "0 violations found"
+    },
+    {
+      "name": "[firefox] Savanna LMS demo has 0 WCAG 2.2 AA violations",
+      "status": "PASS",
+      "details": "0 violations found"
+    },
+    {
+      "name": "[firefox] EthioCareers job portal has 0 WCAG 2.2 AA violations",
+      "status": "PASS",
+      "details": "0 violations found"
+    },
+    {
+      "name": "[firefox] 320px viewport has zero horizontal scroll (Reflow 1.4.10)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Onboarding dialog opens automatically on fresh load",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Countdown starts at 6s",
+      "status": "PASS",
+      "details": "Timer value: 6"
+    },
+    {
+      "name": "[webkit] Dialog closed automatically after 6s",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Screen reader profile automatically activated",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] ARIA live announces screen reader assistance without labeling",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Countdown pauses immediately on user keydown",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Manual selection applies captions profile",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Switches to Amharic (አማርኛ)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Switches to Afaan Oromo",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Switches to Tigrinya (ትግርኛ)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Switches to Somali (Af-Soomaali)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Restores English baseline",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Sandbox executes GET /api/v1/health successfully",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Sandbox executes GET /api/v1/localization/languages",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Savanna LMS loads learner profile from REST API",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] LMS dynamically applies high contrast profile from API",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] LMS captions overlay toggles cleanly",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] EthioCareers connects to LearnBridge API for applicant",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] EthioCareers accessibility filter functions",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] EthioCareers persists preference via PATCH /api/v1/accessibility/preferences/me",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "[webkit] Landing page has 0 WCAG 2.2 AA violations",
+      "status": "PASS",
+      "details": "0 violations found"
+    },
+    {
+      "name": "[webkit] Savanna LMS demo has 0 WCAG 2.2 AA violations",
+      "status": "PASS",
+      "details": "0 violations found"
+    },
+    {
+      "name": "[webkit] EthioCareers job portal has 0 WCAG 2.2 AA violations",
+      "status": "PASS",
+      "details": "0 violations found"
+    },
+    {
+      "name": "[webkit] 320px viewport has zero horizontal scroll (Reflow 1.4.10)",
+      "status": "PASS",
+      "details": ""
+    }
+  ],
+  "axeAudits": [],
+  "viewports": []
+}

@@ -333,7 +333,7 @@ class LearnBridgeCertificate extends HTMLElement {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             <span>Verify Credential</span>
           </button>
-          <button class="btn btn-secondary" id="copyBtn" type="button" aria-label="Copy certificate verification code">
+          <button class="btn btn-secondary" id="copyBtn" type="button" aria-label="Copy ID: Certificate verification code">
             <span>Copy ID</span>
           </button>
         </div>

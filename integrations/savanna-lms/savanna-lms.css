@@ -1,0 +1,559 @@
+/* Savanna LMS - Accessible Course Integration with LearnBridge REST API */
+:root {
+  --alx-red: #d32f2f;
+  --alx-red-dark: #b71c1c;
+  --alx-red-light: #ff6659;
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #334155;
+  --border-color: #cbd5e1;
+  --font-sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --focus-ring: 0 0 0 3px rgba(211, 47, 47, 0.4);
+  --ui-font-scale: 1;
+}
+
+/* High Contrast Override for Low-Vision Accessibility Profile */
+body.high-contrast {
+  --bg-primary: #000000;
+  --bg-surface: #121212;
+  --text-main: #ffffff;
+  --text-muted: #f1f5f9;
+  --border-color: #ffd600;
+  --alx-red: #ffd600;
+  --focus-ring: 0 0 0 4px #ffd600;
+}
+
+body.high-contrast .badge-alx,
+body.high-contrast .user-avatar,
+body.high-contrast .video-btn.active {
+  background: #ffd600 !important;
+  color: #000000 !important;
+  font-weight: 800 !important;
+}
+
+body.high-contrast code {
+  background: #000000 !important;
+  color: #ffd600 !important;
+  border: 1px solid #ffd600 !important;
+}
+
+body.high-contrast .savanna-header,
+body.high-contrast .savanna-sidebar,
+body.high-contrast .concept-card,
+body.high-contrast .concept-section,
+body.high-contrast .api-inspector {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+  border-color: #ffd600 !important;
+}
+
+body.high-contrast a,
+body.high-contrast button {
+  outline-color: #ffd600 !important;
+}
+
+body.high-contrast .concept-callout {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-left: 4px solid #ffd600 !important;
+  border-top: 1px solid #ffd600 !important;
+  border-right: 1px solid #ffd600 !important;
+  border-bottom: 1px solid #ffd600 !important;
+}
+
+body.high-contrast .concept-callout strong,
+body.high-contrast .concept-callout em,
+body.high-contrast .concept-callout code {
+  color: #ffd600 !important;
+}
+
+/* Reduced Motion Profile */
+body.reduce-motion * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Cognitive Accessibility Profile */
+body.cognitive-mode .savanna-sidebar {
+  display: none;
+}
+body.cognitive-mode .savanna-main {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-size: calc(16px * var(--ui-font-scale));
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Accessibility Skip Link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: var(--alx-red);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  font-weight: 700;
+  z-index: 9999;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Savanna Top Navigation Bar */
+.savanna-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 64px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--alx-red);
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.brand-logo .badge-alx {
+  background: var(--alx-red);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.course-breadcrumbs {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.api-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.api-badge .pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  display: inline-block;
+  box-shadow: 0 0 0 2px rgba(16,185,129,0.3);
+}
+
+.user-profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,0,0,0.04);
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--alx-red);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+/* Main Layout: Sidebar + Content Area */
+.savanna-layout {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 64px);
+}
+
+.savanna-sidebar {
+  width: 280px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-color);
+  padding: 1.5rem 1rem;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.curriculum-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.curriculum-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.curriculum-item:hover {
+  background: rgba(0,0,0,0.03);
+  color: var(--text-main);
+}
+.curriculum-item.active {
+  background: #fef2f2;
+  color: var(--alx-red-dark);
+  font-weight: 700;
+  border-left: 3px solid var(--alx-red);
+}
+.curriculum-item .item-icon {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+}
+
+/* Savanna Main Content */
+.savanna-main {
+  flex: 1;
+  padding: 2rem 3rem;
+  max-width: 1040px;
+}
+
+.concept-header {
+  margin-bottom: 2rem;
+}
+.concept-tag {
+  color: var(--alx-red);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.concept-header h1 {
+  font-size: 2.25rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+}
+.concept-lead {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+}
+
+/* Video Stage Area */
+.video-wrapper {
+  background: #090d16;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+  margin-bottom: 2.5rem;
+}
+.video-wrapper video {
+  width: 100%;
+  display: block;
+  max-height: 480px;
+  background: #000;
+}
+
+/* Captions Overlay */
+.video-captions {
+  position: absolute;
+  bottom: 60px;
+  left: 5%;
+  right: 5%;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: calc(1.125rem * var(--ui-font-scale));
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  z-index: 10;
+  pointer-events: none;
+  line-height: 1.4;
+}
+body.high-contrast .video-captions {
+  background: #000000 !important;
+  color: #ffff00 !important;
+  border: 2px solid #ffff00;
+}
+
+/* Ethiopian Sign Language Overlay */
+.video-interpreter {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 4.5rem;
+  width: 220px;
+  height: 150px;
+  background: #111827;
+  border: 2px solid #38bdf8;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+  z-index: 20;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.interpreter-title {
+  background: #0369a1;
+  color: #ffffff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.video-interpreter video,
+.video-interpreter img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Video Controls Bar */
+.video-controls {
+  background: rgba(15, 23, 42, 0.95);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
+}
+.video-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+.video-btn:hover, .video-btn:focus-visible {
+  background: rgba(255,255,255,0.15);
+  outline: 2px solid var(--alx-red);
+}
+.video-btn.active {
+  background: var(--alx-red);
+}
+
+/* Concept Content Blocks */
+.concept-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+.concept-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+.concept-section p {
+  margin-bottom: 1.25rem;
+  color: var(--text-main);
+}
+.concept-callout {
+  background: #f0fdf4;
+  color: #14532d;
+  border-left: 4px solid #16a34a;
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1.5rem 0;
+}
+.concept-callout strong,
+.concept-callout em {
+  color: #14532d;
+}
+.concept-callout code {
+  background: rgba(22, 163, 74, 0.15);
+  color: #14532d;
+  padding: 0.125rem 0.35rem;
+  border-radius: 4px;
+}
+
+/* Live API Inspector Drawer */
+.api-inspector {
+  position: fixed;
+  bottom: 0;
+  right: 1.5rem;
+  width: 440px;
+  max-width: 95vw;
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.35);
+  z-index: 1000;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+.api-inspector.collapsed {
+  transform: translateY(calc(100% - 46px));
+}
+.inspector-header {
+  padding: 0.75rem 1rem;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.inspector-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #38bdf8;
+}
+.inspector-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+}
+.inspector-body {
+  padding: 1rem;
+  font-size: 0.8125rem;
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.inspector-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.inspector-label {
+  color: #94a3b8;
+}
+.inspector-val {
+  font-family: monospace;
+  color: #f1f5f9;
+}
+.inspector-code {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-family: 'Consolas', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #38bdf8;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+/* Quick Profile Switcher in Inspector */
+.profile-switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.profile-switcher label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+.profile-select {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8125rem;
+}
+
+/* Responsiveness */
+@media (max-width: 900px) {
+  .savanna-sidebar {
+    display: none;
+  }
+  .savanna-main {
+    padding: 1.5rem;
+  }
+}

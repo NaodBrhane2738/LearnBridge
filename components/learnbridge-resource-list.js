@@ -264,8 +264,8 @@ class LearnBridgeResourceList extends HTMLElement {
             </div>
           </div>
           <div class="actions">
-            <button class="btn-link preview-btn" data-doc-id="doc-foundations" aria-label="Preview Inclusive Design Foundations accessible document in browser">Read</button>
-            <a class="btn-link" href="./media/transcript.json" download aria-label="Download Inclusive Design Foundations transcript">Download</a>
+            <button class="btn-link preview-btn" data-doc-id="doc-foundations" aria-label="Read: Inclusive Design Foundations accessible document">Read</button>
+            <a class="btn-link" href="./media/transcript.json" download aria-label="Download: Inclusive Design Foundations transcript">Download</a>
           </div>
         </div>
 
@@ -307,7 +307,7 @@ class LearnBridgeResourceList extends HTMLElement {
             </div>
           </div>
           <div class="actions">
-            <a class="btn-link" href="./media/learnbridge-lesson-pack.zip" download aria-label="Download complete lesson pack for offline learning">Download Pack</a>
+            <a class="btn-link" href="./media/learnbridge-lesson-pack.zip" download aria-label="Download Pack: Complete lesson package for offline learning">Download Pack</a>
           </div>
         </div>
       </div>
