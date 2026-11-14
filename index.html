@@ -47,6 +47,173 @@
     <symbol id="i-signal" viewBox="0 0 24 24"><path d="M3 9a13 13 0 0 1 18 0M6 12a9 9 0 0 1 12 0M9 15a5 5 0 0 1 6 0M12 19h.01"/></symbol>
   </svg>
 
+  <!-- Full-Screen Accessible Gateway Experience (Step 1: 7 Languages + Step 2: Disability Identification) -->
+  <aside class="gateway-screen" id="gatewayScreen" role="dialog" aria-modal="true" aria-labelledby="gatewayTitle" aria-describedby="gatewaySubtitle">
+    <div class="gateway-container">
+      <div class="gateway-header">
+        <div class="gateway-brand">
+          <span class="gateway-logo-icon" aria-hidden="true">⚡</span>
+          <span class="gateway-brand-text">LearnBridge</span>
+          <span class="gateway-badge">UNIVERSAL ACCESS GATEWAY</span>
+        </div>
+        <h1 class="gateway-title" id="gatewayTitle" data-i18n="gateway_welcome">Welcome to LearnBridge</h1>
+        <p class="gateway-subtitle" id="gatewaySubtitle" data-i18n="hero_subheadline">Accessible learning without barriers. Let's personalize your experience.</p>
+      </div>
+
+      <!-- STEP 1: LANGUAGE SELECTION -->
+      <section class="gateway-step" id="gatewayStep1" aria-labelledby="step1Title">
+        <div class="step-indicator-row">
+          <span class="step-num-pill">STEP 1 OF 2</span>
+          <h2 class="step-title" id="step1Title" data-i18n="gateway_step1_title">Choose Your Preferred Language</h2>
+        </div>
+        <p class="step-instruction" id="step1Instruction">
+          <span class="audio-wave-icon" aria-hidden="true">🔊</span>
+          <span data-i18n="gateway_step1_spoken">Press the shortcut key or click any language card below.</span>
+        </p>
+
+        <div class="lang-grid" role="group" aria-label="Available platform languages">
+          <button type="button" class="lang-card" data-lang="en" data-key="E" aria-keyshortcuts="E">
+            <span class="lang-flag" aria-hidden="true">🇺🇸</span>
+            <div class="lang-info">
+              <strong class="lang-name">English</strong>
+              <small class="lang-native">English</small>
+            </div>
+            <kbd class="kbd-badge" aria-label="Shortcut E">E</kbd>
+          </button>
+
+          <button type="button" class="lang-card" data-lang="am" data-key="A" aria-keyshortcuts="A">
+            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
+            <div class="lang-info">
+              <strong class="lang-name">Amharic</strong>
+              <small class="lang-native">አማርኛ</small>
+            </div>
+            <kbd class="kbd-badge" aria-label="Shortcut A">A</kbd>
+          </button>
+
+          <button type="button" class="lang-card" data-lang="om" data-key="O" aria-keyshortcuts="O">
+            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
+            <div class="lang-info">
+              <strong class="lang-name">Afaan Oromoo</strong>
+              <small class="lang-native">Afaan Oromoo</small>
+            </div>
+            <kbd class="kbd-badge" aria-label="Shortcut O">O</kbd>
+          </button>
+
+          <button type="button" class="lang-card" data-lang="ti" data-key="T" aria-keyshortcuts="T">
+            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
+            <div class="lang-info">
+              <strong class="lang-name">Tigrinya</strong>
+              <small class="lang-native">ትግርኛ</small>
+            </div>
+            <kbd class="kbd-badge" aria-label="Shortcut T">T</kbd>
+          </button>
+
+          <button type="button" class="lang-card" data-lang="so" data-key="S" aria-keyshortcuts="S">
+            <span class="lang-flag" aria-hidden="true">🇸🇴</span>
+            <div class="lang-info">
+              <strong class="lang-name">Somali</strong>
+              <small class="lang-native">Af-Soomaali</small>
+            </div>
+            <kbd class="kbd-badge" aria-label="Shortcut S">S</kbd>
+          </button>
+
+          <button type="button" class="lang-card" data-lang="aa" data-key="F" aria-keyshortcuts="F">
+            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
+            <div class="lang-info">
+              <strong class="lang-name">Afar</strong>
+              <small class="lang-native">Qafár af</small>
+            </div>
+            <kbd class="kbd-badge" aria-label="Shortcut F">F</kbd>
+          </button>
+
+          <button type="button" class="lang-card" data-lang="har" data-key="H" aria-keyshortcuts="H">
+            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
+            <div class="lang-info">
+              <strong class="lang-name">Harari</strong>
+              <small class="lang-native">ጌይ ሲናን</small>
+            </div>
+            <kbd class="kbd-badge" aria-label="Shortcut H">H</kbd>
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 2: DISABILITY IDENTIFICATION -->
+      <section class="gateway-step" id="gatewayStep2" aria-labelledby="step2Title" hidden>
+        <div class="step-indicator-row">
+          <span class="step-num-pill">STEP 2 OF 2</span>
+          <h2 class="step-title" id="step2Title" data-i18n="gateway_step2_title">Personalize Your Access Experience</h2>
+        </div>
+
+        <!-- 10-Second Countdown Alert Bar -->
+        <div class="gateway-countdown-box" id="gatewayCountdownBox" role="status" aria-live="polite">
+          <div class="countdown-text-row">
+            <span id="gatewayCountdownLabel">
+              <span data-i18n="gateway_timer_label">Activating Vision-Assisted mode in</span>
+              <strong id="gatewayCountdownSeconds">10</strong>
+              <span data-i18n="gateway_timer_unit">seconds. Press Space to pause.</span>
+            </span>
+            <button type="button" class="btn-pause-countdown" id="gatewayPauseTimerBtn" data-i18n="btn_pause_timer">Pause Timer (Space)</button>
+          </div>
+          <div class="countdown-progress-track" aria-hidden="true">
+            <div class="countdown-progress-bar" id="gatewayProgressBar" style="width:100%;"></div>
+          </div>
+        </div>
+
+        <div class="disability-cards-grid" role="group" aria-label="Accessibility Profiles">
+          <!-- Option 1: Blind / Vision Difficulties -->
+          <button type="button" class="disability-card card-blind" id="btnChooseBlind" data-profile="blind" data-key="B" aria-keyshortcuts="B">
+            <div class="disability-card-head">
+              <span class="disability-icon" aria-hidden="true">👁️</span>
+              <kbd class="kbd-action-badge">Press B or wait 10s</kbd>
+            </div>
+            <h3 class="disability-title" data-i18n="disability_blind_title">1. I am blind or have vision difficulties</h3>
+            <p class="disability-desc" data-i18n="disability_blind_desc">Spoken audio guide, full keyboard navigation, screen reader support, sign language video excluded.</p>
+            <ul class="disability-perks">
+              <li>🔊 Guided TTS audio instructions automatically active</li>
+              <li>⌨️ Single-key navigation (L to Learn, D for Dashboard)</li>
+              <li>📑 Braille format (.brf) and Spoken MP3 downloads</li>
+              <li>🚫 Sign language overlay excluded to preserve focus</li>
+            </ul>
+          </button>
+
+          <!-- Option 2: Deaf / Hearing Difficulties -->
+          <button type="button" class="disability-card card-deaf" id="btnChooseDeaf" data-profile="deaf" data-key="D" aria-keyshortcuts="D">
+            <div class="disability-card-head">
+              <span class="disability-icon" aria-hidden="true">🤟</span>
+              <kbd class="kbd-action-badge">Press D or Click</kbd>
+            </div>
+            <h3 class="disability-title" data-i18n="disability_deaf_title">2. I am deaf or hard of hearing</h3>
+            <p class="disability-desc" data-i18n="disability_deaf_desc">Bilingual captions, synchronized Ethiopian Sign Language window, visual guide popup, visual downloads.</p>
+            <ul class="disability-perks">
+              <li>👋 Ethiopian Sign Language (ETSL) window docked by default</li>
+              <li>💬 Synchronized bilingual closed captions auto-enabled</li>
+              <li>📋 Visual instructions popup and full transcripts</li>
+              <li>🚫 Audio and Braille formats removed from downloads</li>
+            </ul>
+          </button>
+        </div>
+
+        <!-- Option 3: Standard Learner (Subtle) -->
+        <div class="standard-option-wrap">
+          <button type="button" class="btn-standard-mode" id="btnChooseStandard" data-profile="standard" data-key="S" aria-keyshortcuts="S">
+            <span aria-hidden="true">🎓</span>
+            <span data-i18n="disability_standard_title">Explore Standard Experience (General Learner)</span>
+            <kbd class="kbd-subtle">Press S</kbd>
+          </button>
+        </div>
+      </section>
+
+      <!-- Step Navigation / Voice Control Status -->
+      <div class="gateway-footer">
+        <div class="tts-live-status" id="ttsLiveStatus" role="status" aria-live="polite">
+          <span class="status-pulse" aria-hidden="true"></span>
+          <span id="ttsStatusText">Speaking instructions out loud... Press M to mute audio.</span>
+        </div>
+        <button type="button" class="btn-gateway-back" id="btnGatewayBack" hidden>← Change Language</button>
+      </div>
+    </div>
+  </aside>
+
   <!-- Slim Vertical Quick-Navigation Rail -->
   <nav class="rail-glass" id="navRail" aria-label="Quick navigation rail">
     <a href="#floatingHeader" id="nav-home" class="rail-button" aria-label="Home page"><svg><use href="#i-grid"/></svg></a>
@@ -71,14 +238,32 @@
         </div>
       </div>
       <div class="header-actions">
-        <!-- 5-Language Switcher -->
+        <!-- 7-Language Switcher -->
         <select id="langSelect" class="header-lang-select" aria-label="Select language / ቋንቋ ይምረጡ">
           <option value="en">English (US)</option>
           <option value="am">አማርኛ (Amharic)</option>
           <option value="om">Afaan Oromoo</option>
           <option value="ti">ትግርኛ (Tigrinya)</option>
           <option value="so">Af-Soomaali</option>
+          <option value="aa">Qafár af (Afar)</option>
+          <option value="har">ጌይ ሲናን (Harari)</option>
         </select>
+
+        <!-- Persistent Top Accessibility Status & Quick-Bar -->
+        <div class="accessibility-quick-bar" id="accessibilityQuickBar" role="region" aria-label="Accessibility mode and shortcuts">
+          <div class="active-mode-chip" id="activeModeChip">
+            <span class="mode-icon" id="modeIcon" aria-hidden="true">⚡</span>
+            <span class="mode-label" id="modeLabel">Standard</span>
+          </div>
+          <div class="quick-bar-buttons">
+            <button type="button" class="btn-quick-bar" id="quickChangeModeBtn" aria-label="Personalize mode (O)" title="Reopen Onboarding Gateway (O)">
+              <span aria-hidden="true">⚙️</span> Mode (O)
+            </button>
+            <button type="button" class="btn-quick-bar" id="quickShortcutsBtn" aria-label="Keyboard shortcuts guide (?)" title="Keyboard shortcuts guide (?)">
+              <span aria-hidden="true">⌨️</span> Guide (?)
+            </button>
+          </div>
+        </div>
 
         <a href="./integrations/savanna-lms/" class="header-demo-link" title="Open Savanna LMS Integration Demo">
           <span>🎓</span> <span data-i18n="btn_lms_demo">Savanna LMS</span>
@@ -115,6 +300,64 @@
         <button type="button" class="hero-secondary-btn" id="heroOnboardingBtn" style="cursor:pointer;">Accessible Onboarding Wizard</button>
       </div>
     </section>
+
+    <!-- Blind Mode Audio & Keyboard Guide Banner (Persistent when Vision-Assisted mode is active) -->
+    <div class="blind-keyboard-banner" id="blindKeyboardBanner" role="region" aria-label="Keyboard navigation guide" hidden>
+      <div class="banner-content">
+        <div class="banner-title-row">
+          <span class="banner-badge" aria-hidden="true">🔊 VISION-ASSISTED MODE ACTIVE</span>
+          <strong data-i18n="blind_guide_title">Keyboard Navigation Quick Guide</strong>
+        </div>
+        <div class="banner-keys-grid">
+          <div class="key-pill"><kbd>L</kbd> <span>Start Learning / Play Video</span></div>
+          <div class="key-pill"><kbd>P</kbd> <span>Pause / Resume</span></div>
+          <div class="key-pill"><kbd>D</kbd> <span>Jump to Dashboard</span></div>
+          <div class="key-pill"><kbd>T</kbd> <span>Hear Transcript Aloud</span></div>
+          <div class="key-pill"><kbd>M</kbd> <span>Toggle Mute</span></div>
+          <div class="key-pill"><kbd>?</kbd> <span>Repeat Audio Guide</span></div>
+          <div class="key-pill"><kbd>O</kbd> <span>Reset Onboarding / Language</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deaf & Hard-of-Hearing Visual Instructions Guide Modal -->
+    <dialog class="deaf-guide-dialog" id="deafGuideModal" aria-labelledby="deafGuideTitle" aria-describedby="deafGuideSubtitle">
+      <div class="deaf-guide-content">
+        <div class="deaf-guide-header">
+          <span class="guide-icon" aria-hidden="true">🤟</span>
+          <div>
+            <h2 id="deafGuideTitle" data-i18n="deaf_guide_title">Welcome to LearnBridge for Deaf Learners</h2>
+            <p id="deafGuideSubtitle" data-i18n="deaf_guide_subtitle">Your learning workspace is tailored with visual-first accessibility.</p>
+          </div>
+        </div>
+        <div class="deaf-guide-steps">
+          <div class="guide-step-card">
+            <span class="step-bullet">1</span>
+            <div>
+              <strong>Ethiopian Sign Language Window Active</strong>
+              <p data-i18n="deaf_guide_point1">An interpreter window is docked directly on the video player with synchronous translation.</p>
+            </div>
+          </div>
+          <div class="guide-step-card">
+            <span class="step-bullet">2</span>
+            <div>
+              <strong>Synchronized Bilingual Captions</strong>
+              <p data-i18n="deaf_guide_point2">Closed captions are automatically enabled for all spoken dialogue in your chosen language.</p>
+            </div>
+          </div>
+          <div class="guide-step-card">
+            <span class="step-bullet">3</span>
+            <div>
+              <strong>Visual Learning Documents</strong>
+              <p data-i18n="deaf_guide_point3">Timestamped PDF transcripts, signed videos, and visual slides are ready for download (audio and Braille files excluded).</p>
+            </div>
+          </div>
+        </div>
+        <div class="deaf-guide-actions">
+          <button type="button" class="btn-deaf-close" id="closeDeafGuideBtn" data-i18n="deaf_guide_close">Got It — Start Learning (Enter)</button>
+        </div>
+      </div>
+    </dialog>
 
     <!-- Main Workspace Grid (Video Stage + Course Classes Panel) -->
     <section class="workspace-grid" id="lesson-workspace" aria-label="Lesson workspace">

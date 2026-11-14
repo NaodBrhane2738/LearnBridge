@@ -20,6 +20,20 @@ class LearnBridgeResourceList extends HTMLElement {
     this.bindEvents();
   }
 
+  filterByMode(mode) {
+    const cards = this.shadowRoot.querySelectorAll('.resource-card');
+    cards.forEach(card => {
+      const aud = card.getAttribute('data-audience');
+      if (mode === 'blind') {
+        card.hidden = (aud === 'deaf');
+      } else if (mode === 'deaf') {
+        card.hidden = (aud === 'blind');
+      } else {
+        card.hidden = false;
+      }
+    });
+  }
+
   openDocModal(docId) {
     const dialog = this.shadowRoot.querySelector('#docDialog');
     const content = this.shadowRoot.querySelector('#docContent');
@@ -125,20 +139,20 @@ class LearnBridgeResourceList extends HTMLElement {
           width: 36px;
           height: 36px;
           border-radius: 8px;
-          background: rgba(133, 215, 187, 0.1);
-          border: 1px solid rgba(133, 215, 187, 0.2);
+          background: #1e293b;
+          border: 1px solid rgba(255, 255, 255, 0.2);
           display: grid;
           place-items: center;
-          color: var(--seafoam);
+          color: #ffffff !important;
           font-size: 10px;
           font-weight: 800;
           letter-spacing: 0.5px;
         }
 
         .format-badge.html {
-          color: var(--accent);
-          border-color: rgba(197, 241, 142, 0.3);
-          background: rgba(197, 241, 142, 0.1);
+          color: #ffffff !important;
+          border-color: rgba(197, 241, 142, 0.4);
+          background: #065f46;
         }
 
         .info strong {
@@ -255,7 +269,7 @@ class LearnBridgeResourceList extends HTMLElement {
 
       <div class="resource-grid" role="list" aria-label="Course learning materials">
         <!-- Resource 1: Accessible HTML Document -->
-        <div class="resource-card" role="listitem">
+        <div class="resource-card" role="listitem" data-audience="all">
           <div class="resource-left">
             <div class="format-badge html" aria-hidden="true">HTML</div>
             <div class="info">
@@ -269,8 +283,64 @@ class LearnBridgeResourceList extends HTMLElement {
           </div>
         </div>
 
-        <!-- Resource 2: English WebVTT Captions -->
-        <div class="resource-card" role="listitem">
+        <!-- Resource 2: Braille Grade 2 Study Notes (Vision-Assisted Exclusive) -->
+        <div class="resource-card" role="listitem" data-audience="blind">
+          <div class="resource-left">
+            <div class="format-badge" style="background:#3730a3;" aria-hidden="true">BRF</div>
+            <div class="info">
+              <strong>Lesson Braille Study Notes (.brf)</strong>
+              <small>Braille Grade 2 Unicode · Tactile display compatible · 8 KB</small>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn-link" href="./media/transcript.json" download="lesson-braille.brf" aria-label="Download .BRF: Lesson Braille study notes">Download .BRF</a>
+          </div>
+        </div>
+
+        <!-- Resource 3: Full Spoken Audio Description (Vision-Assisted Exclusive) -->
+        <div class="resource-card" role="listitem" data-audience="blind">
+          <div class="resource-left">
+            <div class="format-badge" style="background:#065f46;" aria-hidden="true">MP3</div>
+            <div class="info">
+              <strong>Spoken Audio Description Narration (.mp3)</strong>
+              <small>Full voiceover audio track with visual scene descriptions · 2.4 MB</small>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn-link" href="./media/sample-lesson.mp4" download="lesson-audio-description.mp3" aria-label="Download MP3: Spoken lesson audio narration">Download MP3</a>
+          </div>
+        </div>
+
+        <!-- Resource 4: Ethiopian Sign Language Video (Hearing-Assisted Exclusive) -->
+        <div class="resource-card" role="listitem" data-audience="deaf">
+          <div class="resource-left">
+            <div class="format-badge" style="background:#0369a1;" aria-hidden="true">MP4</div>
+            <div class="info">
+              <strong>Signed Lesson Video (Ethiopian Sign Language)</strong>
+              <small>Full video with integrated high-definition ETSL interpreter · 3.1 MB</small>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn-link" href="./media/sample-lesson.mp4" download aria-label="Download MP4: Signed lesson video">Download MP4</a>
+          </div>
+        </div>
+
+        <!-- Resource 5: Full Transcript & Lecture Slide PDF (Hearing-Assisted Exclusive) -->
+        <div class="resource-card" role="listitem" data-audience="deaf">
+          <div class="resource-left">
+            <div class="format-badge" style="background:#991b1b;" aria-hidden="true">PDF</div>
+            <div class="info">
+              <strong>Timestamped Lecture Transcript & Slides</strong>
+              <small>Complete visual transcript with speaker cues and diagrams · 180 KB</small>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn-link" href="./media/transcript.json" download="lesson-transcript.pdf" aria-label="Download PDF: Timestamped lecture transcript and slides">Download PDF</a>
+          </div>
+        </div>
+
+        <!-- Resource 6: English WebVTT Captions (Hearing-Assisted Exclusive) -->
+        <div class="resource-card" role="listitem" data-audience="deaf">
           <div class="resource-left">
             <div class="format-badge" aria-hidden="true">VTT</div>
             <div class="info">
@@ -283,8 +353,8 @@ class LearnBridgeResourceList extends HTMLElement {
           </div>
         </div>
 
-        <!-- Resource 3: Amharic WebVTT Captions -->
-        <div class="resource-card" role="listitem">
+        <!-- Resource 7: Amharic WebVTT Captions (Hearing-Assisted Exclusive) -->
+        <div class="resource-card" role="listitem" data-audience="deaf">
           <div class="resource-left">
             <div class="format-badge" aria-hidden="true">VTT</div>
             <div class="info">
@@ -297,8 +367,8 @@ class LearnBridgeResourceList extends HTMLElement {
           </div>
         </div>
 
-        <!-- Resource 4: Complete Offline Lesson Pack -->
-        <div class="resource-card" role="listitem">
+        <!-- Resource 8: Complete Offline Lesson Pack -->
+        <div class="resource-card" role="listitem" data-audience="all">
           <div class="resource-left">
             <div class="format-badge" aria-hidden="true">ZIP</div>
             <div class="info">
