@@ -1,0 +1,129 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LearnBridge Employment & Recruitment REST API",
+    "version": "1.0.0",
+    "description": "API-first accessible recruitment and job discovery platform for Ethiopia and international remote opportunities, inspired by Afriwork with radical accessibility heuristics."
+  },
+  "servers": [
+    {
+      "url": "/api/v1/employment",
+      "description": "Local LearnBridge Server"
+    }
+  ],
+  "paths": {
+    "/jobs": {
+      "get": {
+        "summary": "Search & filter job vacancies",
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" }, "description": "Keyword search across titles, skills, employers" },
+          { "name": "location", "in": "query", "schema": { "type": "string" }, "description": "City or region" },
+          { "name": "industry", "in": "query", "schema": { "type": "string" } },
+          { "name": "employmentType", "in": "query", "schema": { "type": "string" } },
+          { "name": "experienceLevel", "in": "query", "schema": { "type": "string" } },
+          { "name": "remoteType", "in": "query", "schema": { "type": "string", "enum": ["all", "remote", "hybrid", "onsite"] } },
+          { "name": "accommodation", "in": "query", "schema": { "type": "string" } },
+          { "name": "verifiedOnly", "in": "query", "schema": { "type": "boolean" } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["newest", "relevance", "salary_desc", "deadline_asc"] } },
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } }
+        ],
+        "responses": {
+          "200": { "description": "Filtered jobs listing with facets" }
+        }
+      }
+    },
+    "/jobs/{id}": {
+      "get": {
+        "summary": "Get full job details",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "Job details object" },
+          "404": { "description": "Job not found" }
+        }
+      }
+    },
+    "/jobs/recommendations": {
+      "get": {
+        "summary": "Get explainable job recommendations for a candidate",
+        "parameters": [{ "name": "candidateId", "in": "query", "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "List of recommended jobs with explainable score cards" }
+        }
+      }
+    },
+    "/candidate/me": {
+      "get": {
+        "summary": "Get active candidate profile",
+        "responses": {
+          "200": { "description": "Candidate profile data" }
+        }
+      },
+      "patch": {
+        "summary": "Update candidate profile fields",
+        "responses": {
+          "200": { "description": "Updated candidate object" }
+        }
+      }
+    },
+    "/candidate/me/parse-cv": {
+      "post": {
+        "summary": "Parse CV without auto-saving",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cvText": { "type": "string" },
+                  "fileName": { "type": "string" }
+                },
+                "required": ["cvText"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Extracted draft for candidate review" }
+        }
+      }
+    },
+    "/applications": {
+      "get": {
+        "summary": "List applications submitted by candidate",
+        "responses": { "200": { "description": "Candidate application list" } }
+      },
+      "post": {
+        "summary": "Submit an application",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobId": { "type": "string" },
+                  "coverNote": { "type": "string" },
+                  "shareAccommodations": { "type": "boolean" }
+                },
+                "required": ["jobId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Application created" },
+          "409": { "description": "Duplicate application" }
+        }
+      }
+    },
+    "/employer/jobs": {
+      "get": { "summary": "Get employer vacancies" },
+      "post": { "summary": "Publish a vacancy" }
+    },
+    "/sign-language/resources": {
+      "get": { "summary": "List certified Ethiopian Sign Language resources" }
+    }
+  }
+}

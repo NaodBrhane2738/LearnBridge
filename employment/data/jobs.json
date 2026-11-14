@@ -1,0 +1,982 @@
+[
+  {
+    "id": "job-emp-1794683702659",
+    "postedAt": "2026-11-14T19:15:02.659Z",
+    "isExpired": false,
+    "title": "Junior Cloud Infrastructure Specialist",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "industry": "Technology & Software",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": false,
+    "workArrangement": "On-site",
+    "employmentType": "Full-time",
+    "experienceLevel": "Mid-level",
+    "salaryMin": 0,
+    "salaryMax": 0,
+    "currency": "ETB",
+    "salaryDisclosed": false,
+    "deadline": "2026-12-31",
+    "description": "Assist in cloud deployments.",
+    "responsibilities": [],
+    "requirements": [],
+    "skills": [],
+    "languages": [
+      "English",
+      "Amharic"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "not_specified"
+      },
+      "etsl_interpreter": {
+        "status": "not_specified"
+      }
+    },
+    "applicationMethod": "internal"
+  },
+  {
+    "id": "job-emp-1794681841764",
+    "postedAt": "2026-11-14T18:44:01.764Z",
+    "isExpired": false,
+    "title": "Junior Cloud Infrastructure Specialist",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "industry": "Technology & Software",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": false,
+    "workArrangement": "On-site",
+    "employmentType": "Full-time",
+    "experienceLevel": "Mid-level",
+    "salaryMin": 0,
+    "salaryMax": 0,
+    "currency": "ETB",
+    "salaryDisclosed": false,
+    "deadline": "2026-12-31",
+    "description": "Assist in cloud deployments.",
+    "responsibilities": [],
+    "requirements": [],
+    "skills": [],
+    "languages": [
+      "English",
+      "Amharic"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "not_specified"
+      },
+      "etsl_interpreter": {
+        "status": "not_specified"
+      }
+    },
+    "applicationMethod": "internal"
+  },
+  {
+    "id": "ext-afriwork_partner_api-afw-9014",
+    "postedAt": "2026-11-12T09:00:00.000Z",
+    "isExpired": false,
+    "title": "Mid-Level React Native Developer (Fintech)",
+    "employerId": "emp-ext-kifiya-financial-technologies",
+    "employerName": "Kifiya Financial Technologies",
+    "verifiedEmployer": true,
+    "source": "authorized_feed",
+    "originalProvider": "Afriwork Partnership Feed",
+    "originalJobId": "afw-9014",
+    "originalUrl": "https://afriworket.com/jobs/kifiya-react-native-9014",
+    "importedAt": "2026-11-14T12:55:48.001Z",
+    "lastSyncedAt": "2026-11-14T19:15:02.681Z",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": true,
+    "workArrangement": "100% Remote",
+    "remoteEligibility": "Ethiopia residents",
+    "employmentType": "Full-time",
+    "experienceLevel": "Mid-level",
+    "salaryMin": 55000,
+    "salaryMax": 75000,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Technology & Software",
+    "deadline": "2026-12-25T23:59:59.000Z",
+    "description": "Develop cross-platform mobile wallets and agent terminals with offline sync and biometric authentication.",
+    "responsibilities": [
+      "Develop and test mobile applications.",
+      "Collaborate with QA and accessibility squads."
+    ],
+    "requirements": [
+      "Relevant engineering experience.",
+      "Commitment to code quality and accessibility."
+    ],
+    "skills": [
+      "React Native",
+      "TypeScript",
+      "Redux",
+      "Offline Sync"
+    ],
+    "education": "Bachelor's degree or equivalent experience.",
+    "languages": [
+      "English",
+      "Amharic"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "Tested with mobile screen readers."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "Accessible regional office."
+      }
+    },
+    "applicationMethod": "external",
+    "externalUrl": "https://afriworket.com/jobs/kifiya-react-native-9014",
+    "deduplicationHash": "75b2b69b6ed785b4347f6c15d7777277b65c278e0393c7f93fdf7273689701cc",
+    "updatedAt": "2026-11-14T19:15:02.681Z"
+  },
+  {
+    "id": "ext-afriwork_partner_api-afw-7721",
+    "postedAt": "2026-11-07T10:00:00.000Z",
+    "isExpired": false,
+    "title": "Junior Python / Django Developer",
+    "employerId": "emp-ext-mercy-corps-ethiopia",
+    "employerName": "Mercy Corps Ethiopia",
+    "verifiedEmployer": true,
+    "source": "authorized_feed",
+    "originalProvider": "Afriwork Partnership Feed",
+    "originalJobId": "afw-7721",
+    "originalUrl": "https://afriworket.com/jobs/mercy-corps-python-dev-8821",
+    "importedAt": "2026-11-14T12:55:48.000Z",
+    "lastSyncedAt": "2026-11-14T19:15:02.680Z",
+    "location": "Hawassa, Ethiopia",
+    "region": "Hawassa",
+    "isRemote": false,
+    "workArrangement": "On-site in Hawassa",
+    "remoteEligibility": "On-site",
+    "employmentType": "Internship",
+    "experienceLevel": "Mid-level",
+    "salaryMin": 22000,
+    "salaryMax": 26000,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Technology & Software",
+    "deadline": "2026-11-28T23:59:59.000Z",
+    "description": "Mercy Corps is seeking an enthusiastic Junior Python / Django Developer for a 6-month paid internship in Hawassa.",
+    "responsibilities": [
+      "Develop and test mobile applications.",
+      "Collaborate with QA and accessibility squads."
+    ],
+    "requirements": [
+      "Relevant engineering experience.",
+      "Commitment to code quality and accessibility."
+    ],
+    "skills": [
+      "Python",
+      "Django",
+      "PostgreSQL",
+      "Git"
+    ],
+    "education": "Bachelor's degree or equivalent experience.",
+    "languages": [
+      "English",
+      "Amharic"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "Tested with mobile screen readers."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "Accessible regional office."
+      }
+    },
+    "applicationMethod": "external",
+    "externalUrl": "https://afriworket.com/jobs/mercy-corps-python-dev-8821",
+    "deduplicationHash": "4f5a34897c057ecd47eba5a83c8d2e98e5b9123facc80357a3525cd72ab18ed0",
+    "updatedAt": "2026-11-14T19:15:02.680Z"
+  },
+  {
+    "id": "job-emp-1794660947982",
+    "postedAt": "2026-11-14T12:55:47.982Z",
+    "isExpired": false,
+    "title": "Junior Cloud Infrastructure Specialist",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "industry": "Technology & Software",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": false,
+    "workArrangement": "On-site",
+    "employmentType": "Full-time",
+    "experienceLevel": "Mid-level",
+    "salaryMin": 0,
+    "salaryMax": 0,
+    "currency": "ETB",
+    "salaryDisclosed": false,
+    "deadline": "2026-12-31",
+    "description": "Assist in cloud deployments.",
+    "responsibilities": [],
+    "requirements": [],
+    "skills": [],
+    "languages": [
+      "English",
+      "Amharic"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "not_specified"
+      },
+      "etsl_interpreter": {
+        "status": "not_specified"
+      }
+    },
+    "applicationMethod": "internal"
+  },
+  {
+    "id": "job-eth-001",
+    "title": "Digital Accessibility QA Engineer",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": true,
+    "workArrangement": "Hybrid / Remote Option",
+    "remoteEligibility": "Ethiopia resident with high-speed internet",
+    "timeZone": "UTC+3 (East Africa Time)",
+    "employmentType": "Full-time",
+    "experienceLevel": "Mid-level",
+    "salaryMin": 45000,
+    "salaryMax": 65000,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Technology & Software",
+    "deadline": "2026-12-15T23:59:59.000Z",
+    "postedAt": "2026-11-10T08:00:00.000Z",
+    "isExpired": false,
+    "description": "Lead automated and manual WCAG 2.2 AA accessibility evaluations across ALX Savanna and regional web portals. You will partner with design leads and engineering squads to audit screen reader compatibility (NVDA, JAWS, VoiceOver), verify keyboard tab flows, inspect color contrast tokens, and mentor apprentices with visual and hearing disabilities.",
+    "responsibilities": [
+      "Execute automated accessibility test suites using axe-core and Playwright across desktop and mobile browsers.",
+      "Conduct rigorous manual keyboard navigation and screen reader audits on interactive UI components.",
+      "Document clear remediation tickets for developer squads with code examples and WCAG criterion references.",
+      "Collaborate with the Curriculum team to verify accessibility of digital course materials and video captions."
+    ],
+    "requirements": [
+      "2+ years practical experience in web frontend QA or software engineering with an accessibility focus.",
+      "Demonstrated mastery of WCAG 2.2 Level AA guidelines, WAI-ARIA authoring practices, and semantic HTML.",
+      "Hands-on proficiency with assistive technologies (NVDA, VoiceOver, screen magnifiers).",
+      "Familiarity with JavaScript, automated testing frameworks, and modern CSS."
+    ],
+    "skills": [
+      "WCAG 2.2",
+      "axe-core",
+      "NVDA / Screen Readers",
+      "Playwright",
+      "JavaScript",
+      "HTML/ARIA Semantics"
+    ],
+    "education": "Bachelor's degree in Computer Science, Software Engineering, or equivalent practical experience.",
+    "languages": [
+      "English (Fluent)",
+      "Amharic (Professional)"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "All internal issue trackers (Jira, GitHub) and Slack workspaces are configured for full screen reader compatibility."
+      },
+      "etsl_interpreter": {
+        "status": "supported",
+        "details": "Certified ETSL interpreter available for sprint retrospectives and team meetings."
+      },
+      "captioned_meetings": {
+        "status": "supported",
+        "details": "Automatic real-time transcription and closed captions enabled in all Zoom and Google Meet calls."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "Addis Ababa Bole campus has elevators, wheelchair ramps, and accessible facilities."
+      },
+      "flexible_hours": {
+        "status": "supported",
+        "details": "Core hours 10:00 - 15:00 EAT with flexible async working."
+      }
+    },
+    "applicationMethod": "internal",
+    "externalUrl": null,
+    "audioSummaryText": "Digital Accessibility QA Engineer at ALX Africa in Addis Ababa, Ethiopia. Hybrid or Remote. Salary 45,000 to 65,000 Ethiopian Birr per month. Lead WCAG 2.2 audits and screen-reader testing. Requires two years experience in accessibility QA. Screen reader and sign language accommodations fully supported. Deadline December 15, 2026."
+  },
+  {
+    "id": "job-eth-002",
+    "title": "Ethiopian Sign Language (ETSL) Video Specialist",
+    "employerId": "emp-mint-gov",
+    "employerName": "Ministry of Innovation & Technology (MInT)",
+    "verifiedEmployer": true,
+    "source": "admin_verified",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": false,
+    "workArrangement": "On-site Studio",
+    "remoteEligibility": "On-site production in Addis Ababa",
+    "timeZone": "UTC+3",
+    "employmentType": "Contract",
+    "experienceLevel": "Mid-level",
+    "salaryMin": 38000,
+    "salaryMax": 52000,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Creative & Media",
+    "deadline": "2026-11-30T23:59:59.000Z",
+    "postedAt": "2026-11-08T09:30:00.000Z",
+    "isExpired": false,
+    "description": "Produce and synchronize official Ethiopian Sign Language (ETSL) interpretation video assets for national e-government portals, educational broadcasts, and inclusive public service platforms. The specialist will collaborate with deaf community linguistic advisors, record studio signing, and export standard PiP video tracks.",
+    "responsibilities": [
+      "Interpret complex technical, educational, and public policy texts into standard Ethiopian Sign Language (ETSL).",
+      "Record and edit studio signing videos using professional green-screen lighting and high-contrast attire.",
+      "Synchronize sign language video tracks to WebVTT caption cues and timecodes.",
+      "Review regional dialectical variants with Ethiopian National Association of the Deaf (ENAD) advisors."
+    ],
+    "requirements": [
+      "Native or certified professional fluency in Ethiopian Sign Language (ETSL).",
+      "Strong background in translation, educational media, or television interpretation.",
+      "Experience with video editing software (Premiere Pro, DaVinci Resolve) and subtitle timecoding.",
+      "Deep understanding of Deaf culture and accessibility standards in Ethiopia."
+    ],
+    "skills": [
+      "Ethiopian Sign Language (ETSL)",
+      "Video Editing",
+      "Subtitling / Timecoding",
+      "Studio Production",
+      "Amharic Translation"
+    ],
+    "education": "Diploma or Degree in Special Needs Education, Linguistics, Ethiopian Sign Language, or equivalent practical experience.",
+    "languages": [
+      "Ethiopian Sign Language (Fluent)",
+      "Amharic (Fluent)"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "not_specified",
+        "details": "Primary work involves visual studio production and signing."
+      },
+      "etsl_interpreter": {
+        "status": "supported",
+        "details": "Deaf-first department with native ETSL communication throughout the media unit."
+      },
+      "captioned_meetings": {
+        "status": "supported",
+        "details": "All briefings and production meetings include live captioning and chat transcripts."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "Ministry studio building is equipped with ramps and accessible ground-floor studios."
+      },
+      "flexible_hours": {
+        "status": "supported",
+        "details": "Flexible shooting schedules based on studio availability."
+      }
+    },
+    "applicationMethod": "internal",
+    "externalUrl": null,
+    "audioSummaryText": "Ethiopian Sign Language Video Specialist at the Ministry of Innovation and Technology in Addis Ababa. Contract position paying 38,000 to 52,000 Birr per month. Produce official ETSL video interpretation for educational and public portals. Requires certified ETSL fluency and video editing experience. Application deadline November 30, 2026."
+  },
+  {
+    "id": "job-int-003",
+    "title": "Senior Frontend Engineer — Distributed Design Systems",
+    "employerId": "emp-openremote-global",
+    "employerName": "OpenRemote Technologies (International)",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "location": "International Remote (Worldwide / Async)",
+    "region": "International Remote",
+    "isRemote": true,
+    "workArrangement": "100% Remote",
+    "remoteEligibility": "Worldwide. Eligible for Ethiopian developers with legal payment processing or international invoice support.",
+    "timeZone": "Flexible (Async with 3 hours overlap between 10:00 - 18:00 UTC)",
+    "employmentType": "Full-time",
+    "experienceLevel": "Senior-level",
+    "salaryMin": 4500,
+    "salaryMax": 6500,
+    "currency": "USD",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Technology & Software",
+    "deadline": "2026-12-31T23:59:59.000Z",
+    "postedAt": "2026-11-12T11:00:00.000Z",
+    "isExpired": false,
+    "description": "Architect accessible, scalable web UI component libraries for OpenRemote's open-source IoT automation platform. You will build high-performance React and Web Component systems adhering strictly to WCAG 2.2 AAA guidelines, develop custom screen reader focus traps, and implement multi-theme design tokens.",
+    "responsibilities": [
+      "Engineer zero-dependency Web Components and accessible React design system modules.",
+      "Ensure all UI components achieve deterministic 100% clean passes on automated accessibility audits.",
+      "Document component APIs, keyboard interaction matrix, and ARIA state specifications in Storybook.",
+      "Review pull requests from the global developer community with an emphasis on performance and a11y."
+    ],
+    "requirements": [
+      "5+ years professional experience building enterprise web applications and frontend component systems.",
+      "Deep understanding of DOM accessibility APIs, ARIA 1.3 design patterns, and keyboard event handling.",
+      "Proven track record working asynchronously in distributed remote teams across multiple time zones.",
+      "Excellent written English communication skills."
+    ],
+    "skills": [
+      "React",
+      "TypeScript",
+      "Web Components",
+      "Design Systems",
+      "WAI-ARIA",
+      "WCAG 2.2 AAA",
+      "CSS Tokens"
+    ],
+    "education": "Bachelor's degree in Computer Science or equivalent self-taught engineering portfolio.",
+    "languages": [
+      "English (Fluent)"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "Company-wide async written culture using GitHub and Markdown, fully tested for screen reader navigation."
+      },
+      "etsl_interpreter": {
+        "status": "to_be_confirmed",
+        "details": "International remote team uses English captions; sign language support available via contractor stipend."
+      },
+      "captioned_meetings": {
+        "status": "supported",
+        "details": "Zero mandatory synchronous audio calls; all meetings recorded with synchronized AI captions."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "100% remote work eliminates physical office barriers; hardware stipend provided."
+      },
+      "flexible_hours": {
+        "status": "supported",
+        "details": "Fully asynchronous work schedule with no fixed desk hours."
+      }
+    },
+    "applicationMethod": "internal",
+    "externalUrl": null,
+    "audioSummaryText": "Senior Frontend Engineer for Distributed Design Systems at OpenRemote Technologies. 100% International Remote, worldwide eligibility including Ethiopia. Salary 4,500 to 6,500 US Dollars per month. Build accessible Web Components and React libraries. Requires five years experience and strong ARIA knowledge. Deadline December 31, 2026."
+  },
+  {
+    "id": "job-eth-004",
+    "title": "Inclusive Digital Banking Product Associate",
+    "employerId": "emp-cbe",
+    "employerName": "Commercial Bank of Ethiopia (CBE)",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": false,
+    "workArrangement": "On-site / Hybrid",
+    "remoteEligibility": "On-site at CBE Headquarters with partial remote rotation",
+    "timeZone": "UTC+3",
+    "employmentType": "Full-time",
+    "experienceLevel": "Entry-level",
+    "salaryMin": 28000,
+    "salaryMax": 36000,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Banking & Financial Services",
+    "deadline": "2026-12-05T23:59:59.000Z",
+    "postedAt": "2026-11-05T14:00:00.000Z",
+    "isExpired": false,
+    "description": "Join CBE's Digital Banking division to champion accessibility across mobile banking and ATM touchscreens. You will gather feedback from Ethiopian customers with visual, auditory, and mobility impairments, validate mobile app usability with TalkBack and VoiceOver, and contribute to product feature specifications.",
+    "responsibilities": [
+      "Facilitate user research sessions with persons with disabilities across Addis Ababa branches.",
+      "Test CBE Mobile App and CBE Birr workflows using screen readers and voice navigation tools.",
+      "Write detailed accessibility bug reports and user journey maps for the software development team.",
+      "Support training for branch customer care staff on serving customers who use assistive technologies."
+    ],
+    "requirements": [
+      "Recent graduate or entry-level professional passionate about financial inclusion and digital accessibility.",
+      "Familiarity with Ethiopian banking regulations, mobile money systems, and accessibility concepts.",
+      "Strong analytical mindset and ability to communicate empathetically with diverse user groups.",
+      "Fluency in Amharic and English; knowledge of Afaan Oromo or Tigrinya is a significant advantage."
+    ],
+    "skills": [
+      "Digital Banking",
+      "User Testing",
+      "Assistive Tech Validation",
+      "Mobile Usability",
+      "Amharic Reporting"
+    ],
+    "education": "Bachelor's degree in Business, Information Systems, Economics, Social Sciences, or related field.",
+    "languages": [
+      "Amharic (Native)",
+      "English (Professional)",
+      "Afaan Oromo (Desirable)"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "Core banking reporting tools have accessible web portals and document templates."
+      },
+      "etsl_interpreter": {
+        "status": "supported",
+        "details": "CBE provides accredited sign language interpreters for training and team functions."
+      },
+      "captioned_meetings": {
+        "status": "supported",
+        "details": "All internal training videos and townhalls include Amharic and English captions."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "New CBE Headquarters building in Churchill Road is fully barrier-free with tactile floor paths."
+      },
+      "flexible_hours": {
+        "status": "not_specified",
+        "details": "Standard banking office hours 08:00 - 17:00 with roster flexibility."
+      }
+    },
+    "applicationMethod": "internal",
+    "externalUrl": null,
+    "audioSummaryText": "Inclusive Digital Banking Product Associate at Commercial Bank of Ethiopia in Addis Ababa. Entry-level full-time position paying 28,000 to 36,000 Birr per month. Test mobile banking accessibility and facilitate user research with persons with disabilities. Bachelor degree required. Deadline December 5, 2026."
+  },
+  {
+    "id": "job-ext-005",
+    "title": "Junior Python / Django Developer — Youth Health Information System",
+    "employerId": "emp-mercy-corps",
+    "employerName": "Mercy Corps Ethiopia",
+    "verifiedEmployer": true,
+    "source": "authorized_feed",
+    "originalProvider": "Afriwork Partner Feed",
+    "originalJobId": "afriwork-mc-8821",
+    "originalUrl": "https://afriworket.com/jobs/mercy-corps-python-dev-8821",
+    "importedAt": "2026-11-13T06:00:00.000Z",
+    "lastSyncedAt": "2026-11-14T02:00:00.000Z",
+    "location": "Hawassa, Sidama, Ethiopia",
+    "region": "Sidama",
+    "isRemote": false,
+    "workArrangement": "On-site Field Office",
+    "remoteEligibility": "Hawassa resident or willing to relocate to Hawassa",
+    "timeZone": "UTC+3",
+    "employmentType": "Internship",
+    "experienceLevel": "Entry-level",
+    "salaryMin": 22000,
+    "salaryMax": 26000,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Non-Governmental Organizations (NGO)",
+    "deadline": "2026-11-28T23:59:59.000Z",
+    "postedAt": "2026-11-07T10:00:00.000Z",
+    "isExpired": false,
+    "description": "Mercy Corps is seeking an enthusiastic Junior Python / Django Developer for a 6-month paid internship in Hawassa. You will assist the health informatics team in maintaining community health data collection systems, creating SMS/USSD alerts, and ensuring reporting dashboards are accessible on low-end mobile devices.",
+    "responsibilities": [
+      "Maintain Django backend APIs and PostgreSQL database models for field health indicators.",
+      "Build mobile-responsive HTML templates optimized for low-bandwidth 3G connections in Southern Ethiopia.",
+      "Assist in automated database backups and data validation pipelines.",
+      "Participate in user feedback sessions with local community healthcare workers."
+    ],
+    "requirements": [
+      "Demonstrated experience with Python and web frameworks (Django or Flask).",
+      "Knowledge of relational databases (PostgreSQL or SQLite) and basic SQL querying.",
+      "Familiarity with Git version control and collaborative development.",
+      "Enthusiasm for humanitarian technology and youth empowerment in Ethiopia."
+    ],
+    "skills": [
+      "Python",
+      "Django",
+      "PostgreSQL",
+      "REST APIs",
+      "Git",
+      "Low-Bandwidth Web Optimization"
+    ],
+    "education": "Fresh graduate in Computer Science, Software Engineering, IT, or vocational college diploma.",
+    "languages": [
+      "English (Working proficiency)",
+      "Amharic (Fluent)",
+      "Sidaamu Afoo (Desirable)"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "Coding environment configured for VS Code screen-reader mode and accessible terminals."
+      },
+      "etsl_interpreter": {
+        "status": "to_be_confirmed",
+        "details": "Can arrange interpreter support through Hawassa University special needs department."
+      },
+      "captioned_meetings": {
+        "status": "supported",
+        "details": "Internal video calls use Google Meet automated captioning."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "Hawassa field office features single-level ground floor workspace."
+      },
+      "flexible_hours": {
+        "status": "supported",
+        "details": "Flexible start and end times for public transit ease."
+      }
+    },
+    "applicationMethod": "external",
+    "externalUrl": "https://afriworket.com/jobs/mercy-corps-python-dev-8821",
+    "audioSummaryText": "Junior Python and Django Developer internship at Mercy Corps in Hawassa, Ethiopia. Six-month paid opportunity paying 22,000 to 26,000 Birr per month. Build health reporting tools and low-bandwidth web templates. Fresh graduates welcome. External application via partner portal Afriwork. Deadline November 28, 2026."
+  },
+  {
+    "id": "job-eth-006",
+    "title": "Data Labeling & NLP Annotation Specialist (Afaan Oromo & Tigrinya)",
+    "employerId": "emp-gebeya",
+    "employerName": "Gebeya Inc.",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "location": "Addis Ababa, Ethiopia & Remote",
+    "region": "Oromia / Tigray / Addis Ababa",
+    "isRemote": true,
+    "workArrangement": "100% Remote (Ethiopia)",
+    "remoteEligibility": "Anywhere in Ethiopia with stable internet connectivity",
+    "timeZone": "UTC+3",
+    "employmentType": "Freelance",
+    "experienceLevel": "Entry-level",
+    "salaryMin": 200,
+    "salaryMax": 350,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Hourly",
+    "industry": "Technology & Software",
+    "deadline": "2026-12-20T23:59:59.000Z",
+    "postedAt": "2026-11-11T13:00:00.000Z",
+    "isExpired": false,
+    "description": "Contribute to building next-generation African Large Language Models and voice synthesis engines. Gebeya is recruiting bilingual freelance annotators to review, transcribe, and label conversational datasets in Afaan Oromo and Tigrinya. This role is exceptionally suited for candidates seeking flexible work from home.",
+    "responsibilities": [
+      "Annotate audio speech samples for phonetic accuracy and tone markers in Afaan Oromo or Tigrinya.",
+      "Review machine-translated texts for cultural nuance, grammar, and natural dialogue cadence.",
+      "Tag entity names, sentiment classifications, and intent categories within web-based annotation tools.",
+      "Participate in weekly online quality consensus meetings."
+    ],
+    "requirements": [
+      "Native fluency in either Afaan Oromo or Tigrinya, with excellent written grammar and orthography.",
+      "Comfortable operating web-based labeling software on desktop or laptop computer.",
+      "High attention to detail and consistency in applying annotation guidelines.",
+      "Reliable home internet connection and personal computer."
+    ],
+    "skills": [
+      "Afaan Oromo",
+      "Tigrinya",
+      "Data Labeling",
+      "Audio Transcription",
+      "NLP Annotation",
+      "Proofreading"
+    ],
+    "education": "High school diploma or university students/graduates across any discipline.",
+    "languages": [
+      "Afaan Oromo (Native) OR Tigrinya (Native)",
+      "Amharic (Working proficiency)",
+      "English (Basic)"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "Audio annotation web platform is keyboard operable and tested with NVDA."
+      },
+      "etsl_interpreter": {
+        "status": "not_specified",
+        "details": "All task instructions and feedback are delivered in written text."
+      },
+      "captioned_meetings": {
+        "status": "supported",
+        "details": "Optional team calls have synchronized text chat and transcripts."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "100% work from home eliminates transportation barriers."
+      },
+      "flexible_hours": {
+        "status": "supported",
+        "details": "Work your own hours; minimum 15 hours per week required."
+      }
+    },
+    "applicationMethod": "internal",
+    "externalUrl": null,
+    "audioSummaryText": "Data Labeling and NLP Annotation Specialist at Gebeya. Freelance 100% remote work across Ethiopia. Compensation 200 to 350 Birr per hour. Transcribe and label speech and text in Afaan Oromo or Tigrinya for AI language models. Flexible hours from home. Deadline December 20, 2026."
+  },
+  {
+    "id": "job-int-007",
+    "title": "Technical Customer Support Representative (Async / Remote)",
+    "employerId": "emp-openremote-global",
+    "employerName": "OpenRemote Technologies (International)",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "location": "International Remote (Africa & Europe Timezones)",
+    "region": "International Remote",
+    "isRemote": true,
+    "workArrangement": "100% Remote",
+    "remoteEligibility": "Africa & Europe timezone residency. Ethiopian applicants welcome.",
+    "timeZone": "UTC+1 to UTC+3",
+    "employmentType": "Part-time",
+    "experienceLevel": "Mid-level",
+    "salaryMin": 1800,
+    "salaryMax": 2400,
+    "currency": "USD",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Customer Support & BPO",
+    "deadline": "2026-12-10T23:59:59.000Z",
+    "postedAt": "2026-11-09T16:00:00.000Z",
+    "isExpired": false,
+    "description": "Provide compassionate, written technical support to global users of OpenRemote's smart city and renewable energy platforms. All support is delivered via written tickets and documentation guides—no cold calling or audio phone trees required. Perfect for candidates who excel in clear written technical explanation.",
+    "responsibilities": [
+      "Answer technical questions on IoT device connectivity, dashboard setup, and webhook integrations.",
+      "Reproduce user bug reports in local test environments and escalate to engineering squads.",
+      "Update knowledge base tutorials, FAQ guides, and onboarding troubleshooting sheets.",
+      "Maintain a 95%+ user satisfaction rating with empathetic, timely written replies."
+    ],
+    "requirements": [
+      "2+ years in technical support, software QA, or customer-facing IT roles.",
+      "Solid understanding of web technologies (HTTP, JSON, REST APIs, basic networking).",
+      "Exceptional written English clarity, empathy, and diagnostic reasoning.",
+      "Quiet home office setup with stable internet and backup power."
+    ],
+    "skills": [
+      "Technical Support",
+      "REST APIs",
+      "Troubleshooting",
+      "Knowledge Base Writing",
+      "Customer Empathy",
+      "JSON"
+    ],
+    "education": "Diploma or Bachelor's in IT, Computer Science, or equivalent customer service experience.",
+    "languages": [
+      "English (Fluent written)"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "Zendesk and GitHub support queues are accessible with screen readers."
+      },
+      "etsl_interpreter": {
+        "status": "not_specified",
+        "details": "Role is 100% text-based communication with no phone calls."
+      },
+      "captioned_meetings": {
+        "status": "supported",
+        "details": "Any team video updates are recorded with full English captions."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "Home-based position with equipment stipend."
+      },
+      "flexible_hours": {
+        "status": "supported",
+        "details": "20 hours per week with choice of morning or evening shifts."
+      }
+    },
+    "applicationMethod": "internal",
+    "externalUrl": null,
+    "audioSummaryText": "Technical Customer Support Representative at OpenRemote Technologies. Part-time 100% remote position paying 1,800 to 2,400 US Dollars per month. Provide written support for smart energy software without phone calls. Requires two years technical support experience and excellent written English. Deadline December 10, 2026."
+  },
+  {
+    "id": "job-eth-008",
+    "title": "Customer Service & Telebirr Operations Trainee",
+    "employerId": "emp-ethio-telecom",
+    "employerName": "Ethio Telecom",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "location": "Dire Dawa, Ethiopia",
+    "region": "Dire Dawa",
+    "isRemote": false,
+    "workArrangement": "On-site Regional Branch",
+    "remoteEligibility": "Dire Dawa resident",
+    "timeZone": "UTC+3",
+    "employmentType": "Apprenticeship",
+    "experienceLevel": "Entry-level",
+    "salaryMin": 18000,
+    "salaryMax": 23000,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Telecommunications",
+    "deadline": "2026-12-01T23:59:59.000Z",
+    "postedAt": "2026-11-06T08:00:00.000Z",
+    "isExpired": false,
+    "description": "Ethio Telecom Eastern Regional Division is onboarding trainees for customer operations, SIM registration, and Telebirr merchant assistance in Dire Dawa. The apprenticeship includes 3 months structured vocational coaching, digital skills development, and branch customer desk rotation.",
+    "responsibilities": [
+      "Assist walk-in subscribers with SIM registration, network troubleshooting, and Telebirr wallet activation.",
+      "Support merchant onboarding and QR code deployment across commercial centers in Dire Dawa.",
+      "Resolve subscriber service requests using internal CRM terminals.",
+      "Provide customer guidance in local languages with high courtesy and patience."
+    ],
+    "requirements": [
+      "TVET / Vocational Diploma (Level 3 or 4) or fresh university graduate in Business, Marketing, or IT.",
+      "Excellent interpersonal communication and enthusiasm for digital financial technology.",
+      "Resident of Dire Dawa or surrounding areas.",
+      "Fluency in Amharic and Afaan Oromo or Somali."
+    ],
+    "skills": [
+      "Customer Care",
+      "Telebirr",
+      "Digital Payments",
+      "CRM Data Entry",
+      "Multilingual Communication"
+    ],
+    "education": "TVET Level 3/4 Diploma or Bachelor's Degree in Business or IT fields.",
+    "languages": [
+      "Amharic (Fluent)",
+      "Afaan Oromo OR Somali (Fluent)",
+      "English (Basic)"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "Customer service desks feature accessible terminals and screen magnification tools."
+      },
+      "etsl_interpreter": {
+        "status": "supported",
+        "details": "Dire Dawa regional branch has designated staff trained in basic sign language for deaf subscribers."
+      },
+      "captioned_meetings": {
+        "status": "supported",
+        "details": "Onboarding videos include Amharic captions."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "Dire Dawa central office is equipped with ramps and ground-floor service counters."
+      },
+      "flexible_hours": {
+        "status": "not_specified",
+        "details": "Standard shift hours in regional branch."
+      }
+    },
+    "applicationMethod": "internal",
+    "externalUrl": null,
+    "audioSummaryText": "Customer Service and Telebirr Operations Trainee at Ethio Telecom in Dire Dawa. Apprenticeship program paying 18,000 to 23,000 Birr per month. Assist customers with digital banking and telecommunications services. TVET diploma or degree required. Deadline December 1, 2026."
+  },
+  {
+    "id": "job-eth-009",
+    "title": "Inclusive Education Volunteering Coordinator",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": true,
+    "workArrangement": "Hybrid / Flexible",
+    "remoteEligibility": "Addis Ababa with occasional field visits to special needs schools",
+    "timeZone": "UTC+3",
+    "employmentType": "Volunteering",
+    "experienceLevel": "Entry-level",
+    "salaryMin": 0,
+    "salaryMax": 0,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Stipend (Transportation & Lunch covered)",
+    "industry": "Education & EdTech",
+    "deadline": "2026-12-18T23:59:59.000Z",
+    "postedAt": "2026-11-13T09:00:00.000Z",
+    "isExpired": false,
+    "description": "Coordinate youth tech literacy circles for high school students with sensory impairments in Addis Ababa. As a volunteer coordinator, you will organize weekly accessible coding meetups, arrange sign language interpreter schedules, and distribute tactile learning materials. Full travel stipend and mentorship provided.",
+    "responsibilities": [
+      "Coordinate weekly Saturday tech workshops for deaf and blind high school students.",
+      "Liaise with local special needs educators and sign language volunteer translators.",
+      "Distribute accessible digital audiobooks, braille printouts, and simplified laptops.",
+      "Document student feedback and project outcomes for community donors."
+    ],
+    "requirements": [
+      "Passionate student, graduate, or community advocate committed to disability rights and inclusive education.",
+      "Reliable, empathetic, and enthusiastic about youth mentorship.",
+      "Available for 6 hours per week (principally Saturdays).",
+      "Basic familiarity with computer operations and assistive technology."
+    ],
+    "skills": [
+      "Community Organizing",
+      "Youth Mentorship",
+      "Inclusive Education",
+      "Special Needs Advocacy",
+      "Event Logistics"
+    ],
+    "education": "High school completed; university students encouraged to apply.",
+    "languages": [
+      "Amharic (Fluent)",
+      "English (Conversational)"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "All coordination materials are formatted in accessible Markdown and screen-reader ready Word docs."
+      },
+      "etsl_interpreter": {
+        "status": "supported",
+        "details": "Sign language interpreters participate in all group activities."
+      },
+      "captioned_meetings": {
+        "status": "supported",
+        "details": "Virtual briefing sessions are captioned."
+      },
+      "wheelchair_accessible": {
+        "status": "supported",
+        "details": "Event venues selected exclusively with step-free wheelchair access."
+      },
+      "flexible_hours": {
+        "status": "supported",
+        "details": "Volunteer shifts tailored around university class schedules."
+      }
+    },
+    "applicationMethod": "internal",
+    "externalUrl": null,
+    "audioSummaryText": "Inclusive Education Volunteering Coordinator with ALX Africa in Addis Ababa. Volunteer opportunity with local transport and meal stipends. Organize accessible technology workshops for deaf and blind youth. Six hours per week commitment. Students welcome. Deadline December 18, 2026."
+  },
+  {
+    "id": "job-ext-010",
+    "title": "Expired Sample Listing — Telecom Systems Auditor",
+    "employerId": "emp-safaricom-et",
+    "employerName": "Safaricom Telecommunications Ethiopia",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": false,
+    "workArrangement": "On-site",
+    "remoteEligibility": "On-site audit",
+    "timeZone": "UTC+3",
+    "employmentType": "Full-time",
+    "experienceLevel": "Senior-level",
+    "salaryMin": 70000,
+    "salaryMax": 95000,
+    "currency": "ETB",
+    "salaryDisclosed": true,
+    "salaryPeriod": "Monthly",
+    "industry": "Telecommunications",
+    "deadline": "2026-10-31T23:59:59.000Z",
+    "postedAt": "2026-10-01T08:00:00.000Z",
+    "isExpired": true,
+    "description": "This vacancy is an archived listing preserved for auditing, candidate application history, and expired vacancy test detection.",
+    "responsibilities": [
+      "Archived audit function."
+    ],
+    "requirements": [
+      "5+ years telecom audit."
+    ],
+    "skills": [
+      "Telecommunications",
+      "Security Audit"
+    ],
+    "education": "Bachelor's degree.",
+    "languages": [
+      "English"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "supported",
+        "details": "Accessible enterprise tools."
+      }
+    },
+    "applicationMethod": "internal",
+    "externalUrl": null,
+    "audioSummaryText": "This listing has expired. Applications for Telecom Systems Auditor closed on October 31, 2026."
+  }
+]

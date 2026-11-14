@@ -1,0 +1,253 @@
+[
+  {
+    "id": "ethio-candidate-01",
+    "userId": "user-yohannes-01",
+    "fullName": "Yohannes Bekele",
+    "email": "yohannes.bekele@learnbridge.et",
+    "phone": "+251 91 123 4567",
+    "location": "Addis Ababa (Bole Sub-City)",
+    "headline": "Digital Accessibility QA Specialist & Screen-Reader Advocate",
+    "summary": "Passionate accessibility engineer with 3 years experience conducting WCAG 2.2 audits, screen reader usability testing (NVDA/VoiceOver), and building inclusive web products across Ethiopia.",
+    "profileCompletion": 90,
+    "skills": [
+      "WCAG 2.2",
+      "axe-core",
+      "NVDA",
+      "VoiceOver",
+      "Playwright",
+      "JavaScript",
+      "HTML/ARIA Semantics",
+      "React"
+    ],
+    "experience": [
+      {
+        "id": "exp-1",
+        "title": "Accessibility QA Analyst",
+        "company": "Ethiopian Inclusive Tech Initiative",
+        "location": "Addis Ababa",
+        "startDate": "2024-03-01",
+        "endDate": null,
+        "current": true,
+        "description": "Audited 14 regional NGO and government web portals for keyboard-only and screen reader accessibility."
+      },
+      {
+        "id": "exp-2",
+        "title": "Frontend Development Intern",
+        "company": "Addis Software Hub",
+        "location": "Addis Ababa",
+        "startDate": "2023-01-15",
+        "endDate": "2024-02-28",
+        "current": false,
+        "description": "Built responsive, high-contrast dashboards and tested form input accessibility."
+      }
+    ],
+    "education": [
+      {
+        "id": "edu-1",
+        "degree": "B.Sc. in Computer Science",
+        "institution": "Addis Ababa University (AAU)",
+        "graduationYear": "2023",
+        "honors": "Distinction"
+      }
+    ],
+    "certifications": [
+      {
+        "id": "cert-1",
+        "name": "DHS Trusted Tester Certification",
+        "issuer": "Department of Homeland Security (Office of Accessible Systems)",
+        "year": "2025"
+      },
+      {
+        "id": "cert-2",
+        "name": "ALX Accessibility Engineering Micro-Credential",
+        "issuer": "ALX Africa",
+        "year": "2024"
+      }
+    ],
+    "languages": [
+      {
+        "language": "Amharic",
+        "proficiency": "Native"
+      },
+      {
+        "language": "English",
+        "proficiency": "Professional / Fluent"
+      }
+    ],
+    "resumes": [
+      {
+        "id": "res-yohannes-master",
+        "fileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+        "fileSize": "184 KB",
+        "uploadedAt": "2026-11-01T10:00:00.000Z",
+        "isPrimary": true,
+        "parsedData": {
+          "extractedSkills": [
+            "WCAG 2.2",
+            "axe-core",
+            "NVDA",
+            "VoiceOver",
+            "Playwright",
+            "JavaScript",
+            "HTML/ARIA Semantics"
+          ],
+          "extractedPhone": "+251 91 123 4567",
+          "extractedEmail": "yohannes.bekele@learnbridge.et"
+        }
+      }
+    ],
+    "savedJobIds": [
+      "job-eth-001",
+      "job-int-003",
+      "job-eth-006"
+    ],
+    "alerts": [
+      {
+        "id": "alert-1",
+        "keywords": "Accessibility QA",
+        "location": "Addis Ababa, Ethiopia",
+        "isRemote": true,
+        "frequency": "Daily",
+        "active": true
+      }
+    ],
+    "accommodationsProfile": {
+      "shareWithEmployers": true,
+      "preferredInterviewFormat": "screen_reader_friendly_remote",
+      "accommodationsRequested": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ],
+      "assistiveTechnologyUsed": [
+        "NVDA Screen Reader (Windows)",
+        "High-contrast system color scheme",
+        "Keyboard-only navigation"
+      ],
+      "candidateNotes": "Candidate requests all assessment materials in accessible text format prior to technical rounds. Candidate is fully proficient in coding and QA via keyboard and audio output."
+    },
+    "updatedAt": "2026-11-14T19:15:02.643Z"
+  },
+  {
+    "id": "ethio-candidate-02",
+    "userId": "user-sara-02",
+    "fullName": "Sara Mohammed",
+    "email": "sara.mohammed@learnbridge.et",
+    "phone": "+251 92 987 6543",
+    "location": "Hawassa, Sidama, Ethiopia",
+    "headline": "Junior Python Developer & NLP Linguist",
+    "summary": "Recent software graduate with a passion for indigenous African language processing (Afaan Oromo & Amharic) and data engineering.",
+    "profileCompletion": 75,
+    "skills": [
+      "Python",
+      "Django",
+      "PostgreSQL",
+      "Afaan Oromo NLP",
+      "Amharic Translation",
+      "Git"
+    ],
+    "experience": [
+      {
+        "id": "exp-s1",
+        "title": "NLP Research Assistant",
+        "company": "Hawassa University Tech Incubator",
+        "location": "Hawassa",
+        "startDate": "2024-06-01",
+        "endDate": null,
+        "current": true,
+        "description": "Collected and tagged 20,000 conversational sentences in Afaan Oromo for machine translation training."
+      }
+    ],
+    "education": [
+      {
+        "id": "edu-s1",
+        "degree": "B.Sc. in Software Engineering",
+        "institution": "Hawassa University",
+        "graduationYear": "2024"
+      }
+    ],
+    "certifications": [],
+    "languages": [
+      {
+        "language": "Afaan Oromo",
+        "proficiency": "Native"
+      },
+      {
+        "language": "Amharic",
+        "proficiency": "Fluent"
+      },
+      {
+        "language": "English",
+        "proficiency": "Working"
+      }
+    ],
+    "resumes": [
+      {
+        "id": "res-sara-cv",
+        "fileName": "Sara_Mohammed_Python_Hawassa.pdf",
+        "fileSize": "142 KB",
+        "uploadedAt": "2026-11-05T12:00:00.000Z",
+        "isPrimary": true,
+        "parsedData": {
+          "extractedSkills": [
+            "Python",
+            "Django",
+            "PostgreSQL",
+            "Git"
+          ],
+          "extractedPhone": "+251 92 987 6543",
+          "extractedEmail": "sara.mohammed@learnbridge.et"
+        }
+      }
+    ],
+    "savedJobIds": [
+      "job-ext-005",
+      "job-eth-006"
+    ],
+    "alerts": [],
+    "accommodationsProfile": {
+      "shareWithEmployers": true,
+      "preferredInterviewFormat": "video_with_interpreter",
+      "accommodationsRequested": [
+        "Ethiopian Sign Language (ETSL) interpreter for spoken interviews",
+        "Closed captions or live chat transcript during virtual onboarding"
+      ],
+      "assistiveTechnologyUsed": [
+        "Captioned media players",
+        "Video sign language interpretation"
+      ],
+      "candidateNotes": "Candidate communicates primarily through Ethiopian Sign Language (ETSL) and written text (Amharic / Afaan Oromo / English)."
+    }
+  },
+  {
+    "id": "ethio-candidate-empty",
+    "userId": "user-fresh-03",
+    "fullName": "Abebe Tadesse",
+    "email": "abebe.tadesse@example.et",
+    "phone": "+251 93 000 1122",
+    "location": "Adama, Oromia, Ethiopia",
+    "headline": "Aspiring Tech Professional",
+    "summary": "",
+    "profileCompletion": 25,
+    "skills": [],
+    "experience": [],
+    "education": [],
+    "certifications": [],
+    "languages": [
+      {
+        "language": "Amharic",
+        "proficiency": "Native"
+      }
+    ],
+    "resumes": [],
+    "savedJobIds": [],
+    "alerts": [],
+    "accommodationsProfile": {
+      "shareWithEmployers": false,
+      "preferredInterviewFormat": "standard",
+      "accommodationsRequested": [],
+      "assistiveTechnologyUsed": [],
+      "candidateNotes": ""
+    }
+  }
+]
