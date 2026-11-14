@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LearnBridge Employment — Accessible job discovery and recruitment platform for Ethiopia and international remote opportunities.">
+  <title>LearnBridge Employment | Inclusive Job Finder & Recruitment</title>
+
+  <link rel="stylesheet" href="employment.css">
+</head>
+<body>
+  <!-- Accessibility Skip Links -->
+  <a href="#main-employment-content" class="skip-link" data-i18n="nav.skipToContent">Skip to main employment content</a>
+  <a href="#hero-search-input" class="skip-link" data-i18n="nav.skipToSearch">Skip to job search input</a>
+
+  <!-- ARIA Live Regions for Assistive Technologies -->
+  <div id="sr-announcer-polite" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="sr-announcer-assertive" class="visually-hidden" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- High Visibility Visual Event Toast for Deaf & Hard of Hearing Users -->
+  <div id="visual-event-toast" class="visual-toast" role="status" aria-hidden="true">
+    <svg class="ui-icon" style="width: 20px; height: 20px; color: var(--accent-mint);" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <span id="visual-toast-text">System alert</span>
+  </div>
+
+  <!-- Left Floating Dock Navigation (VisionOS Spatial Pill Nav) -->
+  <nav class="dock-floating-nav" aria-label="Primary Navigation">
+    <a href="#dashboard" class="dock-btn active" id="btn-dock-dashboard" aria-label="Dashboard (Current Page)" title="Dashboard">
+      <svg class="ui-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    </a>
+
+    <a href="#search" class="dock-btn" id="btn-dock-search" aria-label="Find Jobs" title="Find Jobs">
+      <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </a>
+
+    <a href="#saved" class="dock-btn" id="btn-dock-saved" aria-label="Saved Jobs" title="Saved Jobs">
+      <svg class="ui-icon" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    </a>
+
+    <a href="#applications" class="dock-btn" id="btn-dock-applications" aria-label="My Applications" title="My Applications">
+      <svg class="ui-icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    </a>
+
+    <a href="#profile" class="dock-btn" id="btn-dock-profile" aria-label="Candidate Profile" title="Candidate Profile">
+      <svg class="ui-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </a>
+
+    <a href="#employer" class="dock-btn" id="btn-dock-employer" aria-label="Employer Recruitment Portal" title="Employer Portal">
+      <svg class="ui-icon" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/><path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
+    </a>
+
+    <a href="#admin" class="dock-btn" id="btn-dock-admin" aria-label="Admin & Verification Suite" title="Admin & Trust">
+      <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </a>
+  </nav>
+
+  <!-- Master Experience Shell -->
+  <div class="experience-shell">
+
+    <!-- Floating Top Pill Header matching the Player -->
+    <header class="floating-header" role="banner">
+      <div class="header-left">
+        <a href="../index.html" class="back-player-btn">
+          <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          <span data-i18n="nav.backToLearning">Learning Player</span>
+        </a>
+
+        <div class="header-brand-title">
+          <span class="header-kicker" data-i18n="tagline">Inclusive Careers & Recruitment</span>
+          <h1 class="header-main-name" data-i18n="platformTitle">LearnBridge Employment</h1>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Universal Gateway Trigger Button -->
+        <button type="button" class="a11y-pill-btn" id="btn-open-gateway" aria-label="Accessibility and Language Preferences (Gateway)" title="Open Accessibility Gateway">
+          <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Preferences</span>
+        </button>
+
+        <!-- Accessibility Mode Switcher Pills -->
+        <button type="button" class="a11y-pill-btn a11y-mode-pill active" data-mode="standard" aria-pressed="true" data-i18n="accessibilityModes.standard">
+          Standard
+        </button>
+        <button type="button" class="a11y-pill-btn a11y-mode-pill" data-mode="blind" aria-pressed="false" data-i18n="accessibilityModes.blind">
+          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Blind Mode</span>
+        </button>
+        <button type="button" class="a11y-pill-btn a11y-mode-pill" data-mode="deaf" aria-pressed="false" data-i18n="accessibilityModes.deaf">
+          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+          <span>Deaf Mode</span>
+        </button>
+
+        <!-- High Contrast Mode Toggle -->
+        <button type="button" class="a11y-pill-btn" id="btn-toggle-contrast" aria-label="Toggle High Contrast Display" data-i18n="accessibilityModes.highContrast">
+          <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20a10 10 0 0 0 0-20z"/></svg>
+          <span>High Contrast</span>
+        </button>
+
+        <!-- 5-Language Switcher Group -->
+        <div class="lang-selector-group" role="group" aria-label="Language selection">
+          <button type="button" class="lang-btn active" data-lang="en">EN</button>
+          <button type="button" class="lang-btn" data-lang="am">አማ</button>
+          <button type="button" class="lang-btn" data-lang="om">OM</button>
+          <button type="button" class="lang-btn" data-lang="ti">ትግ</button>
+          <button type="button" class="lang-btn" data-lang="so">SO</button>
+        </div>
+
+        <!-- Voice HUD Status Indicator -->
+        <div id="voice-hud" class="voice-hud-indicator" title="Web Speech Recognition Status">
+          <span class="hud-pulse" aria-hidden="true"></span>
+          <span>Voice Ready</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Application Content Stage -->
+    <main class="glass-panel" id="main-employment-content" tabindex="-1">
+
+    <!-- ========================================================= -->
+    <!-- VIEW 1: PERSONALIZED DASHBOARD                            -->
+    <!-- ========================================================= -->
+    <section id="view-dashboard" class="page-view" aria-labelledby="dash-welcome-heading">
+      <!-- Welcome Hero Banner -->
+      <div class="dashboard-hero">
+        <div>
+          <h2 class="hero-welcome-title" id="dash-welcome-heading">
+            <span data-i18n="dashboard.welcome">Welcome back</span>, <span id="dash-cand-name" style="color: var(--accent-primary);">Yohannes</span>!
+          </h2>
+          <p class="hero-subtitle" data-i18n="dashboard.subtitle">
+            Discover tailored career opportunities with verified workplace accommodations and assistive technology support.
+          </p>
+        </div>
+
+        <div class="hero-search-box">
+          <label for="hero-search-input" class="visually-hidden">Search jobs by title or skill</label>
+          <input type="text" id="hero-search-input" class="hero-search-input" placeholder="Search by job title, skill (e.g. Python, WCAG), or employer..." data-i18n="dashboard.searchPlaceholder">
+          <button type="button" class="btn btn-outline" id="btn-voice-search" aria-label="Voice Search" title="Speak to search">
+            <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            Voice Search
+          </button>
+          <button type="button" class="btn btn-primary" id="btn-hero-search" data-i18n="dashboard.btnSearch">
+            Search
+          </button>
+        </div>
+      </div>
+
+      <!-- Metrics & Status Grid -->
+      <div class="dashboard-metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title" data-i18n="dashboard.profileCompletion">Profile Completion</span>
+            <svg class="ui-icon" style="color: var(--accent-mint);" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="metric-value" id="dash-profile-num">90%</div>
+          <div class="progress-track" role="progressbar" aria-label="Profile completion progress" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill" id="dash-profile-bar" style="width: 90%;"></div>
+          </div>
+          <span class="metric-desc" data-i18n="dashboard.completeProfileHint">1-click Quick Apply is unlocked for your profile.</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title" data-i18n="dashboard.activeApplications">Active Applications</span>
+            <svg class="ui-icon" style="color: #93C5FD;" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div class="metric-value" id="dash-apps-num">2</div>
+          <span class="metric-desc">1 in review · 1 interview scheduled</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title" data-i18n="dashboard.savedCount">Saved Opportunities</span>
+            <svg class="ui-icon" style="color: var(--accent-gold);" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="metric-value" id="dash-saved-num">3</div>
+          <span class="metric-desc">Vacancies bookmarked for later review.</span>
+        </div>
+      </div>
+
+      <!-- Dashboard Two Column: Recommendations & Recent Postings -->
+      <div class="dashboard-two-col">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="font-size: 1.35rem; font-weight: 800;" data-i18n="dashboard.newMatches">Recommended for You</h3>
+            <span style="font-size: 0.8125rem; color: var(--accent-primary); font-weight: 600;">✓ Explainable Matching</span>
+          </div>
+          <div id="dash-recommendations-list">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="font-size: 1.35rem; font-weight: 800;" data-i18n="dashboard.recentJobs">Recently Posted Opportunities</h3>
+            <a href="#search" class="btn btn-sm btn-outline">View All →</a>
+          </div>
+          <div id="dash-recent-jobs-list" class="jobs-list-container">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 2: SEARCH & FILTERING ENGINE                         -->
+    <!-- ========================================================= -->
+    <section id="view-search" class="page-view" style="display: none;" aria-labelledby="search-heading">
+      <div style="margin-bottom: 24px;">
+        <h2 id="search-heading" style="font-size: 1.75rem; font-weight: 800;" data-i18n="search.title">Explore Job Opportunities</h2>
+        <p style="color: var(--text-secondary);" data-i18n="search.subtitle">
+          Real-time search across verified Ethiopian companies and authorized remote employers.
+        </p>
+      </div>
+
+      <div class="search-layout">
+        <!-- Filter Sidebar -->
+        <aside class="filter-panel" id="search-filter-panel" aria-label="Job Search Filters">
+          <div class="filter-header">
+            <h3 class="filter-title" data-i18n="search.filtersTitle">Filter Opportunities</h3>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-clear-filters" data-i18n="search.clearFilters">
+              Clear All
+            </button>
+          </div>
+
+          <!-- Keyword Filter -->
+          <div class="filter-group">
+            <label for="filter-search-input" class="filter-label">Keyword / Skill</label>
+            <input type="text" id="filter-search-input" class="text-input" placeholder="Title, Python, QA...">
+          </div>
+
+          <!-- Industry Filter -->
+          <div class="filter-group">
+            <label for="filter-industry" class="filter-label" data-i18n="search.industry">Industry</label>
+            <select id="filter-industry" class="select-input">
+              <option value="all">All Industries</option>
+              <option value="Technology & Software">Technology & Software</option>
+              <option value="Banking & Financial Services">Banking & Financial Services</option>
+              <option value="Telecommunications">Telecommunications</option>
+              <option value="Non-Governmental Organizations (NGO)">Non-Governmental Organizations (NGO)</option>
+              <option value="Creative & Media">Creative & Media</option>
+              <option value="Education & EdTech">Education & EdTech</option>
+              <option value="Customer Support & BPO">Customer Support & BPO</option>
+            </select>
+          </div>
+
+          <!-- Location Filter -->
+          <div class="filter-group">
+            <label for="filter-location" class="filter-label" data-i18n="search.location">Location</label>
+            <select id="filter-location" class="select-input">
+              <option value="all">All Locations</option>
+              <option value="Addis Ababa">Addis Ababa, Ethiopia</option>
+              <option value="Hawassa">Hawassa, Sidama</option>
+              <option value="Dire Dawa">Dire Dawa, Ethiopia</option>
+              <option value="International Remote">International Remote</option>
+            </select>
+          </div>
+
+          <!-- Remote / Arrangement Filter -->
+          <div class="filter-group">
+            <label for="filter-remote" class="filter-label" data-i18n="search.workArrangement">Work Arrangement</label>
+            <select id="filter-remote" class="select-input">
+              <option value="all">All Arrangements</option>
+              <option value="remote">100% Remote</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="onsite">On-site</option>
+            </select>
+          </div>
+
+          <!-- Employment Type Filter -->
+          <div class="filter-group">
+            <label for="filter-type" class="filter-label" data-i18n="search.employmentType">Employment Type</label>
+            <select id="filter-type" class="select-input">
+              <option value="all">All Types</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Contract">Contract</option>
+              <option value="Internship">Internship</option>
+              <option value="Apprenticeship">Apprenticeship</option>
+              <option value="Freelance">Freelance</option>
+              <option value="Volunteering">Volunteering</option>
+            </select>
+          </div>
+
+          <!-- Workplace Accommodations Filter -->
+          <div class="filter-group">
+            <label for="filter-accomm" class="filter-label" data-i18n="search.accommodations">Workplace Accommodations</label>
+            <select id="filter-accomm" class="select-input">
+              <option value="all">Any Accommodations</option>
+              <option value="screen_reader_ready">Screen-Reader Ready Software</option>
+              <option value="etsl_interpreter">Ethiopian Sign Language (ETSL)</option>
+              <option value="captioned_meetings">Captioned Meetings</option>
+              <option value="wheelchair_accessible">Wheelchair Accessible Facility</option>
+              <option value="flexible_hours">Flexible Work Hours</option>
+            </select>
+          </div>
+
+          <!-- Verified Employers Only Checkbox -->
+          <div class="filter-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="filter-verified-only">
+              <span data-i18n="search.verifiedOnly">Verified Employers Only</span>
+            </label>
+          </div>
+        </aside>
+
+        <!-- Search Results Main Column -->
+        <div>
+          <div class="jobs-list-toolbar">
+            <span class="results-count-text" id="search-results-count">Loading opportunities...</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <label for="filter-sort-by" style="font-size: 0.875rem; color: var(--text-secondary);" data-i18n="search.sortBy">Sort by:</label>
+              <select id="filter-sort-by" class="select-input" style="width: auto; min-height: 38px;">
+                <option value="newest" selected>Newest First</option>
+                <option value="relevance">Most Relevant</option>
+                <option value="salary_desc">Highest Compensation</option>
+                <option value="deadline_asc">Closing Soon</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="search-results-list" class="jobs-list-container" role="feed" aria-busy="false">
+            <!-- Results rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 3: JOB DETAILS PAGE                                  -->
+    <!-- ========================================================= -->
+    <section id="view-job-detail" class="page-view" style="display: none;" aria-labelledby="detail-title">
+      <div style="margin-bottom: 16px;">
+        <a href="#search" class="btn btn-sm btn-outline">← Back to Job Search</a>
+      </div>
+
+      <div class="job-detail-grid">
+        <div class="detail-main-card">
+          <div>
+            <span class="badge badge-verified" id="detail-verified-tag">Verified Listing</span>
+            <h2 id="detail-title" style="font-size: 2rem; font-weight: 800; margin-top: 8px;">Job Title</h2>
+            <div style="color: var(--text-secondary); font-size: 1.1rem; margin-top: 4px;">
+              <span id="detail-employer" style="color: var(--text-main); font-weight: 700;">Employer Name</span> · <svg class="ui-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> <span id="detail-location">Location</span>
+            </div>
+          </div>
+
+          <!-- Overview -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.overview">Role Overview</h3>
+            <p id="detail-description" style="color: var(--text-secondary); line-height: 1.7; margin-top: 8px;"></p>
+          </div>
+
+          <!-- Responsibilities -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.responsibilities">Key Responsibilities</h3>
+            <ul id="detail-responsibilities" class="bullet-list" style="margin-top: 8px;"></ul>
+          </div>
+
+          <!-- Requirements -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.requirements">Qualifications & Requirements</h3>
+            <ul id="detail-requirements" class="bullet-list" style="margin-top: 8px;"></ul>
+          </div>
+
+          <!-- Required Skills -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.skills">Required Competencies & Tools</h3>
+            <div id="detail-skills" class="job-tags-row" style="margin-top: 8px;"></div>
+          </div>
+
+          <!-- Compensation & Terms -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.compensation">Compensation & Contract Terms</h3>
+            <div id="detail-compensation" style="margin-top: 8px;"></div>
+          </div>
+
+          <!-- Workplace Accommodations Matrix -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.workplaceAccommodations">Workplace Accommodations & Accessibility</h3>
+            <div id="detail-accommodations-matrix" class="accommodations-matrix-box" style="margin-top: 8px;"></div>
+          </div>
+        </div>
+
+        <!-- Sidebar Sticky Actions Card -->
+        <aside class="detail-sidebar-card">
+          <h3 style="font-size: 1.15rem; font-weight: 700;">Take Action</h3>
+          <div id="detail-sidebar-actions"></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 4: CANDIDATE PROFILE & CV BUILDER                    -->
+    <!-- ========================================================= -->
+    <section id="view-profile" class="page-view" style="display: none;" aria-labelledby="profile-heading">
+      <div style="margin-bottom: 24px;">
+        <h2 id="profile-heading" style="font-size: 1.75rem; font-weight: 800;" data-i18n="candidate.profileTitle">Candidate Career & Accommodations Profile</h2>
+        <p style="color: var(--text-secondary);">Manage your CV, professional summary, skills taxonomy, and voluntary accommodations.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+        <div class="job-card" style="padding: 28px;">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;">Personal Details</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="filter-group">
+              <label for="prof-name-input" class="filter-label">Full Name</label>
+              <input type="text" id="prof-name-input" class="text-input">
+            </div>
+            <div class="filter-group">
+              <label for="prof-email-input" class="filter-label">Email Address</label>
+              <input type="text" id="prof-email-input" class="text-input">
+            </div>
+            <div class="filter-group">
+              <label for="prof-phone-input" class="filter-label">Phone Number (Ethiopian / International)</label>
+              <input type="text" id="prof-phone-input" class="text-input">
+            </div>
+            <div class="filter-group">
+              <label for="prof-location-input" class="filter-label">Location / City</label>
+              <input type="text" id="prof-location-input" class="text-input">
+            </div>
+          </div>
+
+          <div class="filter-group" style="margin-top: 16px;">
+            <label for="prof-summary-input" class="filter-label">Professional Summary</label>
+            <textarea id="prof-summary-input" class="text-input" rows="4"></textarea>
+          </div>
+
+          <div class="filter-group" style="margin-top: 16px;">
+            <label for="prof-skills-input" class="filter-label">Skills (comma separated)</label>
+            <input type="text" id="prof-skills-input" class="text-input">
+          </div>
+
+          <!-- Strict Separation: Voluntary Accommodations Profile -->
+          <div style="margin-top: 28px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--accent-primary);" data-i18n="candidate.accommodationsSection">
+              Voluntary Workplace Accommodations
+            </h3>
+            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 4px;" data-i18n="candidate.accommodationsExplainer">
+              This voluntary profile is candidate-authored. It is separate from your private interface settings and will only be shared with employers when you check the box.
+            </p>
+
+            <div style="margin-top: 14px;">
+              <label class="checkbox-label" style="font-weight: 700;">
+                <input type="checkbox" id="prof-share-accomm-toggle">
+                <span data-i18n="candidate.shareCheckbox">Share my accommodations profile with employers when applying</span>
+              </label>
+            </div>
+
+            <div class="filter-group" style="margin-top: 12px;">
+              <label for="prof-accomm-notes" class="filter-label">Candidate Accommodations Notes (Voluntary)</label>
+              <textarea id="prof-accomm-notes" class="text-input" rows="3" placeholder="Describe any interview or workplace adjustments you request (e.g. sign language interpreter, accessible document formats)..."></textarea>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+            <button type="button" class="btn btn-primary" id="btn-save-candidate-profile" data-i18n="candidate.saveProfile">
+              Save Confirmed Profile
+            </button>
+          </div>
+        </div>
+
+        <!-- CV Upload Sidebar -->
+        <div class="job-card" style="padding: 24px;">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 12px;" data-i18n="candidate.cvUploadTitle">Upload CV / Resume</h3>
+          <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 16px;" data-i18n="candidate.cvUploadDesc">
+            Upload your CV. Our system will extract fields for your review before anything is saved to your profile.
+          </p>
+          <button type="button" class="btn btn-secondary" id="btn-trigger-cv-modal" style="width: 100%;" data-i18n="candidate.parseBtn">
+            <svg class="ui-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Upload & Extract Fields
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 5: SAVED JOBS                                        -->
+    <!-- ========================================================= -->
+    <section id="view-saved" class="page-view" style="display: none;" aria-labelledby="saved-heading">
+      <h2 id="saved-heading" style="font-size: 1.75rem; font-weight: 800; margin-bottom: 20px;" data-i18n="nav.saved">Saved Opportunities</h2>
+      <div id="saved-jobs-container" class="jobs-list-container"></div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 6: APPLICATION TRACKER                               -->
+    <!-- ========================================================= -->
+    <section id="view-applications" class="page-view" style="display: none;" aria-labelledby="apps-heading">
+      <h2 id="apps-heading" style="font-size: 1.75rem; font-weight: 800; margin-bottom: 20px;" data-i18n="nav.applications">My Applications</h2>
+      <div id="candidate-applications-container"></div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 7: EMPLOYER PORTAL & RECRUITMENT ATS                 -->
+    <!-- ========================================================= -->
+    <section id="view-employer" class="page-view" style="display: none;" aria-labelledby="emp-heading">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h2 id="emp-heading" style="font-size: 1.75rem; font-weight: 800;" data-i18n="employer.portalTitle">Employer Recruitment Portal</h2>
+          <p style="color: var(--text-secondary);">Manage company vacancies and track candidate applicants with accessible tools.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-open-post-job-modal" data-i18n="employer.postJobBtn">
+          + Post New Vacancy
+        </button>
+      </div>
+
+      <!-- Anti-Discrimination Guardrail Notice -->
+      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 14px 20px; margin-bottom: 24px; font-size: 0.875rem;">
+        <strong style="color: var(--accent-primary);">Equal Opportunity & Accessibility Notice:</strong>
+        <p style="color: var(--text-secondary); margin-top: 4px;" data-i18n="employer.guardrailNotice">
+          LearnBridge strictly forbids filtering or rejecting candidates based on disability or accessibility preferences. Matching and evaluation must be based solely on qualifications and merit.
+        </p>
+      </div>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;" data-i18n="employer.activeListings">Your Active Vacancies</h3>
+      <div id="employer-vacancies-list" class="jobs-list-container"></div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 8: ADMINISTRATION & TRUST                            -->
+    <!-- ========================================================= -->
+    <section id="view-admin" class="page-view" style="display: none;" aria-labelledby="admin-heading">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h2 id="admin-heading" style="font-size: 1.75rem; font-weight: 800;">Administration, Trust & Compliance</h2>
+          <p style="color: var(--text-secondary);">Audit registered employers, resolve fraud reports, and synchronize external partner feeds.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-admin-sync-feeds">
+          <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Run External Feed Sync
+        </button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Employer Verification Queue</h3>
+          <div id="admin-employer-queue"></div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Fraud & Scam Reports</h3>
+          <div id="admin-reports-list"></div>
+
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-top: 24px; margin-bottom: 12px;">Authorized External Providers</h3>
+          <div id="admin-providers-list"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  </div><!-- /.experience-shell -->
+
+  <!-- ========================================================= -->
+  <!-- UNIVERSAL ACCESS GATEWAY ONBOARDING DIALOG               -->
+  <!-- ========================================================= -->
+  <dialog id="gateway-dialog" class="gateway-dialog" aria-labelledby="gateway-title">
+    <div class="gateway-shell">
+      <div class="gateway-header">
+        <div class="gateway-title-group">
+          <h2 id="gateway-title">Welcome to LearnBridge Employment</h2>
+          <p id="gateway-subtitle">Choose your preferred language and accessibility experience.</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline" id="btn-gateway-back" style="display: none;" aria-label="Back to language selection">
+          ← Languages
+        </button>
+      </div>
+
+      <!-- Step 1: Language Selection -->
+      <div id="gateway-step-lang">
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 14px;">
+          Select your interface language (click or press the keyboard shortcut):
+        </p>
+        <div class="gateway-lang-grid">
+          <button type="button" class="gateway-lang-choice" data-lang="en" aria-label="English. Press E">
+            <span>English</span>
+            <kbd class="key-kbd">E</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="am" aria-label="አማርኛ. Press A">
+            <span>አማርኛ</span>
+            <kbd class="key-kbd">A</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="om" aria-label="Afaan Oromoo. Press O">
+            <span>Afaan Oromoo</span>
+            <kbd class="key-kbd">O</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="ti" aria-label="ትግርኛ. Press T">
+            <span>ትግርኛ</span>
+            <kbd class="key-kbd">T</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="so" aria-label="Af-Soomaali. Press S">
+            <span>Af-Soomaali</span>
+            <kbd class="key-kbd">S</kbd>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Disability & Accessibility Preferences -->
+      <div id="gateway-step-a11y" hidden>
+        <div class="gateway-countdown-box">
+          <div class="gateway-countdown-label" id="gateway-countdown-label">
+            <span>Activating Blind-Accessible Mode in <strong id="gateway-countdown-seconds">10</strong>s</span>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-gateway-pause" aria-label="Pause or resume timer (Space)">
+              Pause Timer (Space)
+            </button>
+          </div>
+          <div class="gateway-progress-track">
+            <div class="gateway-progress-bar" id="gateway-progress-bar" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 12px 0 8px;">
+          Select your profile (click or press shortcut key):
+        </p>
+
+        <div class="gateway-profiles-list">
+          <button type="button" class="gateway-profile-card" data-profile="blind" aria-label="Blind and Low Vision Profile. Press B">
+            <div class="profile-card-icon" aria-hidden="true">
+              <svg class="ui-icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="profile-card-copy">
+              <strong>Blind / Low Vision (ዓይነ ስውር)</strong>
+              <small>Continuous voice narration, Tab-focus spoken readout, high-contrast markers, and audio summaries.</small>
+            </div>
+            <kbd class="key-kbd">Press B</kbd>
+          </button>
+
+          <button type="button" class="gateway-profile-card" data-profile="deaf" aria-label="Deaf and Hard of Hearing Profile. Press D">
+            <div class="profile-card-icon" aria-hidden="true">
+              <svg class="ui-icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+            </div>
+            <div class="profile-card-copy">
+              <strong>Deaf / Hard of Hearing (መስማት የተሳናቸው)</strong>
+              <small>Visual alerts, dockable Ethiopian Sign Language (ETSL) video player with Addis Ababa dialect, and caption cues.</small>
+            </div>
+            <kbd class="key-kbd">Press D</kbd>
+          </button>
+
+          <button type="button" class="gateway-profile-card" data-profile="standard" aria-label="Standard Experience. Press S">
+            <div class="profile-card-icon" aria-hidden="true">
+              <svg class="ui-icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="profile-card-copy">
+              <strong>Standard Experience (መደበኛ)</strong>
+              <small>Clean, high-performance responsive layout with standard keyboard and mouse navigation.</small>
+            </div>
+            <kbd class="key-kbd">Press S</kbd>
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ========================================================= -->
+  <!-- MODAL: APPLICATION WIZARD (INTERNAL APPLY)                -->
+  <!-- ========================================================= -->
+  <dialog id="application-dialog" class="accessible-dialog" aria-labelledby="apply-modal-title">
+    <div class="dialog-header">
+      <h3 id="apply-modal-title" class="dialog-title">Submit Application</h3>
+      <button type="button" class="btn-close" aria-label="Close application dialog">&times;</button>
+    </div>
+
+    <form id="job-application-form">
+      <div style="margin-bottom: 16px;">
+        <h4 id="apply-modal-job-title" style="font-size: 1.2rem; font-weight: 700;">Job Title</h4>
+        <div id="apply-modal-employer" style="color: var(--text-secondary); font-size: 0.875rem;">Employer Name</div>
+      </div>
+
+      <div id="apply-error-banner" style="display: none; background: rgba(244,63,94,0.15); border: 1px solid var(--accent-rose); color: var(--accent-rose); padding: 10px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.875rem;"></div>
+
+      <div class="filter-group" style="margin-bottom: 14px;">
+        <label for="apply-resume-select" class="filter-label">Select Saved CV / Resume</label>
+        <select id="apply-resume-select" class="select-input"></select>
+      </div>
+
+      <div class="filter-group" style="margin-bottom: 14px;">
+        <label for="apply-cover-note" class="filter-label">Supporting Cover Note (Optional)</label>
+        <textarea id="apply-cover-note" class="text-input" rows="3" placeholder="Briefly state your interest or relevant experience..."></textarea>
+      </div>
+
+      <!-- Accommodations Sharing Toggle -->
+      <div style="background: var(--surface-elevated); border: 1px solid var(--border); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+        <label class="checkbox-label" style="font-weight: 600;">
+          <input type="checkbox" id="apply-share-accomm">
+          <span>Include my candidate workplace accommodations profile</span>
+        </label>
+        <div id="apply-accomm-preview-box" style="display: none; font-size: 0.8125rem; color: var(--text-secondary); margin-top: 8px;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-apply">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-apply">Submit Application</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========================================================= -->
+  <!-- MODAL: EXTERNAL DEPARTURE DISCLOSURE                      -->
+  <!-- ========================================================= -->
+  <dialog id="external-apply-dialog" class="accessible-dialog" aria-labelledby="ext-modal-title">
+    <div class="dialog-header">
+      <h3 class="dialog-title">External Application Notice</h3>
+      <button type="button" class="btn-close" aria-label="Close external notice">&times;</button>
+    </div>
+
+    <div>
+      <p style="color: var(--text-main); font-size: 1rem; line-height: 1.6;">
+        You are leaving LearnBridge to apply directly on the partner portal for:
+      </p>
+      <div style="background: var(--surface-elevated); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin: 14px 0;">
+        <h4 id="ext-modal-title" style="font-weight: 700; font-size: 1.15rem;">Job Title</h4>
+        <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 4px;">
+          Partner Source: <strong id="ext-modal-provider" style="color: var(--accent-cyan);">Afriwork Feed</strong>
+        </div>
+        <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px; word-break: break-all;" id="ext-modal-destination">
+          Destination URL
+        </div>
+      </div>
+      <p style="font-size: 0.8125rem; color: var(--text-secondary);">
+        LearnBridge does not store your credentials on external partner sites. Your application will be submitted on the target destination.
+      </p>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+      <button type="button" class="btn btn-outline" id="btn-cancel-external">Cancel</button>
+      <button type="button" class="btn btn-primary" id="btn-proceed-external">Proceed to Partner Portal ↗</button>
+    </div>
+  </dialog>
+
+  <!-- ========================================================= -->
+  <!-- MODAL: CV PARSER & FIELD REVIEW                           -->
+  <!-- ========================================================= -->
+  <dialog id="cv-parser-dialog" class="accessible-dialog" aria-labelledby="cv-modal-title">
+    <div class="dialog-header">
+      <h3 id="cv-modal-title" class="dialog-title">CV Document Parsing & Review</h3>
+      <button type="button" class="btn-close" aria-label="Close CV parser">&times;</button>
+    </div>
+
+    <div id="cv-error-banner" style="display: none; background: rgba(244,63,94,0.15); border: 1px solid var(--accent-rose); color: var(--accent-rose); padding: 10px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.875rem;"></div>
+
+    <!-- Step 1: Upload / Paste -->
+    <div id="cv-upload-step">
+      <p style="color: var(--text-secondary); font-size: 0.9375rem; margin-bottom: 16px;">
+        Choose a file to extract profile fields, or paste text directly:
+      </p>
+
+      <div style="border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 24px; text-align: center; margin-bottom: 16px;">
+        <label for="cv-file-picker" class="btn btn-secondary" style="cursor: pointer;">
+          Choose File (PDF / Text)
+        </label>
+        <input type="file" id="cv-file-picker" accept=".pdf,.txt,.md" class="visually-hidden">
+      </div>
+
+      <div class="filter-group">
+        <label for="cv-pasted-text" class="filter-label">Or paste resume / CV text:</label>
+        <textarea id="cv-pasted-text" class="text-input" rows="4" placeholder="Paste your resume contents here..."></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+        <button type="button" class="btn btn-primary" id="btn-parse-pasted-text">Extract Information</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Review & Confirm -->
+    <div id="cv-review-step" style="display: none;">
+      <div style="background: rgba(245,158,11,0.1); border: 1px solid var(--accent-amber); padding: 10px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 0.8125rem; color: var(--accent-amber);">
+        <strong style="color: var(--accent-gold);">Verification Required:</strong> Review and correct any extracted details below. No changes are saved to your profile without your explicit confirmation.
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="filter-group">
+          <label for="review-full-name" class="filter-label">Candidate Name</label>
+          <input type="text" id="review-full-name" class="text-input">
+        </div>
+        <div class="filter-group">
+          <label for="review-email" class="filter-label">Email</label>
+          <input type="text" id="review-email" class="text-input">
+        </div>
+        <div class="filter-group">
+          <label for="review-phone" class="filter-label">Phone</label>
+          <input type="text" id="review-phone" class="text-input">
+        </div>
+        <div class="filter-group">
+          <label for="review-skills" class="filter-label">Extracted Skills (comma-separated)</label>
+          <input type="text" id="review-skills" class="text-input">
+        </div>
+
+        <div>
+          <strong style="font-size: 0.875rem; color: var(--text-secondary);">Extracted Education:</strong>
+          <ul id="review-edu-list" style="margin-top: 4px; padding-left: 20px; font-size: 0.8125rem; color: var(--text-muted);"></ul>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-cv-review">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-save-cv">Confirm & Save to Profile</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ========================================================= -->
+  <!-- MODAL: EMPLOYER POST VACANCY                              -->
+  <!-- ========================================================= -->
+  <dialog id="employer-post-dialog" class="accessible-dialog" aria-labelledby="post-modal-title">
+    <div class="dialog-header">
+      <h3 id="post-modal-title" class="dialog-title">Publish Job Vacancy</h3>
+      <button type="button" class="btn-close" aria-label="Close vacancy form">&times;</button>
+    </div>
+
+    <form id="employer-post-job-form">
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="filter-group">
+          <label for="post-job-title" class="filter-label">Job Title *</label>
+          <input type="text" id="post-job-title" class="text-input" required placeholder="e.g. Frontend Accessibility Engineer">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="filter-group">
+            <label for="post-job-industry" class="filter-label">Industry *</label>
+            <select id="post-job-industry" class="select-input">
+              <option value="Technology & Software">Technology & Software</option>
+              <option value="Banking & Financial Services">Banking & Financial Services</option>
+              <option value="Telecommunications">Telecommunications</option>
+              <option value="Non-Governmental Organizations (NGO)">Non-Governmental Organizations (NGO)</option>
+              <option value="Creative & Media">Creative & Media</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="post-job-location" class="filter-label">Location *</label>
+            <input type="text" id="post-job-location" class="text-input" required placeholder="e.g. Addis Ababa, Ethiopia">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="filter-group">
+            <label for="post-job-type" class="filter-label">Employment Type</label>
+            <select id="post-job-type" class="select-input">
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Contract">Contract</option>
+              <option value="Internship">Internship</option>
+              <option value="Freelance">Freelance</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="post-job-deadline" class="filter-label">Application Deadline *</label>
+            <input type="date" id="post-job-deadline" class="text-input" required value="2026-12-31">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="filter-group">
+            <label for="post-job-salary-min" class="filter-label">Salary Min (ETB / Mo)</label>
+            <input type="number" id="post-job-salary-min" class="text-input" placeholder="40000">
+          </div>
+
+          <div class="filter-group">
+            <label for="post-job-salary-max" class="filter-label">Salary Max (ETB / Mo)</label>
+            <input type="number" id="post-job-salary-max" class="text-input" placeholder="60000">
+          </div>
+        </div>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="post-job-remote">
+          <span>This position is 100% remote</span>
+        </label>
+
+        <div class="filter-group">
+          <label for="post-job-description" class="filter-label">Job Description *</label>
+          <textarea id="post-job-description" class="text-input" rows="4" required placeholder="Outline role responsibilities, team structure, and qualifications..."></textarea>
+        </div>
+
+        <!-- Accommodations Available -->
+        <fieldset style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px;">
+          <legend style="font-size: 0.8125rem; font-weight: 700; color: var(--accent-primary); padding: 0 6px;">Available Accommodations</legend>
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+            <label class="checkbox-label"><input type="checkbox" id="post-accomm-screen-reader" checked> <span>Screen-reader compatible internal software</span></label>
+            <label class="checkbox-label"><input type="checkbox" id="post-accomm-etsl"> <span>Certified Ethiopian Sign Language interpreter available</span></label>
+            <label class="checkbox-label"><input type="checkbox" id="post-accomm-wheelchair" checked> <span>Wheelchair accessible physical facility</span></label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-post-job">Cancel</button>
+        <button type="submit" class="btn btn-primary">Publish Vacancy</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========================================================= -->
+  <!-- MODAL: ATS APPLICANT INBOX                                -->
+  <!-- ========================================================= -->
+  <dialog id="ats-applicants-dialog" class="accessible-dialog" style="max-width: 800px;" aria-labelledby="ats-modal-title">
+    <div class="dialog-header">
+      <div>
+        <h3 id="ats-modal-title" class="dialog-title">Applicant Management</h3>
+        <div id="ats-job-title" style="color: var(--text-secondary); font-size: 0.875rem;">Vacancy Title</div>
+      </div>
+      <button type="button" class="btn-close" onclick="document.getElementById('ats-applicants-dialog').close()" aria-label="Close applicants inbox">&times;</button>
+    </div>
+
+    <div id="ats-applicants-container"></div>
+  </dialog>
+
+  <!-- ========================================================= -->
+  <!-- MODAL: REPORT FRAUDULENT VACANCY                          -->
+  <!-- ========================================================= -->
+  <dialog id="report-dialog" class="accessible-dialog" aria-labelledby="rep-modal-title">
+    <div class="dialog-header">
+      <h3 id="rep-modal-title" class="dialog-title">Report Job Vacancy</h3>
+      <button type="button" class="btn-close" onclick="document.getElementById('report-dialog').close()" aria-label="Close report form">&times;</button>
+    </div>
+
+    <form id="report-job-form">
+      <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 12px;">
+        Reporting: <strong id="report-job-title" style="color: var(--text-main);">Job Title</strong> (<span id="report-employer">Employer</span>)
+      </p>
+
+      <div class="filter-group" style="margin-bottom: 12px;">
+        <label for="report-reason-select" class="filter-label">Reason for Flagging *</label>
+        <select id="report-reason-select" class="select-input">
+          <option value="scam_recruitment">Fraudulent / Recruitment Scam</option>
+          <option value="misleading_salary">Misleading Compensation or Unpaid Trial</option>
+          <option value="discriminatory_language">Discriminatory Language or Accessibility Barrier</option>
+          <option value="expired_listing">Expired Vacancy Still Displayed</option>
+          <option value="fake_employer">Unregistered or Impersonated Employer</option>
+        </select>
+      </div>
+
+      <div class="filter-group" style="margin-bottom: 16px;">
+        <label for="report-details-input" class="filter-label">Details / Evidence</label>
+        <textarea id="report-details-input" class="text-input" rows="3" placeholder="Please describe what makes this listing suspicious..."></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('report-dialog').close()">Cancel</button>
+        <button type="submit" class="btn btn-primary" style="background: var(--accent-rose); border-color: var(--accent-rose); color: #fff;">
+          Submit Report
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========================================================= -->
+  <!-- DOCKABLE ETHIOPIAN SIGN LANGUAGE (ETSL) WINDOW            -->
+  <!-- ========================================================= -->
+  <div id="etsl-dock-window" class="etsl-dock-window" style="display: none;" role="region" aria-label="Ethiopian Sign Language Guide">
+    <div class="etsl-dock-header">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="font-weight: 700; color: #FFFFFF;">ETSL Guide</span>
+        <span id="etsl-status-badge" class="badge badge-verified">Verified</span>
+      </div>
+      <div style="display: flex; gap: 4px;">
+        <button type="button" class="btn btn-sm btn-outline" id="btn-etsl-dock-pos" style="min-height: 28px; padding: 2px 8px; font-size: 0.75rem;">
+          Dock Left ↙
+        </button>
+        <button type="button" class="btn-close" id="btn-etsl-close" style="width: 28px; height: 28px; font-size: 1rem;" aria-label="Close sign language window">&times;</button>
+      </div>
+    </div>
+
+    <div class="etsl-video-box">
+      <!-- Standard Video for ETSL Recording -->
+      <video id="etsl-video-element" controls playsinline muted>
+        <source src="assets/sign/etsl-search-guide.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="etsl-disclaimer-card">
+      <div style="font-weight: 700; color: var(--accent-primary); margin-bottom: 2px;" id="etsl-variety-label">
+        Ethiopian Sign Language (ETSL) — Addis Ababa Dialect
+      </div>
+      <p id="etsl-disclaimer-text">
+        Official validated ETSL studio recording produced in collaboration with certified interpreters in Addis Ababa.
+      </p>
+      <div style="margin-top: 6px;">
+        <label for="etsl-resource-select" class="visually-hidden">Choose Sign Language Guide</label>
+        <select id="etsl-resource-select" class="select-input" style="font-size: 0.75rem; min-height: 30px; padding: 4px 8px;"></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="accessibility/a11yManager.js"></script>
+  <script src="components/JobCard.js"></script>
+  <script src="components/ApplicationModal.js"></script>
+  <script src="components/CVParserModal.js"></script>
+  <script src="components/SignLanguagePlayer.js"></script>
+  <script src="components/ATSManager.js"></script>
+  <script src="components/AdminManager.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
