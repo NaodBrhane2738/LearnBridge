@@ -1,0 +1,128 @@
+{
+  "profiles": [
+    {
+      "id": "screen_reader",
+      "name": "Screen Reader Experience",
+      "category": "Blindness / Screen Reader",
+      "description": "Optimized semantic DOM, ARIA live region announcements, audio-description track auto-enabled, and enhanced keyboard access.",
+      "settings": {
+        "screen_reader_optimized": true,
+        "high_contrast": false,
+        "reduce_transparency": false,
+        "captions": false,
+        "audio_descriptions": true,
+        "sign_language": false,
+        "font_scale": 1.0,
+        "reduced_motion": true,
+        "enhanced_focus": true,
+        "tts_feedback": true,
+        "visual_alerts": false,
+        "simplified_interface": false
+      }
+    },
+    {
+      "id": "low_vision",
+      "name": "High Contrast & Low Vision",
+      "category": "Low Vision",
+      "description": "High contrast black backdrop, 125% font scale, solid non-transparent panels, and 3px lime focus outlines.",
+      "settings": {
+        "screen_reader_optimized": false,
+        "high_contrast": true,
+        "reduce_transparency": true,
+        "captions": true,
+        "audio_descriptions": true,
+        "sign_language": false,
+        "font_scale": 1.25,
+        "reduced_motion": false,
+        "enhanced_focus": true,
+        "tts_feedback": true,
+        "visual_alerts": true,
+        "simplified_interface": false
+      }
+    },
+    {
+      "id": "deaf_hard_of_hearing",
+      "name": "Deaf & Hard of Hearing",
+      "category": "Auditory",
+      "description": "Auto-enabled bilingual captions, synchronized transcript panel, visual flash alerts, and Ethiopian Sign Language interpreter overlay.",
+      "settings": {
+        "screen_reader_optimized": false,
+        "high_contrast": false,
+        "reduce_transparency": false,
+        "captions": true,
+        "audio_descriptions": false,
+        "sign_language": true,
+        "transcript_sync": true,
+        "font_scale": 1.0,
+        "reduced_motion": false,
+        "enhanced_focus": false,
+        "tts_feedback": false,
+        "visual_alerts": true,
+        "simplified_interface": false
+      }
+    },
+    {
+      "id": "motor_accessible",
+      "name": "Motor & Switch Accessibility",
+      "category": "Motor / Mobility",
+      "description": "Strict single-key shortcuts, zero required drag gestures, 48px+ touch targets, and extended interaction tolerances.",
+      "settings": {
+        "screen_reader_optimized": false,
+        "high_contrast": false,
+        "reduce_transparency": false,
+        "captions": false,
+        "audio_descriptions": false,
+        "sign_language": false,
+        "font_scale": 1.0,
+        "reduced_motion": true,
+        "enhanced_focus": true,
+        "tts_feedback": false,
+        "visual_alerts": true,
+        "simplified_interface": false,
+        "keyboard_only": true,
+        "non_drag_controls": true,
+        "large_targets": true
+      }
+    },
+    {
+      "id": "cognitive_accessible",
+      "name": "Cognitive & Focused Reading",
+      "category": "Cognitive",
+      "description": "Reduced motion, distraction-free content hierarchy, clear typography, and simplified card views.",
+      "settings": {
+        "screen_reader_optimized": false,
+        "high_contrast": false,
+        "reduce_transparency": true,
+        "captions": true,
+        "audio_descriptions": false,
+        "sign_language": false,
+        "font_scale": 1.1,
+        "reduced_motion": true,
+        "enhanced_focus": true,
+        "tts_feedback": false,
+        "visual_alerts": false,
+        "simplified_interface": true
+      }
+    },
+    {
+      "id": "default",
+      "name": "Accessible Standard Baseline",
+      "category": "Universal",
+      "description": "Standard WCAG 2.2 AA compliant baseline with all assistive controls immediately accessible on-demand.",
+      "settings": {
+        "screen_reader_optimized": false,
+        "high_contrast": false,
+        "reduce_transparency": false,
+        "captions": false,
+        "audio_descriptions": false,
+        "sign_language": false,
+        "font_scale": 1.0,
+        "reduced_motion": false,
+        "enhanced_focus": true,
+        "tts_feedback": false,
+        "visual_alerts": false,
+        "simplified_interface": false
+      }
+    }
+  ]
+}

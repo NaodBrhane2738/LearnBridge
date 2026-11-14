@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ALX Savanna LMS — Concept: Media Accessibility | Powered by LearnBridge API</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Noto+Sans+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./savanna-lms.css">
+</head>
+<body>
+  <a class="skip-link" href="#lmsMainContent">Skip to course lesson content</a>
+
+  <!-- ARIA Live Region for Screen Readers -->
+  <div id="ariaAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;"></div>
+
+  <!-- Savanna Top Header -->
+  <header class="savanna-header" role="banner">
+    <div class="brand-section">
+      <a href="./index.html" class="brand-logo" aria-label="ALX Savanna LMS Home">
+        <span class="badge-alx">ALX</span>
+        <span>SAVANNA</span>
+      </a>
+      <div class="course-breadcrumbs" aria-label="Breadcrumb navigation">
+        <span>Curriculum</span>
+        <span aria-hidden="true">/</span>
+        <span>Track 2: Accessible Media</span>
+        <span aria-hidden="true">/</span>
+        <strong>Concept 04: Media Foundations</strong>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="api-badge" title="Active REST connection to LearnBridge API">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span>LearnBridge REST API: Connected</span>
+      </div>
+      <div class="user-profile-chip">
+        <div class="user-avatar" aria-hidden="true">S1</div>
+        <span>Student: <strong>savanna-student-1</strong></span>
+        <span class="badge-alx" id="profileChipLabel" style="background:#0f172a; color:#ffffff; font-size: 0.7rem;">loading</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Savanna LMS Layout -->
+  <div class="savanna-layout">
+    <!-- Curriculum Sidebar -->
+    <aside class="savanna-sidebar" aria-label="Curriculum Navigation">
+      <h2 class="sidebar-title">Track 2 Curriculum</h2>
+      <nav>
+        <ul class="curriculum-list">
+          <li>
+            <a href="#" class="curriculum-item" aria-current="false">
+              <span class="item-icon" aria-hidden="true">✓</span>
+              <span>01. Introduction to Digital Bridge</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="curriculum-item" aria-current="false">
+              <span class="item-icon" aria-hidden="true">✓</span>
+              <span>02. Universal Learning Principles</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="curriculum-item" aria-current="false">
+              <span class="item-icon" aria-hidden="true">✓</span>
+              <span>03. Ethiopian Accessibility Needs</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="curriculum-item active" aria-current="page">
+              <span class="item-icon" aria-hidden="true">▶</span>
+              <span>04. Accessible Media Foundations</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="curriculum-item" aria-current="false">
+              <span class="item-icon" aria-hidden="true">○</span>
+              <span>05. Multi-modal Delivery Systems</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="curriculum-item" aria-current="false">
+              <span class="item-icon" aria-hidden="true">○</span>
+              <span>06. Final Project & Submission</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Course Concept Content -->
+    <main class="savanna-main" id="lmsMainContent" role="main">
+      <article class="concept-header">
+        <div class="concept-tag">Concept 04 · Module 2</div>
+        <h1>Accessible Media & Learning Delivery</h1>
+        <p class="concept-lead">
+          Understanding how LearnBridge provides decoupled, universal accessibility infrastructure to existing LMS platforms like ALX Savanna.
+        </p>
+      </article>
+
+      <!-- Video Lesson Stage -->
+      <section class="video-wrapper" aria-label="Course video lesson">
+        <video id="lmsVideo" controls poster="../../media/sample-poster.svg" preload="metadata">
+          <source src="../../media/sample-lesson.mp4" type="video/mp4">
+          <p>Your browser does not support HTML5 video. <a href="../../media/sample-lesson.mp4">Download the video directly</a>.</p>
+        </video>
+
+        <!-- Live Dynamic Captions Overlay (Driven by LearnBridge API) -->
+        <div id="lmsCaptions" class="video-captions" hidden aria-live="off">
+          Captions powered by LearnBridge REST API
+        </div>
+
+        <!-- Live Ethiopian Sign Language Viewport (Driven by LearnBridge API) -->
+        <aside id="lmsInterpreter" class="video-interpreter" hidden aria-label="Ethiopian Sign Language interpreter window">
+          <div class="interpreter-title">Ethiopian Sign Language (ETSL)</div>
+          <video autoplay loop muted playsinline>
+            <source src="../../media/sample-interpreter.mp4" type="video/mp4">
+          </video>
+        </aside>
+
+        <!-- Accessibility Action Bar for Learner -->
+        <div class="video-controls" role="toolbar" aria-label="Lesson media accessibility controls">
+          <button type="button" class="video-btn" id="lmsCaptionsBtn">
+            <span aria-hidden="true">CC</span> Captions
+          </button>
+          <button type="button" class="video-btn" id="lmsInterpreterBtn">
+            <span aria-hidden="true">🤟</span> Sign Language
+          </button>
+          <button type="button" class="video-btn" id="lmsContrastBtn">
+            <span aria-hidden="true">◐</span> Contrast
+          </button>
+          <button type="button" class="video-btn" id="lmsFontBiggerBtn">
+            <span aria-hidden="true">A+</span> Enlarge Text
+          </button>
+          <button type="button" class="video-btn" id="lmsFontResetBtn">
+            <span aria-hidden="true">↺</span> Reset
+          </button>
+        </div>
+      </section>
+
+      <!-- Concept Lesson Body -->
+      <section class="concept-section">
+        <h2>Why External LMS Integration Matters</h2>
+        <p>
+          In traditional online learning, accessibility is often implemented as an afterthought—or locked inside a vendor's proprietary media player. If a learner requires bilingual Amharic and English captions, high-contrast text, or Ethiopian Sign Language interpretations, they are usually forced to use cumbersome third-party screen overlays or miss out entirely.
+        </p>
+
+        <div class="concept-callout">
+          <strong>Key Architectural Principle:</strong> LearnBridge operates as an <em>API-First Accessibility Layer</em>. The ALX Savanna LMS does not need to store medical diagnoses or invent assistive tools; it simply queries <code>GET /api/v1/accessibility/preferences</code> using the student's authenticated session, and receives the exact visual, auditory, and motor preferences to apply.
+        </div>
+
+        <h2>Multi-Modal Educational Formats</h2>
+        <p>
+          Under WCAG 2.2 Level AA requirements, all synchronous and asynchronous learning media must provide equivalent alternatives:
+        </p>
+        <ul style="padding-left: 1.5rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+          <li><strong>Captions:</strong> Synchronized text for learners who are Deaf or hard of hearing, available in Ethiopian national languages.</li>
+          <li><strong>Audio Description:</strong> Spoken narration of critical visual charts, diagrams, and physical gestures.</li>
+          <li><strong>Ethiopian Sign Language (ETSL):</strong> Native sign interpretation delivered via low-bandwidth video viewports.</li>
+          <li><strong>Cognitive Simplification:</strong> Clean, distraction-free typographic hierarchy with adjustable line spacing.</li>
+        </ul>
+
+        <h2>Knowledge Check</h2>
+        <p>
+          How does LearnBridge protect learner privacy when communicating with third-party LMS platforms?
+        </p>
+        <div style="background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
+          <p style="margin-bottom: 0.5rem; font-weight: 600;">Answer:</p>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">
+            LearnBridge stores strictly functional preferences (e.g. <code style="padding:2px 6px; border-radius:4px;">highContrast: true</code>, <code style="padding:2px 6px; border-radius:4px;">captionsEnabled: true</code>), never clinical diagnoses or disability labels. Third-party platforms receive only the styling and behavioral tokens needed to render an accessible experience.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Docked Live API Inspector Drawer -->
+  <aside class="api-inspector" id="apiInspector" aria-label="Live REST API Inspector">
+    <div class="inspector-header" id="inspectorToggle" role="button" tabindex="0" aria-expanded="true" aria-label="Toggle LearnBridge REST API Inspector panel">
+      <div class="inspector-title">
+        <span aria-hidden="true">⚡</span>
+        <span>LearnBridge REST API Inspector</span>
+      </div>
+      <span class="inspector-toggle-btn" aria-hidden="true" style="display:inline-block; min-width:28px; min-height:28px; line-height:28px; text-align:center;">▼</span>
+    </div>
+
+    <div class="inspector-body">
+      <div class="inspector-row">
+        <span class="inspector-label">Tenant ID:</span>
+        <span class="inspector-val">savanna-lms (Authenticated)</span>
+      </div>
+      <div class="inspector-row">
+        <span class="inspector-label">API Endpoint:</span>
+        <span class="inspector-val" id="inspectorEndpoint">GET /api/v1/accessibility/preferences</span>
+      </div>
+      <div class="inspector-row">
+        <span class="inspector-label">Status Code:</span>
+        <span class="inspector-val" id="inspectorStatus" style="color: #4ade80;">200 OK</span>
+      </div>
+      <div class="inspector-row">
+        <span class="inspector-label">Round-Trip Latency:</span>
+        <span class="inspector-val" id="inspectorLatency">8 ms</span>
+      </div>
+
+      <!-- Quick Profile Switcher to test live dynamic adaptations -->
+      <div class="profile-switcher">
+        <label for="inspectorProfileSelect">Simulate Profile Change on API:</label>
+        <select id="inspectorProfileSelect" class="profile-select">
+          <option value="deaf_hard_of_hearing">Deaf / Hard of Hearing (Captions & ETSL)</option>
+          <option value="low_vision">Low Vision (High Contrast & 125% Font)</option>
+          <option value="screen_reader">Screen Reader (Semantic ARIA Announcements)</option>
+          <option value="cognitive_accessible">Cognitive (Simplified Reading Layout)</option>
+          <option value="motor_accessible">Motor Accessible (Expanded Targets)</option>
+          <option value="default">Default (Baseline WCAG 2.2 AA)</option>
+        </select>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.25rem;">
+        <span class="inspector-label">Live JSON Payload:</span>
+        <button type="button" id="refetchApiBtn" class="video-btn" style="background:#1e293b; font-size:0.75rem; padding:2px 8px;">Re-fetch</button>
+      </div>
+      <pre class="inspector-code" id="inspectorPayload" tabindex="0" role="region" aria-label="JSON payload response">Connecting to REST API...</pre>
+    </div>
+  </aside>
+
+  <script src="./lms-client.js" defer></script>
+</body>
+</html>

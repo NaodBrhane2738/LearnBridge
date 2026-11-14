@@ -1,0 +1,32 @@
+{
+  "name": "learnbridge",
+  "version": "1.0.0",
+  "description": "[![WCAG 2.2 AA Verified](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA%20Verified-brightgreen)](#accessibility-audit--qa-status) [![Axe-Core Violations](https://img.shields.io/badge/Axe--Core%20Violations-0-success)](#automated-testing-results) [![Browsers Supported](https://img.shields.io/badge/Browsers-Chromium%20%7C%20Firefox%20%7C%20WebKit-blue)](#automated-testing-results) [![Platform Embed](https://img.shields.io/badge/Platform-ALX%20Savanna%20Ready-emerald)](#savanna-platform-integration)",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node qa/api-verification.js",
+    "test:api": "node qa/api-verification.js",
+    "test:e2e": "node qa/e2e-verification.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NaodBrhane2738/LearnBridge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/NaodBrhane2738/LearnBridge/issues"
+  },
+  "homepage": "https://github.com/NaodBrhane2738/LearnBridge#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0"
+  }
+}

@@ -191,7 +191,7 @@
   function setCaptions(enabled) {
     captionsEnabled = Boolean(enabled);
     captionsButton.setAttribute('aria-pressed', String(captionsEnabled));
-    captionsButton.setAttribute('aria-label', captionsEnabled ? 'Turn captions off (C)' : 'Turn captions on (C)');
+    captionsButton.setAttribute('aria-label', captionsEnabled ? 'CC: Turn captions off (C)' : 'CC: Turn captions on (C)');
     updateCaption();
     showToast(captionsEnabled ? `${currentLanguage === 'am' ? 'Amharic' : 'English'} captions on` : 'Captions turned off');
   }
@@ -199,7 +199,7 @@
   async function setAudioDescription(enabled) {
     descriptionEnabled = Boolean(enabled);
     descriptionButton.setAttribute('aria-pressed', String(descriptionEnabled));
-    descriptionButton.setAttribute('aria-label', descriptionEnabled ? 'Turn audio description off (D)' : 'Turn audio description on (D)');
+    descriptionButton.setAttribute('aria-label', descriptionEnabled ? 'AD: Turn audio description off (D)' : 'AD: Turn audio description on (D)');
     audioDescription.volume = video.volume;
 
     if (descriptionEnabled) {
@@ -481,7 +481,7 @@
     if (noteText) noteText.value = localStorage.getItem(noteKey) || '';
   } catch (err) {}
 
-  $('#takeNoteButton').addEventListener('click', () => {
+  $('#takeNoteButton')?.addEventListener('click', () => {
     if (noteDialog && typeof noteDialog.showModal === 'function') {
       noteDialog.showModal();
     } else {
@@ -489,7 +489,7 @@
     }
   });
 
-  $('#saveNoteButton').addEventListener('click', () => {
+  $('#saveNoteButton')?.addEventListener('click', () => {
     try {
       localStorage.setItem(noteKey, noteText.value.trim());
       if (noteDialog.open) noteDialog.close();
@@ -500,7 +500,7 @@
   });
 
   // Next Class Button
-  $('#nextClassButton').addEventListener('click', () => {
+  $('#nextClassButton')?.addEventListener('click', () => {
     const current = video.currentTime || 0;
     const next = segments.find(s => s.start > current + 0.3);
     if (!next) {
@@ -513,7 +513,7 @@
   });
 
   // Share and Bookmark Actions
-  $('#bookmarkButton').addEventListener('click', (e) => {
+  $('#bookmarkButton')?.addEventListener('click', (e) => {
     const btn = e.currentTarget;
     const marked = btn.classList.toggle('bookmarked');
     btn.setAttribute('aria-label', marked ? 'Remove lesson bookmark' : 'Bookmark this lesson');
@@ -521,7 +521,7 @@
     showToast(marked ? 'Lesson bookmarked.' : 'Bookmark removed.');
   });
 
-  $('#shareButton').addEventListener('click', async () => {
+  $('#shareButton')?.addEventListener('click', async () => {
     const shareData = {
       title: 'LearnBridge — Design for Every Mind',
       text: 'Explore accessible learning media with captions, audio description, and Ethiopian Sign Language.',
@@ -539,7 +539,7 @@
   });
 
   // Offline Lesson Pack Caching
-  $('#downloadPackButton').addEventListener('click', async () => {
+  $('#downloadPackButton')?.addEventListener('click', async () => {
     showToast('Caching lesson package for offline study...');
     try {
       if ('caches' in window) {
@@ -567,7 +567,7 @@
     }
   });
 
-  $('#helpButtonSecondary').addEventListener('click', () => {
+  $('#helpButtonSecondary')?.addEventListener('click', () => {
     showToast('Learning support connects with ALX mentors during Savanna integration.');
   });
 
@@ -593,5 +593,303 @@
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
   }
+
+  /* ========================================================
+     1. ACCESSIBLE ONBOARDING & 6-SECOND AUTOMATIC FALLBACK
+     ======================================================== */
+  const onboardingDialog = $('#onboardingDialog');
+  const onboardingAriaLive = $('#onboardingAriaLive');
+  const countdownSeconds = $('#countdownSeconds');
+  const onboardingProgressBar = $('#onboardingProgressBar');
+  const countdownLabel = $('#countdownLabel');
+  const pauseCountdownBtn = $('#pauseCountdownBtn');
+  const dismissOnboardingBtn = $('#dismissOnboardingBtn');
+  const submitOnboardingBtn = $('#submitOnboardingBtn');
+  const onboardingTriggerBtn = $('#onboardingTriggerBtn');
+  const heroOnboardingBtn = $('#heroOnboardingBtn');
+
+  let countdownRemaining = 6.0;
+  let countdownTimer = null;
+  let countdownInterval = null;
+  let countdownActive = false;
+
+  function announceOnboarding(msg) {
+    if (onboardingAriaLive) {
+      onboardingAriaLive.textContent = msg;
+    }
+  }
+
+  function pauseCountdown() {
+    countdownActive = false;
+    clearTimeout(countdownTimer);
+    clearInterval(countdownInterval);
+    if (countdownLabel) {
+      countdownLabel.textContent = 'Countdown paused. Select your preferred experience below.';
+    }
+    if (pauseCountdownBtn) {
+      pauseCountdownBtn.textContent = 'Paused';
+      pauseCountdownBtn.disabled = true;
+    }
+    if (onboardingProgressBar) {
+      onboardingProgressBar.style.width = '100%';
+      onboardingProgressBar.style.background = '#94a3b8';
+    }
+    announceOnboarding('Onboarding countdown paused. You can now select your preferred accessibility profile.');
+  }
+
+  function applyProfileSettings(profileId) {
+    switch (profileId) {
+      case 'screen_reader':
+        document.body.classList.add('screen-reader-mode', 'high-contrast');
+        showToast('Screen reader assistance enabled.');
+        break;
+      case 'low_vision':
+        document.body.classList.add('high-contrast');
+        document.documentElement.style.setProperty('--caption-scale', '1.3');
+        showToast('High contrast and enlarged text enabled.');
+        break;
+      case 'deaf_hard_of_hearing':
+        setCaptions(true);
+        setInterpreter(true);
+        showToast('Bilingual captions and Ethiopian Sign Language enabled.');
+        break;
+      case 'motor_accessible':
+        document.body.classList.add('motor-mode');
+        showToast('Keyboard navigation and expanded touch targets enabled.');
+        break;
+      case 'cognitive_accessible':
+        document.body.classList.add('reduce-motion', 'cognitive-mode');
+        showToast('Simplified distraction-free layout enabled.');
+        break;
+      case 'custom':
+        openPreferences();
+        break;
+      case 'default':
+      default:
+        showToast('Standard accessible profile loaded.');
+        break;
+    }
+
+    // Persist to REST API asynchronously
+    fetch('/api/v1/accessibility/preferences', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': 'lb_live_savanna_9842a1b7c'
+      },
+      body: JSON.stringify({
+        userId: 'local-learner',
+        profileId: profileId,
+        source: 'onboarding-wizard'
+      })
+    }).catch(() => {});
+  }
+
+  function triggerAutomaticFallback() {
+    countdownActive = false;
+    clearTimeout(countdownTimer);
+    clearInterval(countdownInterval);
+
+    // ZERO FALSE BLINDNESS DETECTION:
+    // Inform user politely that non-visual assistance was automatically enabled without diagnosing or labeling them.
+    applyProfileSettings('screen_reader');
+
+    if (onboardingDialog && onboardingDialog.open) {
+      onboardingDialog.close();
+    }
+    try {
+      localStorage.setItem('learnbridge_onboarding_done', 'true');
+    } catch (_) {}
+
+    announceOnboarding('Automatic screen reader assistance enabled after no interaction. You can change this anytime in Settings.');
+    showToast('Automatic screen reader assistance enabled.');
+  }
+
+  function startOnboardingCountdown() {
+    if (!onboardingDialog) return;
+    countdownRemaining = 6.0;
+    countdownActive = true;
+    if (onboardingProgressBar) {
+      onboardingProgressBar.style.width = '100%';
+      onboardingProgressBar.style.background = '#16a34a';
+    }
+    if (countdownSeconds) countdownSeconds.textContent = '6';
+
+    announceOnboarding('Welcome to LearnBridge. Accessible onboarding will automatically activate non-visual assistance in 6 seconds unless you press any key or interact with the screen.');
+
+    const stepMs = 100;
+    countdownInterval = setInterval(() => {
+      countdownRemaining = Math.max(0, countdownRemaining - (stepMs / 1000));
+      if (countdownSeconds) {
+        countdownSeconds.textContent = String(Math.ceil(countdownRemaining));
+      }
+      if (onboardingProgressBar) {
+        const pct = (countdownRemaining / 6.0) * 100;
+        onboardingProgressBar.style.width = `${pct}%`;
+      }
+      if (countdownRemaining <= 0) {
+        clearInterval(countdownInterval);
+        triggerAutomaticFallback();
+      }
+    }, stepMs);
+
+    // Cancel on ANY explicit user interaction (keydown, click, touch, mouse wheel)
+    const cancelInteractions = ['keydown', 'pointerdown', 'mousedown', 'touchstart', 'wheel'];
+    const handleInteraction = () => {
+      pauseCountdown();
+      cancelInteractions.forEach(ev => {
+        window.removeEventListener(ev, handleInteraction, true);
+        document.removeEventListener(ev, handleInteraction, true);
+        if (onboardingDialog) onboardingDialog.removeEventListener(ev, handleInteraction, true);
+      });
+    };
+    cancelInteractions.forEach(ev => {
+      window.addEventListener(ev, handleInteraction, { capture: true, once: true });
+      document.addEventListener(ev, handleInteraction, { capture: true, once: true });
+      if (onboardingDialog) onboardingDialog.addEventListener(ev, handleInteraction, { capture: true, once: true });
+    });
+  }
+
+  function showOnboarding(forceInteractive = false) {
+    if (!onboardingDialog || typeof onboardingDialog.showModal !== 'function') return;
+    try {
+      if (!onboardingDialog.open) {
+        onboardingDialog.showModal();
+      }
+    } catch (_) {}
+    if (forceInteractive) {
+      pauseCountdown();
+    } else {
+      startOnboardingCountdown();
+    }
+  }
+
+  pauseCountdownBtn?.addEventListener('click', pauseCountdown);
+
+  dismissOnboardingBtn?.addEventListener('click', () => {
+    pauseCountdown();
+    if (onboardingDialog.open) onboardingDialog.close();
+    try { localStorage.setItem('learnbridge_onboarding_done', 'true'); } catch (_) {}
+  });
+
+  submitOnboardingBtn?.addEventListener('click', () => {
+    pauseCountdown();
+    const checked = $('input[name="onboardingChoice"]:checked', onboardingDialog);
+    const choice = checked ? checked.value : 'default';
+    applyProfileSettings(choice);
+    if (onboardingDialog.open) onboardingDialog.close();
+    try { localStorage.setItem('learnbridge_onboarding_done', 'true'); } catch (_) {}
+  });
+
+  onboardingTriggerBtn?.addEventListener('click', () => showOnboarding(true));
+  heroOnboardingBtn?.addEventListener('click', () => showOnboarding(true));
+
+  // Check if initial onboarding should be shown
+  try {
+    const done = localStorage.getItem('learnbridge_onboarding_done');
+    if (!done) {
+      showOnboarding(false);
+    }
+  } catch (_) {}
+
+
+  /* ========================================================
+     2. 5-LANGUAGE LOCALIZATION ENGINE (REST API INTEGRATION)
+     ======================================================== */
+  const langSelect = $('#langSelect');
+  let loadedTranslations = {};
+
+  async function loadTranslations(langCode) {
+    try {
+      const res = await fetch(`/api/v1/localization/translations/${langCode}`);
+      if (!res.ok) throw new Error('Failed to load translations');
+      const json = await res.json();
+      if (json.success && json.data) {
+        loadedTranslations[langCode] = json.data.translations;
+        applyI18n(langCode, json.data.translations);
+      }
+    } catch (err) {
+      console.warn('[LearnBridge I18n] Translation fetch failed, using fallback:', err);
+    }
+  }
+
+  function applyI18n(langCode, dictionary) {
+    document.documentElement.lang = langCode;
+    document.documentElement.dir = (langCode === 'ar' || langCode === 'he') ? 'rtl' : 'ltr';
+
+    $$('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dictionary[key]) {
+        el.textContent = dictionary[key];
+      }
+    });
+
+    // Update main video captions / transcript
+    setLanguage(langCode);
+
+    try { localStorage.setItem('learnbridge_lang', langCode); } catch (_) {}
+  }
+
+  langSelect?.addEventListener('change', (e) => {
+    loadTranslations(e.target.value);
+  });
+
+  // Restore saved language
+  try {
+    const savedLang = localStorage.getItem('learnbridge_lang');
+    if (savedLang && langSelect) {
+      langSelect.value = savedLang;
+      loadTranslations(savedLang);
+    }
+  } catch (_) {}
+
+
+  /* ========================================================
+     3. LIVE REST API SANDBOX ENGINE
+     ======================================================== */
+  const sandboxEndpointSelect = $('#sandboxEndpointSelect');
+  const sandboxExecuteBtn = $('#sandboxExecuteBtn');
+  const sandboxResponsePre = $('#sandboxResponsePre');
+  const sandboxCurlCmd = $('#sandboxCurlCmd');
+  const sandboxLatency = $('#sandboxLatency');
+
+  function updateSandboxCurl() {
+    const ep = sandboxEndpointSelect?.value || '/api/v1/health';
+    if (sandboxCurlCmd) {
+      sandboxCurlCmd.textContent = `curl -H "x-api-key: lb_live_savanna_9842a1b7c" http://127.0.0.1:4173${ep}`;
+    }
+  }
+
+  async function executeSandboxRequest() {
+    const ep = sandboxEndpointSelect?.value || '/api/v1/health';
+    if (sandboxResponsePre) sandboxResponsePre.textContent = 'Sending request to LearnBridge REST API...';
+    if (sandboxLatency) sandboxLatency.textContent = '...';
+
+    const start = performance.now();
+    try {
+      const res = await fetch(ep, {
+        headers: {
+          'x-api-key': 'lb_live_savanna_9842a1b7c',
+          'Accept': 'application/json'
+        }
+      });
+      const latency = Math.round(performance.now() - start);
+      if (sandboxLatency) sandboxLatency.textContent = `${latency} ms · HTTP ${res.status}`;
+
+      const json = await res.json();
+      if (sandboxResponsePre) {
+        sandboxResponsePre.textContent = JSON.stringify(json, null, 2);
+      }
+    } catch (err) {
+      const latency = Math.round(performance.now() - start);
+      if (sandboxLatency) sandboxLatency.textContent = `${latency} ms · Error`;
+      if (sandboxResponsePre) {
+        sandboxResponsePre.textContent = JSON.stringify({ error: err.message, status: 'offline/error' }, null, 2);
+      }
+    }
+  }
+
+  sandboxEndpointSelect?.addEventListener('change', updateSandboxCurl);
+  sandboxExecuteBtn?.addEventListener('click', executeSandboxRequest);
 
 })();
