@@ -73,8 +73,24 @@ router.get('/jobs', (req, res) => {
 router.get('/jobs/recommendations', (req, res) => {
   try {
     const candidateId = req.query.candidateId || req.headers['x-candidate-id'] || 'ethio-candidate-01';
-    const recs = recommendationsEngine.getRecommendationsForCandidate(candidateId);
+    const limit = req.query.limit ? parseInt(req.query.limit) : 50;
+    const recs = recommendationsEngine.getRecommendationsForCandidate(candidateId, { limit });
     return jsonSuccess(res, recs, { candidateId });
+  } catch (err) {
+    return jsonError(res, 500, "Error fetching recommendations: " + err.message);
+  }
+});
+
+/**
+ * POST /jobs/recommendations
+ * Explainable recommendations computed directly from custom candidate profile / parsed CV
+ */
+router.post('/jobs/recommendations', (req, res) => {
+  try {
+    const candidateProfile = req.body.candidateProfile || req.body;
+    const limit = req.body.limit ? parseInt(req.body.limit) : 50;
+    const recs = recommendationsEngine.getRecommendationsForCandidate(candidateProfile, { limit });
+    return jsonSuccess(res, recs);
   } catch (err) {
     return jsonError(res, 500, "Error fetching recommendations: " + err.message);
   }

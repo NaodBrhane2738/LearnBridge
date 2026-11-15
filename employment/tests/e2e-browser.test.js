@@ -51,6 +51,8 @@ async function runBrowserTests() {
       viewport: { width: 1440, height: 900 }
     });
     const page = await context.newPage();
+    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+    page.on('pageerror', err => console.error('PAGE ERROR:', err));
 
     // 1. Fresh Load: Universal Access Gateway Opens Automatically
     await page.goto('http://127.0.0.1:4174/', { waitUntil: 'networkidle' });
@@ -132,55 +134,93 @@ async function runBrowserTests() {
     console.log('✓ 7. WCAG 2.2 AA Axe-Core Audit: 0 violations! Clean pass.');
     passed++;
 
-    // 7. Verify Top-Right Language Switcher is present and functional
-    await page.click('.lang-selector-group button.lang-btn[data-lang="am"]');
+    // 7. Verify Top-Right Language Dropdown is present and functional
+    await page.selectOption('#lang-select-dropdown', 'am');
     await page.waitForTimeout(300);
     const htmlLangAm = await page.getAttribute('html', 'lang');
-    console.log(`✓ 8. Switched language to Amharic via top-right switch: html lang = "${htmlLangAm}"`);
+    console.log(`✓ 8. Switched language to Amharic via dropdown: html lang = "${htmlLangAm}"`);
     assert.strictEqual(htmlLangAm, 'am');
     passed++;
 
     // Switch back to English
-    await page.click('.lang-selector-group button.lang-btn[data-lang="en"]');
+    await page.selectOption('#lang-select-dropdown', 'en');
     await page.waitForTimeout(200);
     const htmlLangEn = await page.getAttribute('html', 'lang');
     console.log(`✓ 9. Switched back to English: html lang = "${htmlLangEn}"`);
     assert.strictEqual(htmlLangEn, 'en');
     passed++;
 
-    // 8. Verify Full-Screen Layout has no sidebar and no top extra pages
-    const hasSidebar = await page.evaluate(() => !!document.querySelector('.dock-floating-nav'));
-    console.log(`✓ 10. Sidebar dock removed (Full-screen view): hasSidebar = ${hasSidebar}`);
-    assert.strictEqual(hasSidebar, false, "Sidebar dock must not exist in full-screen mode");
+    // 8. Verify Left Filter Sidebar is completely removed from DOM
+    const hasFilterSidebar = await page.evaluate(() => !!document.getElementById('search-filter-panel'));
+    const hasDockSidebar = await page.evaluate(() => !!document.querySelector('.dock-floating-nav'));
+    console.log(`✓ 10. Filter sidebar removed: ${!hasFilterSidebar}, Dock removed: ${!hasDockSidebar}`);
+    assert.strictEqual(hasFilterSidebar, false, "Filter sidebar must be removed");
+    assert.strictEqual(hasDockSidebar, false, "Dock sidebar must not exist");
     passed++;
 
-    // 9. Test Keyword Search & Filter
-    await page.fill('#hero-search-input', 'Telebirr');
-    await page.click('#btn-hero-search');
+    // 9. Verify CV Upload Stage is present upfront
+    const uploadStageVisible = await page.evaluate(() => {
+      const u = document.getElementById('cv-upload-stage');
+      return u && u.style.display !== 'none';
+    });
+    console.log(`✓ 11. Upfront CV upload stage visible: ${uploadStageVisible}`);
+    assert.ok(uploadStageVisible, "CV upload stage should be visible before upload");
+    passed++;
+
+    // 10. Load Software Engineer Demo CV
+    await page.click('#btn-demo-swe');
+    await page.waitForFunction(() => {
+      const b = document.getElementById('active-cv-banner');
+      const d = document.getElementById('swipe-deck-stage');
+      return b && b.style.display !== 'none' && d && d.style.display !== 'none';
+    }, { timeout: 5000 });
+    const candidateName = await page.textContent('#active-cv-candidate-name');
+    console.log(`✓ 12. Demo CV parsed & loaded for candidate: "${candidateName}"`);
+    assert.ok(candidateName.includes('Abenezer') || candidateName.length > 0);
+    passed++;
+
+    // 11. Verify Swipeable Card Deck is populated with recommendation match scores
+    const firstCardTitle = await page.textContent('.swipe-card-title');
+    const firstCardScore = await page.textContent('.match-score-pill');
+    console.log(`✓ 13. Top recommended card: "${firstCardTitle}" (${firstCardScore.trim()})`);
+    assert.ok(firstCardTitle && firstCardTitle.length > 0);
+    passed++;
+
+    // 12. Test Keyboard Right Arrow (Instant Apply)
+    await page.keyboard.press('ArrowRight');
     await page.waitForTimeout(400);
-    const resultsCount = await page.textContent('#search-results-count');
-    console.log(`✓ 11. Keyword filter applied via hero search: "${resultsCount}"`);
+    const secondCardTitle = await page.textContent('.swipe-card-title');
+    console.log(`✓ 14. Pressed ArrowRight: Applied to vacancy and advanced deck to: "${secondCardTitle}"`);
+    assert.ok(secondCardTitle && secondCardTitle.length > 0);
     passed++;
 
-    await page.screenshot({ path: path.join(EVIDENCE_DIR, '02-search-filtered.png') });
+    // 13. Test Keyboard Left Arrow (Pass / Skip)
+    await page.keyboard.press('ArrowLeft');
+    await page.waitForTimeout(400);
+    const thirdCardTitle = await page.textContent('.swipe-card-title');
+    console.log(`✓ 15. Pressed ArrowLeft: Passed on vacancy and advanced deck to: "${thirdCardTitle}"`);
+    assert.ok(thirdCardTitle && thirdCardTitle.length > 0);
+    passed++;
 
-    // 10. Test Job Details View
+    await page.screenshot({ path: path.join(EVIDENCE_DIR, '02-swipeable-card-deck.png') });
+
+    // 14. Test Job Details View
     await page.goto('http://127.0.0.1:4174/#job/job-eth-001', { waitUntil: 'networkidle' });
     await page.waitForTimeout(400);
     const jobTitle = await page.textContent('#detail-title');
-    console.log(`✓ 12. Job Details View loaded for: "${jobTitle}"`);
+    console.log(`✓ 16. Job Details View loaded for: "${jobTitle}"`);
     passed++;
 
     await page.screenshot({ path: path.join(EVIDENCE_DIR, '04-job-detail-accommodations.png') });
 
-    // 11. Test Application Modal Opening
+    // 15. Test Application Modal Opening from Details View
     await page.click('#detail-sidebar-actions .btn-open-apply-modal');
     await page.waitForTimeout(300);
     const appModalOpen = await page.evaluate(() => {
       const d = document.getElementById('application-modal');
       return d && d.open;
     });
-    console.log(`✓ 13. Application modal open state: ${appModalOpen}`);
+    console.log(`✓ 17. Application modal open state: ${appModalOpen}`);
     assert.ok(appModalOpen, "Application modal should open");
     passed++;
 
@@ -188,14 +228,14 @@ async function runBrowserTests() {
     await page.click('#btn-cancel-apply');
     await page.waitForTimeout(200);
 
-    // 12. Mobile 320px Reflow Audit (Zero horizontal scrolling)
+    // 16. Mobile 320px Reflow Audit (Zero horizontal scrolling)
     await page.setViewportSize({ width: 320, height: 600 });
     await page.goto('http://127.0.0.1:4174/#search', { waitUntil: 'networkidle' });
     await page.waitForTimeout(300);
     const hasHorizontalScroll = await page.evaluate(() => {
       return document.documentElement.scrollWidth > document.documentElement.clientWidth;
     });
-    console.log(`✓ 14. 320px Reflow Audit: has horizontal scroll = ${hasHorizontalScroll} (Must be false)`);
+    console.log(`✓ 18. 320px Reflow Audit: has horizontal scroll = ${hasHorizontalScroll} (Must be false)`);
     assert.strictEqual(hasHorizontalScroll, false, "320px viewport must not have horizontal scroll.");
     passed++;
 

@@ -130,6 +130,14 @@ class AccessibilityManager {
   }
 
   buildElementSpeechText(el) {
+    // 0. Swipe Card item
+    if (el.classList.contains('swipe-card')) {
+      const title = el.querySelector('.swipe-card-title')?.innerText || '';
+      const employer = el.querySelector('.swipe-card-employer')?.innerText || '';
+      const score = el.querySelector('.match-score-pill')?.innerText || '';
+      return `Swipeable job opportunity: ${title} at ${employer}. ${score}. Press Right Arrow on keyboard to apply with CV, Left Arrow to pass.`;
+    }
+
     // 1. Job Card item
     if (el.classList.contains('job-card')) {
       const title = el.querySelector('.job-card-title')?.innerText || '';

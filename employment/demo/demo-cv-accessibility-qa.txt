@@ -1,0 +1,27 @@
+Selamawit Kebede
+Email: selamawit.kebede@learnbridge.et
+Phone: +251 92 987 6543
+Location: Addis Ababa, Ethiopia
+
+PROFESSIONAL SUMMARY
+Senior Quality Assurance & Accessibility Specialist with 4+ years of dedicated expertise auditing and testing digital web platforms against WCAG 2.2 AA/AAA guidelines, screen readers (NVDA, VoiceOver), and automated accessibility scanners (axe-core, Playwright).
+
+EDUCATION
+B.Sc. in Software Engineering — Addis Ababa Science and Technology University (AASTU) (2022)
+Certified Professional in Web Accessibility (CPWA) (2023)
+
+CORE COMPETENCIES & TECHNICAL SKILLS
+- Accessibility & A11y: WCAG 2.2, axe-core, NVDA, VoiceOver, HTML/ARIA Semantics, Screen Reader Compatibility
+- Testing & Automation: Playwright, End-to-End browser testing, Regression testing, Cross-browser QA
+- Web Technologies: JavaScript, React, CSS, HTML5, REST APIs, Git
+- Spoken & Sign Languages: Amharic (Native), English (Fluent), Ethiopian Sign Language (ETSL) (Conversational)
+
+PROFESSIONAL EXPERIENCE
+Lead Accessibility QA Analyst — Ethio Digital Inclusion Initiative (2023 - Present)
+- Performed rigorous WCAG 2.2 accessibility audits and screen reader verification using NVDA and VoiceOver.
+- Integrated automated axe-core scanning pipelines into continuous integration test suites with Playwright.
+- Trained engineering teams on ARIA live regions, focus trapping, and accessible color contrast.
+
+QA Automation Engineer — Horn Technologies (2022 - 2023)
+- Authored Playwright end-to-end regression test scripts for web applications.
+- Documented and resolved accessibility barriers across mobile and desktop browser environments.

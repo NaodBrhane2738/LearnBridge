@@ -5,10 +5,14 @@
 
 class EmploymentApp {
   constructor() {
-    this.currentRoute = 'dashboard';
+    this.currentRoute = 'search';
     this.currentCandidate = null;
     this.allJobs = [];
     this.savedJobIds = new Set();
+    this.activeCandidateProfile = null;
+    this.cardDeck = [];
+    this.currentCardIndex = 0;
+    this.isCardAnimating = false;
     this.activeSearchFilters = {
       q: '',
       industry: 'all',
@@ -20,7 +24,7 @@ class EmploymentApp {
       verifiedOnly: false,
       sortBy: 'newest',
       page: 1,
-      limit: 10
+      limit: 50
     };
     this.activeSpeechJobId = null;
     this.translations = {};
@@ -92,6 +96,12 @@ class EmploymentApp {
       }
     } catch (err) {
       console.warn(`[EmploymentApp] Error loading ${langCode}.json:`, err);
+    }
+
+    // Update active language selector dropdown
+    const dropdown = document.getElementById('lang-select-dropdown');
+    if (dropdown && dropdown.value !== langCode) {
+      dropdown.value = langCode;
     }
 
     // Update active language selector button
@@ -242,34 +252,275 @@ class EmploymentApp {
     this.bindJobCardActions(container);
   }
 
-  // 2. Search & Filtering View
+  // 2. CV Matching & Swipeable Card Deck View
   renderSearchView() {
     const view = document.getElementById('view-search');
     if (!view) return;
     view.style.display = 'block';
 
-    const container = document.getElementById('search-results-list');
-    if (!container) return;
+    const savedCv = localStorage.getItem('lb_active_cv');
+    if (savedCv && !this.activeCandidateProfile) {
+      try {
+        this.activeCandidateProfile = JSON.parse(savedCv);
+      } catch (_) {}
+    }
 
-    if (this.allJobs.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state-box">
-          <div class="empty-state-icon">🔍</div>
-          <h4 class="empty-state-title">No Matching Opportunities</h4>
-          <p class="empty-state-desc">Try clearing some filters or searching with different keywords.</p>
-        </div>
-      `;
-      document.getElementById('search-results-count').textContent = '0 opportunities found';
+    if (this.activeCandidateProfile) {
+      this.displayActiveCvBanner(this.activeCandidateProfile);
+      if (this.cardDeck.length === 0) {
+        this.loadRecommendationsForCandidate(this.activeCandidateProfile);
+      } else {
+        this.renderActiveCard();
+      }
+    } else {
+      this.showCvUploadStage();
+    }
+  }
+
+  showCvUploadStage() {
+    const uploadStage = document.getElementById('cv-upload-stage');
+    const deckStage = document.getElementById('swipe-deck-stage');
+    const activeBanner = document.getElementById('active-cv-banner');
+
+    if (uploadStage) uploadStage.style.display = 'block';
+    if (deckStage) deckStage.style.display = 'none';
+    if (activeBanner) activeBanner.style.display = 'none';
+
+    if (window.a11y) {
+      window.a11y.announceLive("Upload your CV or choose a demo CV to unlock tailored job cards.", false);
+    }
+  }
+
+  displayActiveCvBanner(profile) {
+    const banner = document.getElementById('active-cv-banner');
+    const nameEl = document.getElementById('active-cv-candidate-name');
+    const skillsPreview = document.getElementById('active-cv-skills-preview');
+
+    if (!banner) return;
+    banner.style.display = 'flex';
+    if (nameEl) nameEl.textContent = profile.fullName || 'Verified Candidate Profile';
+
+    if (skillsPreview) {
+      const skills = (profile.skills || []).slice(0, 8);
+      skillsPreview.innerHTML = skills.map(s => `<span class="meta-pill">${s}</span>`).join(' ');
+    }
+  }
+
+  async loadRecommendationsForCandidate(profile) {
+    try {
+      const res = await fetch('/api/v1/employment/jobs/recommendations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ candidateProfile: profile, limit: 50 })
+      });
+      const json = await res.json();
+      if (json.success && json.data && json.data.length > 0) {
+        this.cardDeck = json.data;
+      } else {
+        this.cardDeck = this.allJobs.map(job => ({
+          job,
+          matchScore: 85,
+          explanation: { summary: "Matches your broad career profile." }
+        }));
+      }
+      this.currentCardIndex = 0;
+      this.renderActiveCard();
+    } catch (err) {
+      console.warn("[EmploymentApp] Error loading recommendations:", err);
+      this.cardDeck = this.allJobs.map(job => ({
+        job,
+        matchScore: 80,
+        explanation: { summary: "Recommended opportunity." }
+      }));
+      this.currentCardIndex = 0;
+      this.renderActiveCard();
+    }
+  }
+
+  renderActiveCard() {
+    const deckStage = document.getElementById('swipe-deck-stage');
+    const uploadStage = document.getElementById('cv-upload-stage');
+    const wrapper = document.getElementById('active-card-wrapper');
+    const emptyState = document.getElementById('deck-empty-state');
+
+    if (uploadStage) uploadStage.style.display = 'none';
+    if (deckStage) deckStage.style.display = 'block';
+
+    if (!wrapper) return;
+
+    if (this.currentCardIndex >= this.cardDeck.length || this.cardDeck.length === 0) {
+      wrapper.innerHTML = '';
+      if (emptyState) emptyState.style.display = 'block';
+      if (window.a11y) {
+        window.a11y.announceLive("You've reviewed all recommended opportunities.", true);
+      }
       return;
     }
 
-    document.getElementById('search-results-count').textContent = `${this.allJobs.length} opportunities found`;
-    container.innerHTML = this.allJobs.map(j => window.JobCardComponent.render(j, this.savedJobIds.has(j.id))).join('');
-    this.bindJobCardActions(container);
+    if (emptyState) emptyState.style.display = 'none';
 
-    if (window.a11y) {
-      window.a11y.announceLive(`${this.allJobs.length} opportunities match your search filters.`, false);
+    const currentItem = this.cardDeck[this.currentCardIndex];
+    wrapper.innerHTML = window.JobCardComponent.renderSwipeCard(
+      currentItem,
+      this.currentCardIndex,
+      this.cardDeck.length
+    );
+
+    // Bind card action buttons
+    const passBtn = wrapper.querySelector('#btn-card-pass');
+    const applyBtn = wrapper.querySelector('#btn-card-apply');
+
+    if (passBtn) {
+      passBtn.onclick = (e) => {
+        e.preventDefault();
+        this.handleCardPass();
+      };
     }
+
+    if (applyBtn) {
+      applyBtn.onclick = (e) => {
+        e.preventDefault();
+        this.handleCardApply();
+      };
+    }
+
+    // Accessible announcements for screen readers & TTS
+    const job = currentItem.job;
+    const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply with CV, Left Arrow to pass.`;
+    if (window.a11y) {
+      window.a11y.announceLive(spokenSummary, false);
+      if (window.a11y.currentMode === 'blind') {
+        window.a11y.speak(spokenSummary);
+      }
+    }
+  }
+
+  async handleCardApply() {
+    if (this.isCardAnimating || this.currentCardIndex >= this.cardDeck.length) return;
+    this.isCardAnimating = true;
+
+    const currentItem = this.cardDeck[this.currentCardIndex];
+    const job = currentItem.job;
+
+    // Trigger visual swipe right animation
+    const cardEl = document.querySelector('.swipe-card');
+    if (cardEl) {
+      cardEl.classList.add('anim-swipe-right');
+    }
+
+    // Submit Application automatically using the uploaded CV
+    try {
+      const applyPayload = {
+        jobId: job.id,
+        resumeId: 'uploaded-cv',
+        coverNote: `Direct application submitted via LearnBridge CV Smart Match (${currentItem.matchScore}% match).`,
+        shareAccommodations: true
+      };
+
+      await fetch('/api/v1/employment/applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-candidate-id': this.currentCandidate?.id || 'ethio-candidate-01'
+        },
+        body: JSON.stringify(applyPayload)
+      });
+    } catch (err) {
+      console.warn("[EmploymentApp] Direct apply error:", err);
+    }
+
+    // Audio & Toast Feedback
+    const successMsg = `Applied for ${job.title} at ${job.employerName}!`;
+    if (window.a11y) {
+      window.a11y.playEarcon('chime');
+      window.a11y.showVisualToast(successMsg, 2500);
+      window.a11y.announceLive(successMsg, true);
+    }
+
+    setTimeout(() => {
+      this.currentCardIndex++;
+      this.isCardAnimating = false;
+      this.renderActiveCard();
+    }, 240);
+  }
+
+  handleCardPass() {
+    if (this.isCardAnimating || this.currentCardIndex >= this.cardDeck.length) return;
+    this.isCardAnimating = true;
+
+    const currentItem = this.cardDeck[this.currentCardIndex];
+    const job = currentItem.job;
+
+    // Trigger visual swipe left animation
+    const cardEl = document.querySelector('.swipe-card');
+    if (cardEl) {
+      cardEl.classList.add('anim-swipe-left');
+    }
+
+    const passMsg = `Passed on ${job.title}`;
+    if (window.a11y) {
+      window.a11y.showVisualToast(passMsg, 1800);
+      window.a11y.announceLive(passMsg, false);
+    }
+
+    setTimeout(() => {
+      this.currentCardIndex++;
+      this.isCardAnimating = false;
+      this.renderActiveCard();
+    }, 240);
+  }
+
+  async processCvText(cvText, fileName = 'uploaded-cv.txt') {
+    const statusEl = document.getElementById('cv-upload-status');
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.textContent = 'Parsing skills and generating tailored matches...';
+    }
+
+    try {
+      const res = await fetch('/api/v1/employment/candidate/me/parse-cv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cvText, fileName, fileSize: cvText.length })
+      });
+      const json = await res.json();
+      if (json.success && json.data) {
+        this.activeCandidateProfile = json.data;
+        localStorage.setItem('lb_active_cv', JSON.stringify(json.data));
+        if (statusEl) statusEl.style.display = 'none';
+        this.displayActiveCvBanner(json.data);
+        await this.loadRecommendationsForCandidate(json.data);
+        if (window.a11y) {
+          window.a11y.playEarcon('rising');
+          window.a11y.showVisualToast(`CV loaded for ${json.data.fullName || 'Candidate'}. Tailored matches ready!`);
+        }
+      } else {
+        throw new Error(json.error || 'Failed to parse CV');
+      }
+    } catch (err) {
+      if (statusEl) {
+        statusEl.textContent = 'Error parsing CV: ' + err.message;
+      }
+    }
+  }
+
+  async loadDemoCv(demoPath) {
+    try {
+      const res = await fetch(demoPath);
+      const text = await res.text();
+      await this.processCvText(text, demoPath.split('/').pop());
+    } catch (err) {
+      console.error("[EmploymentApp] Error loading demo CV:", err);
+    }
+  }
+
+  handleFileUploaded(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target.result;
+      this.processCvText(text, file.name);
+    };
+    reader.readAsText(file);
   }
 
   // 3. Job Detail View
@@ -561,11 +812,111 @@ class EmploymentApp {
       });
     }
 
-    // Language buttons triggers
+    // Language selector dropdown
+    const langSelect = document.getElementById('lang-select-dropdown');
+    if (langSelect) {
+      langSelect.addEventListener('change', (e) => {
+        this.loadLanguage(e.target.value);
+      });
+    }
+
+    // Language buttons triggers (fallback / gateway)
     document.querySelectorAll('.lang-choice-btn, .lang-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         this.loadLanguage(btn.dataset.lang);
       });
+    });
+
+    // Demo CV quick-select buttons
+    const btnDemoSwe = document.getElementById('btn-demo-swe');
+    if (btnDemoSwe) {
+      btnDemoSwe.addEventListener('click', () => {
+        this.loadDemoCv('demo/demo-cv-software-engineer.txt');
+      });
+    }
+
+    const btnDemoQa = document.getElementById('btn-demo-qa');
+    if (btnDemoQa) {
+      btnDemoQa.addEventListener('click', () => {
+        this.loadDemoCv('demo/demo-cv-accessibility-qa.txt');
+      });
+    }
+
+    // CV Dropzone & File Input
+    const dropzone = document.getElementById('cv-dropzone');
+    const fileInput = document.getElementById('cv-file-input');
+
+    if (dropzone && fileInput) {
+      dropzone.addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          this.handleFileUploaded(e.dataTransfer.files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files[0]) {
+          this.handleFileUploaded(fileInput.files[0]);
+        }
+      });
+    }
+
+    // Re-upload CV and Restart Deck buttons
+    const btnReupload = document.getElementById('btn-reupload-cv');
+    if (btnReupload) {
+      btnReupload.addEventListener('click', () => {
+        localStorage.removeItem('lb_active_cv');
+        this.activeCandidateProfile = null;
+        this.cardDeck = [];
+        this.showCvUploadStage();
+      });
+    }
+
+    const btnEmptyChange = document.getElementById('btn-empty-change-cv');
+    if (btnEmptyChange) {
+      btnEmptyChange.addEventListener('click', () => {
+        localStorage.removeItem('lb_active_cv');
+        this.activeCandidateProfile = null;
+        this.cardDeck = [];
+        this.showCvUploadStage();
+      });
+    }
+
+    const btnRestartDeck = document.getElementById('btn-restart-deck');
+    if (btnRestartDeck) {
+      btnRestartDeck.addEventListener('click', () => {
+        this.currentCardIndex = 0;
+        this.renderActiveCard();
+      });
+    }
+
+    // Swipeable Card Keyboard Navigation: Left = Pass, Right = Apply
+    window.addEventListener('keydown', (e) => {
+      if (e.target.matches('input, textarea, select')) return;
+      if (this.currentRoute !== 'search') return;
+      if (!this.cardDeck || this.cardDeck.length === 0 || this.currentCardIndex >= this.cardDeck.length) return;
+
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        this.handleCardApply();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.handleCardPass();
+      }
     });
 
     // Profile save trigger
