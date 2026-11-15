@@ -1,5 +1,16 @@
 [
   {
+    "id": "rep-1794744349339",
+    "status": "pending",
+    "createdAt": "2026-11-15T12:05:49.339Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
     "id": "rep-1794728056824",
     "status": "pending",
     "createdAt": "2026-11-15T07:34:16.824Z",

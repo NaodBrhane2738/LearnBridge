@@ -33,18 +33,15 @@ class EmploymentApp {
       window.a11y.init();
     }
 
-    // 2. Load Localization Dictionary
-    await this.loadLanguage(localStorage.getItem('lb_emp_lang') || 'en');
+    // 2. Load Localization Dictionary (check shared player preferences first)
+    const initialLang = localStorage.getItem('lb_emp_lang') || localStorage.getItem('learnbridge_lang') || 'en';
+    await this.loadLanguage(initialLang);
 
-    // 3. Load Candidate & Data
+    // 3. Load Candidate & Initial Opportunities
     await this.loadInitialData();
 
-    // 4. Initialize Subcomponents
+    // 4. Initialize Application Wizard Modal
     if (window.applicationModal) window.applicationModal.init();
-    if (window.cvParserModal) window.cvParserModal.init();
-    if (window.signLanguagePlayer) await window.signLanguagePlayer.init();
-    if (window.atsManager) await window.atsManager.init();
-    if (window.adminManager) await window.adminManager.init();
 
     // 5. Setup Routing & Events
     this.bindGlobalEvents();
@@ -84,6 +81,7 @@ class EmploymentApp {
   async loadLanguage(langCode) {
     this.currentLang = langCode;
     localStorage.setItem('lb_emp_lang', langCode);
+    localStorage.setItem('learnbridge_lang', langCode);
     document.documentElement.lang = langCode;
 
     try {
@@ -102,6 +100,10 @@ class EmploymentApp {
       btn.classList.toggle('active', isActive);
       btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     });
+
+    if (window.a11y) {
+      window.a11y.currentLanguage = langCode;
+    }
   }
 
   applyTranslations() {
@@ -132,19 +134,11 @@ class EmploymentApp {
   // ROUTING SYSTEM
   // -------------------------------------------------------------
   handleRoute() {
-    const hash = window.location.hash.slice(1) || 'dashboard';
+    const hash = window.location.hash.slice(1) || 'search';
     const parts = hash.split('/');
     const mainView = parts[0];
 
     this.currentRoute = mainView;
-
-    // Update nav links & floating dock buttons
-    document.querySelectorAll('.nav-link, .dock-btn').forEach(link => {
-      const href = link.getAttribute('href');
-      const isActive = href === `#${mainView}`;
-      link.classList.toggle('active', isActive);
-      link.setAttribute('aria-current', isActive ? 'page' : 'false');
-    });
 
     // Toggle View Containers
     document.querySelectorAll('.page-view').forEach(view => {
@@ -153,20 +147,8 @@ class EmploymentApp {
 
     if (mainView === 'job' && parts[1]) {
       this.renderJobDetailView(parts[1]);
-    } else if (mainView === 'search') {
-      this.renderSearchView();
-    } else if (mainView === 'profile') {
-      this.renderProfileView();
-    } else if (mainView === 'employer') {
-      this.renderEmployerView();
-    } else if (mainView === 'admin') {
-      this.renderAdminView();
-    } else if (mainView === 'saved') {
-      this.renderSavedJobsView();
-    } else if (mainView === 'applications') {
-      this.renderApplicationsView();
     } else {
-      this.renderDashboardView();
+      this.renderSearchView();
     }
 
     window.scrollTo(0, 0);
@@ -306,6 +288,7 @@ class EmploymentApp {
       }
 
       const job = json.data;
+      this.currentActiveJob = job;
       const isSaved = this.savedJobIds.has(job.id);
 
       // Populate Detail View
@@ -684,9 +667,9 @@ class EmploymentApp {
       btn.onclick = (e) => {
         e.preventDefault();
         const jobId = btn.dataset.id;
-        const job = this.allJobs.find(j => j.id === jobId);
+        const job = this.allJobs.find(j => j.id === jobId) || this.currentActiveJob || { id: jobId, title: document.getElementById('detail-title')?.textContent, employerName: document.getElementById('detail-employer')?.textContent, location: document.getElementById('detail-location')?.textContent };
         if (job && window.applicationModal) {
-          window.applicationModal.open(job, this.currentCandidate);
+          window.applicationModal.open(job, this.currentCandidate || {});
         }
       };
     });
@@ -696,7 +679,7 @@ class EmploymentApp {
       btn.onclick = (e) => {
         e.preventDefault();
         const jobId = btn.dataset.id;
-        const job = this.allJobs.find(j => j.id === jobId);
+        const job = this.allJobs.find(j => j.id === jobId) || this.currentActiveJob;
         if (job && window.applicationModal) {
           window.applicationModal.openExternalDisclosure(job);
         }

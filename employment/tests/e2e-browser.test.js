@@ -132,77 +132,70 @@ async function runBrowserTests() {
     console.log('✓ 7. WCAG 2.2 AA Axe-Core Audit: 0 violations! Clean pass.');
     passed++;
 
-    // 7. Screenshot Frosted Glass Dashboard
-    await page.screenshot({ path: path.join(EVIDENCE_DIR, '01-dashboard-desktop.png') });
-    console.log('✓ 8. Captured 01-dashboard-desktop.png');
+    // 7. Verify Top-Right Language Switcher is present and functional
+    await page.click('.lang-selector-group button.lang-btn[data-lang="am"]');
+    await page.waitForTimeout(300);
+    const htmlLangAm = await page.getAttribute('html', 'lang');
+    console.log(`✓ 8. Switched language to Amharic via top-right switch: html lang = "${htmlLangAm}"`);
+    assert.strictEqual(htmlLangAm, 'am');
     passed++;
 
-    // 8. Test Navigation via Left Floating Dock to Search View
-    await page.click('#btn-dock-search');
-    await page.waitForTimeout(400);
-    const searchHeader = await page.textContent('#search-heading');
-    console.log(`✓ 9. Left Dock Navigated to Search View: "${searchHeader}"`);
+    // Switch back to English
+    await page.click('.lang-selector-group button.lang-btn[data-lang="en"]');
+    await page.waitForTimeout(200);
+    const htmlLangEn = await page.getAttribute('html', 'lang');
+    console.log(`✓ 9. Switched back to English: html lang = "${htmlLangEn}"`);
+    assert.strictEqual(htmlLangEn, 'en');
+    passed++;
+
+    // 8. Verify Full-Screen Layout has no sidebar and no top extra pages
+    const hasSidebar = await page.evaluate(() => !!document.querySelector('.dock-floating-nav'));
+    console.log(`✓ 10. Sidebar dock removed (Full-screen view): hasSidebar = ${hasSidebar}`);
+    assert.strictEqual(hasSidebar, false, "Sidebar dock must not exist in full-screen mode");
     passed++;
 
     // 9. Test Keyword Search & Filter
-    await page.fill('#filter-search-input', 'QA');
-    await page.dispatchEvent('#filter-search-input', 'change');
+    await page.fill('#hero-search-input', 'Telebirr');
+    await page.click('#btn-hero-search');
     await page.waitForTimeout(400);
     const resultsCount = await page.textContent('#search-results-count');
-    console.log(`✓ 10. Keyword filter applied: "${resultsCount}"`);
+    console.log(`✓ 11. Keyword filter applied via hero search: "${resultsCount}"`);
     passed++;
 
     await page.screenshot({ path: path.join(EVIDENCE_DIR, '02-search-filtered.png') });
 
-    // 10. Test Deaf Mode Switcher (shows ETSL window)
-    await page.click('button[data-mode="deaf"]');
-    await page.waitForTimeout(300);
-    const etslDisplay = await page.evaluate(() => document.getElementById('etsl-dock-window').style.display);
-    console.log(`✓ 11. Deaf mode toggled: ETSL window displayed = ${etslDisplay === 'flex'}`);
-    assert.strictEqual(etslDisplay, 'flex');
-    passed++;
-
-    await page.screenshot({ path: path.join(EVIDENCE_DIR, '03-deaf-mode-etsl.png') });
-
-    // 11. Test 5-Language Switching: Amharic (አማርኛ)
-    await page.click('button.lang-btn[data-lang="am"]');
-    await page.waitForTimeout(300);
-    const htmlLang = await page.getAttribute('html', 'lang');
-    console.log(`✓ 12. Switched language to Amharic: html lang = "${htmlLang}"`);
-    assert.strictEqual(htmlLang, 'am');
-    passed++;
-
-    // Switch back to English
-    await page.click('button.lang-btn[data-lang="en"]');
-    await page.waitForTimeout(200);
-
-    // 12. Test Job Details View
+    // 10. Test Job Details View
     await page.goto('http://127.0.0.1:4174/#job/job-eth-001', { waitUntil: 'networkidle' });
     await page.waitForTimeout(400);
     const jobTitle = await page.textContent('#detail-title');
-    console.log(`✓ 13. Job Details View loaded for: "${jobTitle}"`);
+    console.log(`✓ 12. Job Details View loaded for: "${jobTitle}"`);
     passed++;
 
     await page.screenshot({ path: path.join(EVIDENCE_DIR, '04-job-detail-accommodations.png') });
 
-    // 13. Test Application Modal Opening
+    // 11. Test Application Modal Opening
     await page.click('#detail-sidebar-actions .btn-open-apply-modal');
     await page.waitForTimeout(300);
-    const appModalOpen = await page.evaluate(() => document.getElementById('application-dialog').open);
-    console.log(`✓ 14. Application modal open state: ${appModalOpen}`);
+    const appModalOpen = await page.evaluate(() => {
+      const d = document.getElementById('application-modal');
+      return d && d.open;
+    });
+    console.log(`✓ 13. Application modal open state: ${appModalOpen}`);
+    assert.ok(appModalOpen, "Application modal should open");
     passed++;
 
     await page.screenshot({ path: path.join(EVIDENCE_DIR, '05-application-modal.png') });
     await page.click('#btn-cancel-apply');
+    await page.waitForTimeout(200);
 
-    // 14. Mobile 320px Reflow Audit (Zero horizontal scrolling)
+    // 12. Mobile 320px Reflow Audit (Zero horizontal scrolling)
     await page.setViewportSize({ width: 320, height: 600 });
     await page.goto('http://127.0.0.1:4174/#search', { waitUntil: 'networkidle' });
     await page.waitForTimeout(300);
     const hasHorizontalScroll = await page.evaluate(() => {
       return document.documentElement.scrollWidth > document.documentElement.clientWidth;
     });
-    console.log(`✓ 15. 320px Reflow Audit: has horizontal scroll = ${hasHorizontalScroll} (Must be false)`);
+    console.log(`✓ 14. 320px Reflow Audit: has horizontal scroll = ${hasHorizontalScroll} (Must be false)`);
     assert.strictEqual(hasHorizontalScroll, false, "320px viewport must not have horizontal scroll.");
     passed++;
 

@@ -32,7 +32,7 @@
     },
     "status": "interview",
     "appliedAt": "2026-11-10T14:30:00.000Z",
-    "updatedAt": "2026-11-15T07:34:16.905Z",
+    "updatedAt": "2026-11-15T12:05:49.399Z",
     "timeline": [
       {
         "status": "applied",
@@ -72,6 +72,11 @@
       {
         "status": "interview",
         "date": "2026-11-15T07:34:16.904Z",
+        "note": "Technical interview confirmed."
+      },
+      {
+        "status": "interview",
+        "date": "2026-11-15T12:05:49.399Z",
         "note": "Technical interview confirmed."
       }
     ],

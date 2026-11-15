@@ -39,15 +39,22 @@ class AccessibilityManager {
     this.setupSpeechRecognition();
     this.initGateway();
 
-    // Check saved mode or launch Gateway on first load
-    const savedMode = localStorage.getItem('lb_emp_mode');
-    const onboardingDone = localStorage.getItem('lb_emp_onboarding_done');
+    // Check saved mode or launch Gateway on first load (interoperable with Player)
+    const savedMode = localStorage.getItem('lb_emp_mode') || localStorage.getItem('learnbridge_user_profile');
+    const savedLang = localStorage.getItem('lb_emp_lang') || localStorage.getItem('learnbridge_lang');
+    const onboardingDone = localStorage.getItem('lb_emp_onboarding_done') || localStorage.getItem('learnbridge_gateway_done');
 
     if (savedMode) {
       this.setMode(savedMode, false);
     }
+    if (savedLang) {
+      this.currentLanguage = savedLang;
+      if (window.app && typeof window.app.loadLanguage === 'function') {
+        window.app.loadLanguage(savedLang);
+      }
+    }
 
-    if (!onboardingDone) {
+    if (!onboardingDone && !savedMode) {
       // Automatic first-load onboarding check for language and disability preferences
       setTimeout(() => {
         this.openGateway(true);
@@ -384,6 +391,7 @@ class AccessibilityManager {
   selectGatewayLanguage(langCode) {
     this.currentLanguage = langCode;
     localStorage.setItem('lb_emp_lang', langCode);
+    localStorage.setItem('learnbridge_lang', langCode);
 
     if (window.app && typeof window.app.loadLanguage === 'function') {
       window.app.loadLanguage(langCode);
@@ -405,7 +413,10 @@ class AccessibilityManager {
 
   applyTailoredProfile(profile, notify = true) {
     this.setMode(profile, notify);
+    localStorage.setItem('lb_emp_mode', profile);
+    localStorage.setItem('learnbridge_user_profile', profile);
     localStorage.setItem('lb_emp_onboarding_done', 'true');
+    localStorage.setItem('learnbridge_gateway_done', 'true');
     this.closeGateway();
 
     if (profile === 'blind') {
@@ -414,7 +425,7 @@ class AccessibilityManager {
       this.speak(blindWelcome, this.getSpeechLang());
       this.showVisualToast("Blind-Accessible Mode Active: Spoken Tab guidance enabled.");
     } else if (profile === 'deaf') {
-      const deafWelcome = "Deaf-accessible mode active. Ethiopian Sign Language video interpreter docked on right.";
+      const deafWelcome = "Deaf-accessible mode active. Visual alerts, captions, and high contrast guidance enabled.";
       this.showVisualToast(deafWelcome);
       this.announceLive(deafWelcome, false);
     } else {
