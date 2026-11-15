@@ -1,0 +1,30 @@
+Abenezer Haile
+Email: abenezer.haile@alx.edu.et
+Phone: +251 91 123 4567
+Location: Addis Ababa, Ethiopia
+
+PROFESSIONAL SUMMARY
+Passionate Full-Stack Developer and Software Engineer with 3+ years of experience building accessible web applications, responsive frontend interfaces, and resilient backend APIs. Strong proficiency in modern JavaScript, React, TypeScript, Python, and REST APIs.
+
+EDUCATION
+B.Sc. in Computer Science — Addis Ababa University (2023)
+ALX Software Engineering Certificate — ALX Africa / Holberton School (2024)
+
+CORE COMPETENCIES & TECHNICAL SKILLS
+- Languages & Frameworks: JavaScript, TypeScript, React, Python, Django, HTML/ARIA Semantics, CSS
+- Testing & Quality Assurance: Playwright, axe-core, WCAG 2.2 accessibility standards
+- Database & DevOps: PostgreSQL, SQL, Git, Linux, Docker, REST APIs
+- Languages: English (Fluent), Amharic (Native), Afaan Oromo (Working proficiency)
+
+PROFESSIONAL EXPERIENCE
+Frontend Software Developer — Addis Tech Labs (2024 - Present)
+- Developed responsive web interfaces using React, TypeScript, and modern CSS for fintech clients.
+- Implemented accessible design tokens and ensured WCAG 2.2 AA compliance across public products.
+- Automated end-to-end user testing suites using Playwright.
+
+Junior Software Engineer — Fintech Ethiopia (2023 - 2024)
+- Built REST API endpoints integrating Telebirr payment gateways with Django and PostgreSQL.
+- Collaborated on distributed Git workflows, code reviews, and Docker container deployments.
+
+WORKPLACE ACCOMMODATIONS
+- Flexible working hours and remote / hybrid work availability.

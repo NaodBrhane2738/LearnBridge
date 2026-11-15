@@ -1,0 +1,132 @@
+[
+  {
+    "id": "rep-1794745870669",
+    "status": "pending",
+    "createdAt": "2026-11-15T12:31:10.669Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794745772638",
+    "status": "pending",
+    "createdAt": "2026-11-15T12:29:32.638Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794744349339",
+    "status": "pending",
+    "createdAt": "2026-11-15T12:05:49.339Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794728056824",
+    "status": "pending",
+    "createdAt": "2026-11-15T07:34:16.824Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794683702622",
+    "status": "pending",
+    "createdAt": "2026-11-14T19:15:02.622Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794681841721",
+    "status": "pending",
+    "createdAt": "2026-11-14T18:44:01.721Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794681806279",
+    "status": "pending",
+    "createdAt": "2026-11-14T18:43:26.279Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794681791593",
+    "status": "pending",
+    "createdAt": "2026-11-14T18:43:11.593Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794681759535",
+    "status": "pending",
+    "createdAt": "2026-11-14T18:42:39.535Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794681742385",
+    "status": "pending",
+    "createdAt": "2026-11-14T18:42:22.385Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-1794660947944",
+    "status": "pending",
+    "createdAt": "2026-11-14T12:55:47.944Z",
+    "jobId": "job-eth-001",
+    "jobTitle": "Digital Accessibility QA Engineer",
+    "employerName": "ALX Africa / The ROOM",
+    "reportedBy": "anonymous-user",
+    "reason": "misleading_salary",
+    "details": "Audit check"
+  },
+  {
+    "id": "rep-001",
+    "jobId": "job-ext-010",
+    "reportedBy": "candidate-audit-team",
+    "reason": "expired_listing",
+    "details": "Deadline passed on October 31, 2026. Automated flag confirmed.",
+    "status": "resolved",
+    "createdAt": "2026-11-01T08:00:00.000Z"
+  }
+]

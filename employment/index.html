@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LearnBridge Employment — Accessible job discovery and recruitment platform for Ethiopia and international remote opportunities.">
+  <title>LearnBridge Employment | Inclusive Job Finder & Recruitment</title>
+
+  <link rel="stylesheet" href="employment.css">
+</head>
+<body>
+  <!-- Accessibility Skip Links -->
+  <a href="#main-employment-content" class="skip-link" data-i18n="nav.skipToContent">Skip to main employment content</a>
+  <a href="#hero-search-input" class="skip-link" data-i18n="nav.skipToSearch">Skip to job search input</a>
+
+  <!-- ARIA Live Regions for Assistive Technologies -->
+  <div id="sr-announcer-polite" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="sr-announcer-assertive" class="visually-hidden" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- Visual Event Toast for Status Announcements -->
+  <div id="visual-event-toast" class="visual-toast" role="status" aria-hidden="true">
+    <span id="visual-toast-text">System alert</span>
+  </div>
+
+  <!-- Top Bar: Platform Brand on Left, Language Switcher at Top Right Only -->
+  <header class="top-nav-bar" role="banner">
+    <div class="brand-container">
+      <a href="#search" style="text-decoration: none;">
+        <h1 class="brand-title">LearnBridge <span class="brand-accent">Employment</span></h1>
+      </a>
+      <span class="brand-tagline">Ethiopian & Remote Career Hub</span>
+    </div>
+
+    <!-- Top Right Language Switcher Dropdown -->
+    <div class="lang-dropdown-container">
+      <label for="lang-select-dropdown" class="visually-hidden">Interface Language</label>
+      <div class="lang-dropdown-wrapper">
+        <svg class="ui-icon" style="color: var(--primary-red); width: 15px; height: 15px; margin-right: 6px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <select id="lang-select-dropdown" class="lang-select-dropdown" aria-label="Select Interface Language">
+          <option value="en">English (EN)</option>
+          <option value="am">አማርኛ (AM)</option>
+          <option value="om">Afaan Oromoo (OM)</option>
+          <option value="ti">ትግርኛ (TI)</option>
+          <option value="so">Af-Soomaali (SO)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Full-Screen Main Stage -->
+  <main class="fullscreen-main" id="main-employment-content" tabindex="-1">
+
+    <!-- ========================================================= -->
+    <!-- PRIMARY FULL-SCREEN VIEW: CV MATCHING & SWIPEABLE CARDS   -->
+    <!-- ========================================================= -->
+    <section id="view-search" class="page-view" aria-labelledby="search-heading">
+
+      <!-- Active Candidate CV Banner (Displayed after CV is uploaded/selected) -->
+      <div id="active-cv-banner" class="active-cv-banner" style="display: none;">
+        <div class="active-cv-info">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg class="ui-icon" style="color: var(--primary-red); width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span style="font-weight: 700; color: var(--text-main);" id="active-cv-candidate-name">Candidate Profile</span>
+            <span class="badge badge-verified" id="active-cv-file-badge">CV Loaded</span>
+          </div>
+          <div id="active-cv-skills-preview" class="active-cv-skills-row" style="margin-top: 6px;"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline" id="btn-reupload-cv">
+          Change CV
+        </button>
+      </div>
+
+      <!-- CV Upload Stage (Shown if no CV uploaded yet) -->
+      <div id="cv-upload-stage" class="cv-upload-stage">
+        <h2 id="search-heading" class="cv-upload-title">Upload Your CV to Unlock Matched Jobs</h2>
+        <p class="cv-upload-subtitle">
+          LearnBridge analyzes your skills, experience, and accessibility needs to tailor and rank opportunities. Swipe right with your keyboard to apply directly.
+        </p>
+
+        <!-- Drag & Drop Zone -->
+        <div class="cv-dropzone" id="cv-dropzone" role="button" tabindex="0">
+          <input type="file" id="cv-file-input" accept=".txt,.pdf,.docx" style="display: none;">
+          <svg class="ui-icon" style="width: 36px; height: 36px; color: var(--primary-red); margin-bottom: 10px;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);">Drop your CV here or click to browse</div>
+          <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 4px;">Supports TXT, PDF, DOCX (Max 5MB)</div>
+        </div>
+
+        <div id="cv-upload-status" style="display: none; padding: 10px; margin-bottom: 14px; font-size: 0.875rem; border-radius: var(--radius-control); background: var(--primary-red-tint); color: var(--primary-red);"></div>
+
+        <!-- Quick Demo CV Options -->
+        <div class="demo-cv-section">
+          <div style="font-size: 0.875rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">
+            Or test instantly with a pre-configured Ethiopian Demo CV:
+          </div>
+          <div class="demo-cv-options">
+            <button type="button" class="btn btn-outline" id="btn-demo-swe">
+              <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Software Engineer Demo CV (React, TS, Python)
+            </button>
+            <button type="button" class="btn btn-outline" id="btn-demo-qa">
+              <svg class="ui-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Accessibility QA Demo CV (axe-core, Playwright)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Swipeable Card Deck Stage -->
+      <div id="swipe-deck-stage" class="swipe-stage-container" style="display: none;">
+        <!-- Card Active Container -->
+        <div id="active-card-wrapper" class="active-card-wrapper">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- Empty / Complete State -->
+        <div id="deck-empty-state" class="deck-empty-state" style="display: none;">
+          <div style="font-size: 40px; margin-bottom: 10px;">🎉</div>
+          <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">You've Reviewed All Recommended Matches!</h3>
+          <p style="color: var(--text-secondary); margin-top: 6px;" id="deck-empty-summary">
+            Applications have been automatically sent to the employers you approved with your CV.
+          </p>
+          <div style="display: flex; justify-content: center; gap: 12px; margin-top: 24px;">
+            <button type="button" class="btn btn-primary" id="btn-restart-deck">
+              Review Recommended Jobs Again
+            </button>
+            <button type="button" class="btn btn-outline" id="btn-empty-change-cv">
+              Upload Different CV
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 2: JOB DETAILS PAGE                                  -->
+    <!-- ========================================================= -->
+    <section id="view-job-detail" class="page-view" style="display: none;" aria-labelledby="detail-title">
+      <div style="margin-bottom: 20px;">
+        <a href="#search" class="btn btn-sm btn-outline">← Back to Opportunities</a>
+      </div>
+
+      <div class="job-detail-grid">
+        <div class="detail-main-card">
+          <div>
+            <span class="badge badge-verified" id="detail-verified-tag">Verified Listing</span>
+            <h2 id="detail-title" style="font-size: 2rem; font-weight: 800; margin-top: 8px; color: var(--text-main);">Job Title</h2>
+            <div style="color: var(--text-secondary); font-size: 1.1rem; margin-top: 4px;">
+              <span id="detail-employer" style="color: var(--text-main); font-weight: 700;">Employer Name</span> · <span id="detail-location">Location</span>
+            </div>
+          </div>
+
+          <!-- Overview -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.overview">Role Overview</h3>
+            <p id="detail-description" style="color: var(--text-secondary); line-height: 1.7; margin-top: 8px;"></p>
+          </div>
+
+          <!-- Responsibilities -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.responsibilities">Key Responsibilities</h3>
+            <ul id="detail-responsibilities" class="bullet-list" style="margin-top: 8px;"></ul>
+          </div>
+
+          <!-- Requirements -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.requirements">Qualifications & Requirements</h3>
+            <ul id="detail-requirements" class="bullet-list" style="margin-top: 8px;"></ul>
+          </div>
+
+          <!-- Required Skills -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.skills">Required Competencies & Tools</h3>
+            <div id="detail-skills" class="job-tags-row" style="margin-top: 8px;"></div>
+          </div>
+
+          <!-- Compensation & Terms -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.compensation">Compensation & Contract Terms</h3>
+            <div id="detail-compensation" style="margin-top: 8px;"></div>
+          </div>
+
+          <!-- Workplace Accommodations Matrix -->
+          <div>
+            <h3 class="detail-section-title" data-i18n="jobDetail.workplaceAccommodations">Workplace Accommodations & Accessibility</h3>
+            <div id="detail-accommodations-matrix" class="accommodations-matrix-box" style="margin-top: 8px;"></div>
+          </div>
+        </div>
+
+        <!-- Sidebar Sticky Actions Card -->
+        <aside class="detail-sidebar-card">
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Take Action</h3>
+          <div id="detail-sidebar-actions"></div>
+        </aside>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- UNIVERSAL ACCESS GATEWAY (ONBOARDING)                      -->
+  <!-- Checks preferred language & disability profile on arrival  -->
+  <!-- ========================================================= -->
+  <dialog id="gateway-dialog" class="gateway-dialog" aria-labelledby="gateway-title">
+    <div class="gateway-shell">
+      <div class="gateway-header">
+        <div class="gateway-title-group">
+          <h2 id="gateway-title">Welcome to LearnBridge Employment</h2>
+          <p id="gateway-subtitle">Choose your preferred language and accessibility experience.</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline" id="btn-gateway-back" hidden aria-label="Back to language selection">
+          ← Languages
+        </button>
+      </div>
+
+      <!-- Step 1: Language Selection -->
+      <div id="gateway-step-lang">
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 14px;">
+          Select your interface language (click or press keyboard shortcut):
+        </p>
+        <div class="gateway-lang-grid">
+          <button type="button" class="gateway-lang-choice" data-lang="en" aria-label="English. Press E">
+            <span>English</span>
+            <kbd class="key-kbd">E</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="am" aria-label="አማርኛ. Press A">
+            <span>አማርኛ</span>
+            <kbd class="key-kbd">A</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="om" aria-label="Afaan Oromoo. Press O">
+            <span>Afaan Oromoo</span>
+            <kbd class="key-kbd">O</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="ti" aria-label="ትግርኛ. Press T">
+            <span>ትግርኛ</span>
+            <kbd class="key-kbd">T</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="so" aria-label="Af-Soomaali. Press S">
+            <span>Af-Soomaali</span>
+            <kbd class="key-kbd">S</kbd>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Disability / Accessibility Profile -->
+      <div id="gateway-step-a11y" hidden>
+        <div class="gateway-countdown-box">
+          <div class="gateway-countdown-label" id="gateway-countdown-label">
+            <span>Activating Blind-Accessible Mode in <strong id="gateway-countdown-seconds">10</strong>s</span>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-gateway-pause" aria-label="Pause or resume timer (Space)">
+              Pause Timer (Space)
+            </button>
+          </div>
+          <div class="gateway-progress-track">
+            <div class="gateway-progress-bar" id="gateway-progress-bar" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 12px 0 8px;">
+          Select your experience profile (click or press shortcut key):
+        </p>
+
+        <div class="gateway-profiles-list">
+          <button type="button" class="gateway-profile-card" data-profile="blind" aria-label="Blind and Low Vision Profile. Press B">
+            <div class="profile-card-icon" aria-hidden="true">
+              <svg class="ui-icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="profile-card-copy">
+              <strong>Blind / Low Vision (ዓይነ ስውር)</strong>
+              <small>Continuous voice narration, Tab-focus spoken readout, high-contrast markers, and audio summaries.</small>
+            </div>
+            <kbd class="key-kbd">Press B</kbd>
+          </button>
+
+          <button type="button" class="gateway-profile-card" data-profile="deaf" aria-label="Deaf and Hard of Hearing Profile. Press D">
+            <div class="profile-card-icon" aria-hidden="true">
+              <svg class="ui-icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+            </div>
+            <div class="profile-card-copy">
+              <strong>Deaf / Hard of Hearing (መስማት የተሳናቸው)</strong>
+              <small>Visual alerts, clear typography, captions, and visual confirmations.</small>
+            </div>
+            <kbd class="key-kbd">Press D</kbd>
+          </button>
+
+          <button type="button" class="gateway-profile-card" data-profile="standard" aria-label="Standard Experience. Press S">
+            <div class="profile-card-icon" aria-hidden="true">
+              <svg class="ui-icon" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="profile-card-copy">
+              <strong>Standard Experience (መደበኛ)</strong>
+              <small>Clean, high-performance responsive layout with standard keyboard and mouse navigation.</small>
+            </div>
+            <kbd class="key-kbd">Press S</kbd>
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ========================================================= -->
+  <!-- APPLICATION MODAL WIZARD                                  -->
+  <!-- ========================================================= -->
+  <dialog id="application-modal" class="accessible-dialog" aria-labelledby="apply-modal-title">
+    <div class="dialog-header">
+      <h3 id="apply-modal-title" class="dialog-title">Submit Job Application</h3>
+      <button type="button" class="btn-close" id="btn-close-apply-modal" aria-label="Close application modal">&times;</button>
+    </div>
+
+    <form id="apply-form">
+      <input type="hidden" id="apply-job-id">
+      <div style="background: var(--bg-muted); padding: 14px; border-radius: var(--radius-subcard); border: 1px solid var(--border-line); margin-bottom: 16px;">
+        <h4 id="apply-job-title" style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">Role Title</h4>
+        <div id="apply-employer-name" style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 2px;">Employer Name</div>
+      </div>
+
+      <div id="apply-error-banner" style="display: none; background: var(--primary-red-tint); border: 1px solid var(--primary-red-border); color: var(--primary-red); padding: 10px; border-radius: var(--radius-control); margin-bottom: 14px; font-size: 0.875rem;"></div>
+
+      <div class="filter-group" style="margin-bottom: 14px;">
+        <label for="apply-resume-select" class="filter-label">Select Saved CV / Resume</label>
+        <select id="apply-resume-select" class="select-input"></select>
+      </div>
+
+      <div class="filter-group" style="margin-bottom: 14px;">
+        <label for="apply-cover-note" class="filter-label">Supporting Cover Note (Optional)</label>
+        <textarea id="apply-cover-note" class="text-input" rows="3" placeholder="Highlight relevant skills or experience..."></textarea>
+      </div>
+
+      <div style="background: var(--bg-muted); border: 1px solid var(--border-line); border-radius: var(--radius-subcard); padding: 14px; margin-bottom: 18px;">
+        <label class="checkbox-label" style="font-weight: 700;">
+          <input type="checkbox" id="apply-accomm-toggle">
+          <span>Include my Voluntary Workplace Accommodations</span>
+        </label>
+        <div id="apply-accomm-preview" style="display: none; margin-top: 8px; font-size: 0.8125rem; color: var(--text-secondary);">
+          <strong style="color: var(--primary-red);">Candidate-Approved Note:</strong>
+          <span id="apply-accomm-text">Screen-reader software compatibility and flexible interview schedule.</span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-apply">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-application">Confirm & Submit</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- External Job Redirect Modal -->
+  <dialog id="external-job-modal" class="accessible-dialog" aria-labelledby="ext-modal-title">
+    <div class="dialog-header">
+      <h3 id="ext-modal-title" class="dialog-title">Partner Job Redirection</h3>
+      <button type="button" class="btn-close" id="btn-close-external-modal" aria-label="Close external redirect modal">&times;</button>
+    </div>
+
+    <div>
+      <p style="color: var(--text-main); font-size: 1rem; line-height: 1.6;">
+        You are leaving LearnBridge to apply directly on the partner portal for:
+      </p>
+      <div style="background: var(--bg-muted); padding: 14px; border-radius: var(--radius-subcard); border: 1px solid var(--border-line); margin: 14px 0;">
+        <h4 id="ext-job-title" style="font-weight: 700; font-size: 1.15rem; color: var(--text-main);">Job Title</h4>
+        <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 4px;">
+          Partner Source: <strong id="ext-modal-provider" style="color: var(--primary-red);">Afriwork Feed</strong>
+        </div>
+        <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px; word-break: break-all;" id="ext-modal-destination">
+          Destination URL
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+      <button type="button" class="btn btn-outline" id="btn-cancel-external">Cancel</button>
+      <button type="button" class="btn btn-primary" id="btn-proceed-external">Proceed to Partner Portal ↗</button>
+    </div>
+  </dialog>
+
+  <!-- Scripts -->
+  <script src="accessibility/a11yManager.js"></script>
+  <script src="components/JobCard.js"></script>
+  <script src="components/ApplicationModal.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
