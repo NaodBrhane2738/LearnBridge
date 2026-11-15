@@ -637,29 +637,100 @@ class AccessibilityManager {
 
   setupSpeechRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
+    if (!SpeechRecognition) {
+      console.warn("[A11yManager] SpeechRecognition not available in this environment.");
+      return;
+    }
 
-    this.recognition = new SpeechRecognition();
-    this.recognition.continuous = false;
-    this.recognition.interimResults = false;
-    this.recognition.lang = 'en-US';
+    try {
+      this.recognition = new SpeechRecognition();
+      this.recognition.continuous = true;
+      this.recognition.interimResults = false;
+      this.recognition.lang = 'en-US';
+      this.isListeningActive = false;
 
-    this.recognition.onstart = () => {
-      this.voiceActive = true;
-      const hud = document.getElementById('voice-hud');
-      if (hud) hud.classList.add('active');
-      this.announceLive("Voice search listening...", false);
-    };
+      this.recognition.onstart = () => {
+        this.voiceActive = true;
+        this.updateVoiceStatusUI(true);
+        this.announceLive("Voice listening active. Say more, apply, or pass.", false);
+      };
 
-    this.recognition.onend = () => {
-      this.voiceActive = false;
-      const hud = document.getElementById('voice-hud');
-      if (hud) hud.classList.remove('active');
-    };
+      this.recognition.onend = () => {
+        this.voiceActive = false;
+        if (this.isListeningActive) {
+          try {
+            this.recognition.start();
+          } catch (_) {
+            this.updateVoiceStatusUI(false);
+          }
+        } else {
+          this.updateVoiceStatusUI(false);
+        }
+      };
 
-    this.recognition.onerror = (e) => {
-      console.warn("[A11yManager] Voice recognition error:", e.error);
-    };
+      this.recognition.onerror = (e) => {
+        console.warn("[A11yManager] Voice recognition error:", e.error);
+        if (e.error === 'not-allowed') {
+          this.isListeningActive = false;
+          this.updateVoiceStatusUI(false);
+          this.showVisualToast("Microphone access denied. Please click the microphone icon in your browser address bar to allow.");
+        }
+      };
+
+      this.recognition.onresult = (event) => {
+        const lastResult = event.results[event.results.length - 1];
+        if (!lastResult) return;
+        const transcript = lastResult[0].transcript;
+        console.log("[A11yManager] Heard voice:", transcript);
+
+        if (window.app && typeof window.app.handleVoiceCommand === 'function') {
+          window.app.handleVoiceCommand(transcript);
+        }
+      };
+    } catch (err) {
+      console.warn("[A11yManager] Failed to init SpeechRecognition:", err);
+    }
+  }
+
+  toggleVoiceListening() {
+    if (!this.recognition) {
+      this.showVisualToast("Speech recognition not supported in this browser. Please use M, Left Arrow, and Right Arrow.");
+      return;
+    }
+
+    if (this.voiceActive || this.isListeningActive) {
+      this.isListeningActive = false;
+      try { this.recognition.stop(); } catch (_) {}
+      this.updateVoiceStatusUI(false);
+      this.showVisualToast("Microphone muted.");
+    } else {
+      this.isListeningActive = true;
+      try {
+        this.recognition.start();
+        this.showVisualToast("Listening for voice commands: 'more', 'apply', 'pass'");
+      } catch (err) {
+        console.warn("[A11yManager] Speech start error:", err);
+        this.showVisualToast("Please allow microphone access in your browser.");
+      }
+    }
+  }
+
+  updateVoiceStatusUI(isActive) {
+    this.voiceActive = isActive;
+    const btns = document.querySelectorAll('.btn-deck-mic');
+    btns.forEach(btn => {
+      if (isActive) {
+        btn.classList.add('is-listening');
+        btn.setAttribute('aria-pressed', 'true');
+        const lbl = btn.querySelector('.mic-status-label');
+        if (lbl) lbl.textContent = 'Mic: Listening (V)';
+      } else {
+        btn.classList.remove('is-listening');
+        btn.setAttribute('aria-pressed', 'false');
+        const lbl = btn.querySelector('.mic-status-label');
+        if (lbl) lbl.textContent = 'Voice (V)';
+      }
+    });
   }
 
   startVoiceSearch(onResultCallback) {

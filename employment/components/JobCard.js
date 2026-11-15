@@ -219,9 +219,15 @@ class JobCardComponent {
             <div class="deck-counter-badge">
               Opportunity <strong>${index + 1}</strong> of <strong>${total}</strong>
             </div>
-            <div class="match-score-pill">
-              <svg class="ui-icon" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span><strong>${matchScore}%</strong> Match</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button type="button" class="btn-deck-mic" id="btn-deck-mic" aria-label="Toggle voice commands microphone (Press V)" title="Click or press V to speak commands: 'more', 'apply', 'pass'">
+                <svg class="ui-icon mic-icon" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                <span class="mic-status-label">Voice (V)</span>
+              </button>
+              <div class="match-score-pill">
+                <svg class="ui-icon" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span><strong>${matchScore}%</strong> Match</span>
+              </div>
             </div>
           </div>
 
@@ -270,13 +276,13 @@ class JobCardComponent {
             ` : ''}
           </div>
 
-          <!-- Toggle More Details Button (Tab key or click) -->
-          <button type="button" class="btn-card-toggle-details" id="btn-card-toggle-details" aria-expanded="false" aria-controls="card-expanded-details-${job.id}" aria-label="Toggle full job details (Press Tab or say more)">
-            <span class="toggle-text">More Details (Tab or say "more")</span>
+          <!-- Toggle More Details Button (M key or click) -->
+          <button type="button" class="btn-card-toggle-details" id="btn-card-toggle-details" aria-expanded="false" aria-controls="card-expanded-details-${job.id}" aria-label="Toggle full job details (Press M or click)">
+            <span class="toggle-text">More Details (Press M or click)</span>
             <svg class="ui-icon toggle-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
 
-          <!-- Expanded Full Details (Revealed via Tab or 'More') -->
+          <!-- Expanded Full Details (Revealed via M or 'More') -->
           <div class="swipe-card-expanded-details" id="card-expanded-details-${job.id}" style="display: none;" aria-hidden="true">
             ${resps ? `
               <div class="swipe-card-section">
@@ -312,7 +318,7 @@ class JobCardComponent {
               <span>Pass</span>
             </div>
             <div class="hint-col hint-mid">
-              <kbd class="key-kbd">Tab</kbd>
+              <kbd class="key-kbd">M</kbd>
               <span>More Info</span>
             </div>
             <div class="hint-col hint-right">
