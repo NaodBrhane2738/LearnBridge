@@ -149,15 +149,21 @@ class JobCardComponent {
 
   /**
    * Render focused compact swipeable job card (Tinder-style)
+   * 100% IDENTICAL structure across center hero and fanned background cards.
+   * Differs only in job data and visual depth/positioning.
+   *
    * @param {Object} scoredItem Scored job object { job, matchScore, explanation }
    * @param {number} index Current card index (0-based)
    * @param {number} total Total cards in deck
+   * @param {string} role 'center' | 'next' | 'prev'
    * @returns {string} HTML markup
    */
-  static renderSwipeCard(scoredItem, index, total) {
+  static renderSwipeCard(scoredItem, index, total, role = 'center') {
+    if (!scoredItem) return '';
     const job = scoredItem.job || scoredItem;
     const matchScore = scoredItem.matchScore || 85;
     const explanation = scoredItem.explanation || {};
+    const isCenter = role === 'center';
 
     let salaryString = 'Disclosed Upon Interview';
     if (job.salaryDisclosed) {
@@ -180,10 +186,6 @@ class JobCardComponent {
       : `<span class="badge badge-onsite">${escapeHTML(job.workArrangement || 'On-site')}</span>`;
 
     const skillsList = (job.skills || []).slice(0, 4).map(s => `<span class="meta-pill">${escapeHTML(s)}</span>`).join(' ');
-
-    const remaining = total - index;
-    const hasLayer1 = remaining > 1;
-    const hasLayer2 = remaining > 2;
 
     const resps = (job.responsibilities || []).slice(0, 4).map(r => `<li>${escapeHTML(r)}</li>`).join('');
     const reqs = (job.requirements || []).slice(0, 4).map(r => `<li>${escapeHTML(r)}</li>`).join('');
@@ -208,137 +210,268 @@ class JobCardComponent {
     }
     const accommHtml = accommTags.join(' ');
 
-    return `
-      <div class="deck-3d-stack" id="deck-3d-stack">
-        ${hasLayer2 ? `<div class="deck-card-layer deck-layer-deep" aria-hidden="true"></div>` : ''}
-        ${hasLayer1 ? `<div class="deck-card-layer deck-layer-mid" aria-hidden="true"></div>` : ''}
+    const cardClasses = [
+      'swipe-card',
+      'tinder-card',
+      isCenter ? 'is-hero-card' : 'is-side-card',
+      !isCenter ? `is-side-${role}` : ''
+    ].filter(Boolean).join(' ');
 
-        <article class="swipe-card tinder-card" id="swipe-card-${job.id}" role="region" aria-label="Job card: ${escapeHTML(job.title)} at ${escapeHTML(job.employerName)}" tabindex="0">
-          <!-- Top Status Bar -->
-          <div class="swipe-card-top-bar">
-            <div class="deck-counter-badge">
-              Opportunity <strong>${index + 1}</strong> of <strong>${total}</strong>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
+    const cardId = isCenter ? `swipe-card-${job.id}` : `swipe-card-${job.id}-${role}`;
+    const cardTitleId = isCenter ? `swipe-title-${job.id}` : `swipe-title-${job.id}-${role}`;
+    const detailsContainerId = isCenter ? `card-expanded-details-${job.id}` : `card-expanded-details-${job.id}-${role}`;
+
+    const roleAriaLabel = isCenter
+      ? `Active opportunity ${index + 1} of ${total}: ${escapeHTML(job.title)} at ${escapeHTML(job.employerName)}`
+      : (role === 'next'
+          ? `Next opportunity (+1): ${escapeHTML(job.title)} at ${escapeHTML(job.employerName)} (Click to view)`
+          : `Upcoming opportunity (+2): ${escapeHTML(job.title)} at ${escapeHTML(job.employerName)} (Click to view)`);
+
+    return `
+      <article class="${cardClasses}" id="${cardId}" role="${isCenter ? 'region' : 'button'}" aria-label="${roleAriaLabel}" tabindex="${isCenter ? '0' : '-1'}">
+        <!-- Top Status Bar -->
+        <div class="swipe-card-top-bar">
+          <div class="deck-counter-badge">
+            Opportunity <strong>${index + 1}</strong> of <strong>${total}</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            ${isCenter ? `
               <button type="button" class="btn-deck-mic is-listening" id="btn-deck-mic" aria-label="Voice microphone on by default (Press V to mute)" aria-pressed="true" title="Voice Control Active (Say 'more', 'apply', 'pass' or press V to mute)">
                 <svg class="ui-icon mic-icon" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
                 <span class="mic-status-label">Mic: On (V)</span>
               </button>
-              <div class="match-score-pill">
-                <svg class="ui-icon" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                <span><strong>${matchScore}%</strong> Match</span>
-              </div>
+            ` : `
+              <span class="side-card-role-pill" title="${role === 'next' ? 'First to appear when swiped' : 'Upcoming in queue'}">
+                ${role === 'next' ? 'Next Up (→)' : 'Queue (+2)'}
+              </span>
+            `}
+            <div class="match-score-pill">
+              <svg class="ui-icon" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span><strong>${matchScore}%</strong> Match</span>
             </div>
           </div>
+        </div>
 
-          ${explanation.summary ? `
-            <div class="match-explanation-banner">
-              <svg class="ui-icon" style="color: var(--primary-red); width: 13px; height: 13px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>${escapeHTML(explanation.summary)}</span>
+        ${explanation.summary ? `
+          <div class="match-explanation-banner">
+            <svg class="ui-icon" style="color: var(--primary-red); width: 13px; height: 13px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>${escapeHTML(explanation.summary)}</span>
+          </div>
+        ` : ''}
+
+        <!-- Job Header -->
+        <div class="swipe-card-header">
+          <h2 class="swipe-card-title" id="${cardTitleId}">${escapeHTML(job.title)}</h2>
+          <div class="swipe-card-subhead">
+            <strong class="swipe-card-employer">${escapeHTML(job.employerName)}</strong>
+            <span class="dot-separator">•</span>
+            <span class="swipe-card-location">${escapeHTML(job.location)}</span>
+          </div>
+          <div class="swipe-card-badges">
+            ${verifiedBadge}
+            ${remoteBadge}
+            <span class="badge badge-standard">${escapeHTML(job.employmentType)}</span>
+          </div>
+        </div>
+
+        <!-- Meta Highlights -->
+        <div class="swipe-card-meta-row compact-meta">
+          <div class="meta-item">
+            <span class="meta-label">Compensation</span>
+            <span class="meta-val meta-salary">${salaryString}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Industry</span>
+            <span class="meta-val">${escapeHTML(job.industry || 'Technology')}</span>
+          </div>
+        </div>
+
+        <!-- Role Overview -->
+        <div class="swipe-card-body compact-body">
+          <p class="swipe-card-desc">${escapeHTML(job.description)}</p>
+
+          ${skillsList ? `
+            <div class="swipe-card-section" style="margin-top: 6px;">
+              <div class="job-tags-row">${skillsList}</div>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Toggle More Details Button (M key or click) -->
+        <button type="button" class="btn-card-toggle-details" ${isCenter ? 'id="btn-card-toggle-details"' : ''} aria-expanded="false" aria-controls="${detailsContainerId}" aria-label="Toggle full job details (Press M or click)">
+          <span class="toggle-text">More Details (Press M or click)</span>
+          <svg class="ui-icon toggle-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <!-- Expanded Full Details (Revealed via M or 'More') -->
+        <div class="swipe-card-expanded-details" id="${detailsContainerId}" style="display: none;" aria-hidden="true">
+          ${resps ? `
+            <div class="swipe-card-section">
+              <h4 class="swipe-section-heading">Key Responsibilities</h4>
+              <ul class="bullet-list">${resps}</ul>
             </div>
           ` : ''}
 
-          <!-- Job Header -->
-          <div class="swipe-card-header">
-            <h2 class="swipe-card-title" id="swipe-title-${job.id}">${escapeHTML(job.title)}</h2>
-            <div class="swipe-card-subhead">
-              <strong class="swipe-card-employer">${escapeHTML(job.employerName)}</strong>
-              <span class="dot-separator">•</span>
-              <span class="swipe-card-location">${escapeHTML(job.location)}</span>
+          ${reqs ? `
+            <div class="swipe-card-section">
+              <h4 class="swipe-section-heading">Requirements & Qualifications</h4>
+              <ul class="bullet-list">${reqs}</ul>
             </div>
-            <div class="swipe-card-badges">
-              ${verifiedBadge}
-              ${remoteBadge}
-              <span class="badge badge-standard">${escapeHTML(job.employmentType)}</span>
+          ` : ''}
+
+          ${accommHtml ? `
+            <div class="swipe-card-section">
+              <h4 class="swipe-section-heading">Verified Workplace Accommodations</h4>
+              <div class="job-tags-row">${accommHtml}</div>
             </div>
+          ` : ''}
+
+          <div class="swipe-card-section swipe-card-footer-info">
+            <span class="info-pill">Employer: <strong>${escapeHTML(job.employerName)}</strong></span>
+            <span class="info-pill">Location: <strong>${escapeHTML(job.location)}</strong></span>
+          </div>
+        </div>
+
+        <!-- Keyboard Controls Indicator -->
+        <div class="swipe-keyboard-hint compact-hint" aria-hidden="true">
+          <div class="hint-col hint-left">
+            <kbd class="key-kbd">← Arrow</kbd>
+            <span>Pass</span>
+          </div>
+          <div class="hint-col hint-mid">
+            <kbd class="key-kbd">M</kbd>
+            <span>More Info</span>
+          </div>
+          <div class="hint-col hint-right">
+            <span>Apply</span>
+            <kbd class="key-kbd">Arrow →</kbd>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="swipe-card-actions tinder-actions">
+          <button type="button" class="btn btn-card-pass" ${isCenter ? 'id="btn-card-pass"' : ''} data-id="${job.id}" aria-label="Pass on this job (Left Arrow)">
+            <svg class="ui-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Pass (←)
+          </button>
+          <button type="button" class="btn btn-card-apply" ${isCenter ? 'id="btn-card-apply"' : ''} data-id="${job.id}" aria-label="Apply to this job with CV (Right Arrow)">
+            <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Apply with CV (→)
+          </button>
+        </div>
+      </article>
+    `;
+  }
+
+  /**
+   * Deprecated alias for renderSwipeCard to maintain backward compatibility
+   */
+  static renderSideCard(scoredItem, index, total, position) {
+    return this.renderSwipeCard(scoredItem, index, total, position);
+  }
+
+  /**
+   * Render pagination dots with active red pill indicator matching Image 2
+   */
+  static renderPaginationDots(total, currentIndex) {
+    if (total <= 1) return '';
+    const dots = [];
+    const maxVisible = 7;
+    let start = 0;
+    let end = total;
+
+    if (total > maxVisible) {
+      const half = Math.floor(maxVisible / 2);
+      start = Math.max(0, currentIndex - half);
+      end = Math.min(total, start + maxVisible);
+      if (end - start < maxVisible) {
+        start = Math.max(0, end - maxVisible);
+      }
+    }
+
+    for (let i = start; i < end; i++) {
+      const isActive = i === currentIndex;
+      dots.push(`
+        <button type="button" 
+                class="deck-page-dot ${isActive ? 'active' : ''}" 
+                data-jump-index="${i}" 
+                role="tab" 
+                aria-selected="${isActive ? 'true' : 'false'}" 
+                aria-label="Go to opportunity ${i + 1} of ${total}"
+                title="Opportunity ${i + 1} of ${total}">
+        </button>
+      `);
+    }
+    return dots.join('');
+  }
+
+  /**
+   * Render complete deck with subtle tip corners behind front card and circular navigation controls
+   * @param {Array} cardDeck Array of scored job items
+   * @param {number} currentIndex Active card index
+   * @returns {string} HTML markup
+   */
+  static renderSwipeDeck(cardDeck, currentIndex) {
+    if (!cardDeck || cardDeck.length === 0 || currentIndex >= cardDeck.length) {
+      return '';
+    }
+
+    const total = cardDeck.length;
+    const currentItem = cardDeck[currentIndex];
+    
+    // User requirement:
+    // 1. Right background card has the work NEXT from the front one (currentIndex + 1)
+    // This is the card that will animate to front when swiped!
+    const rightIndex = (currentIndex + 1) % total;
+    const nextItem = total > 1 ? cardDeck[rightIndex] : null;
+
+    // 2. Left background card has the NEXT-NEXT one (currentIndex + 2) in queue
+    const leftIndex = (currentIndex + 2) % total;
+    const leftItem = total > 2 ? cardDeck[leftIndex] : (total > 1 ? cardDeck[rightIndex] : null);
+
+    // Pre-structured identical card markup for all 3 positions
+    const centerCardHtml = this.renderSwipeCard(currentItem, currentIndex, total, 'center');
+    const prevCardHtml = leftItem ? this.renderSwipeCard(leftItem, leftIndex, total, 'prev') : '';
+    const nextCardHtml = nextItem ? this.renderSwipeCard(nextItem, rightIndex, total, 'next') : '';
+    const paginationDotsHtml = this.renderPaginationDots(total, currentIndex);
+
+    return `
+      <div class="deck-carousel-viewport" id="deck-carousel-viewport">
+        <div class="deck-carousel-stage" id="deck-carousel-stage">
+          <!-- Left Background Card (Upcoming Opportunity +2, Fanned Out) -->
+          ${leftItem ? `
+            <div class="deck-slide-side deck-slide-prev" id="deck-slide-prev" data-target-index="${leftIndex}" role="button" tabindex="0" aria-label="Upcoming in queue (+2): ${escapeHTML(leftItem.job?.title || '')} (Click to switch)" title="Upcoming (+2): ${escapeHTML(leftItem.job?.title || '')} (Click to view)">
+              ${prevCardHtml}
+            </div>
+          ` : ''}
+
+          <!-- Center Active Card (Hero Card - Crystal Clear, High Contrast, Red Accent) -->
+          <div class="deck-slide-center" id="deck-slide-center">
+            ${centerCardHtml}
           </div>
 
-          <!-- Meta Highlights -->
-          <div class="swipe-card-meta-row compact-meta">
-            <div class="meta-item">
-              <span class="meta-label">Compensation</span>
-              <span class="meta-val meta-salary">${salaryString}</span>
+          <!-- Right Background Card (Immediate Next Opportunity +1, Fanned Out) -->
+          ${nextItem ? `
+            <div class="deck-slide-side deck-slide-next" id="deck-slide-next" data-target-index="${rightIndex}" role="button" tabindex="0" aria-label="Next opportunity (+1): ${escapeHTML(nextItem.job?.title || '')} (Click to switch)" title="Next (+1): ${escapeHTML(nextItem.job?.title || '')} (Click to view)">
+              ${nextCardHtml}
             </div>
-            <div class="meta-item">
-              <span class="meta-label">Industry</span>
-              <span class="meta-val">${escapeHTML(job.industry || 'Technology')}</span>
-            </div>
-          </div>
+          ` : ''}
+        </div>
 
-          <!-- Role Overview -->
-          <div class="swipe-card-body compact-body">
-            <p class="swipe-card-desc">${escapeHTML(job.description)}</p>
-
-            ${skillsList ? `
-              <div class="swipe-card-section" style="margin-top: 6px;">
-                <div class="job-tags-row">${skillsList}</div>
-              </div>
-            ` : ''}
-          </div>
-
-          <!-- Toggle More Details Button (M key or click) -->
-          <button type="button" class="btn-card-toggle-details" id="btn-card-toggle-details" aria-expanded="false" aria-controls="card-expanded-details-${job.id}" aria-label="Toggle full job details (Press M or click)">
-            <span class="toggle-text">More Details (Press M or click)</span>
-            <svg class="ui-icon toggle-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        <!-- Carousel Navigation Controls (Circular Arrows + Pagination Dots from Image 2) -->
+        <div class="deck-carousel-controls" aria-label="Opportunity carousel controls">
+          <button type="button" class="deck-nav-arrow deck-nav-prev" id="btn-carousel-prev" aria-label="Previous opportunity (Left Arrow)" title="Previous (← Arrow)" ${currentIndex === 0 ? 'disabled' : ''}>
+            <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
 
-          <!-- Expanded Full Details (Revealed via M or 'More') -->
-          <div class="swipe-card-expanded-details" id="card-expanded-details-${job.id}" style="display: none;" aria-hidden="true">
-            ${resps ? `
-              <div class="swipe-card-section">
-                <h4 class="swipe-section-heading">Key Responsibilities</h4>
-                <ul class="bullet-list">${resps}</ul>
-              </div>
-            ` : ''}
-
-            ${reqs ? `
-              <div class="swipe-card-section">
-                <h4 class="swipe-section-heading">Requirements & Qualifications</h4>
-                <ul class="bullet-list">${reqs}</ul>
-              </div>
-            ` : ''}
-
-            ${accommHtml ? `
-              <div class="swipe-card-section">
-                <h4 class="swipe-section-heading">Verified Workplace Accommodations</h4>
-                <div class="job-tags-row">${accommHtml}</div>
-              </div>
-            ` : ''}
-
-            <div class="swipe-card-section swipe-card-footer-info">
-              <span class="info-pill">Employer: <strong>${escapeHTML(job.employerName)}</strong></span>
-              <span class="info-pill">Location: <strong>${escapeHTML(job.location)}</strong></span>
-            </div>
+          <div class="deck-pagination-pills" id="deck-pagination-pills" role="tablist" aria-label="Opportunity indicators">
+            ${paginationDotsHtml}
           </div>
 
-          <!-- Keyboard Controls Indicator -->
-          <div class="swipe-keyboard-hint compact-hint" aria-hidden="true">
-            <div class="hint-col hint-left">
-              <kbd class="key-kbd">← Arrow</kbd>
-              <span>Pass</span>
-            </div>
-            <div class="hint-col hint-mid">
-              <kbd class="key-kbd">M</kbd>
-              <span>More Info</span>
-            </div>
-            <div class="hint-col hint-right">
-              <span>Apply</span>
-              <kbd class="key-kbd">Arrow →</kbd>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="swipe-card-actions tinder-actions">
-            <button type="button" class="btn btn-card-pass" id="btn-card-pass" data-id="${job.id}" aria-label="Pass on this job (Left Arrow)">
-              <svg class="ui-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Pass (←)
-            </button>
-            <button type="button" class="btn btn-card-apply" id="btn-card-apply" data-id="${job.id}" aria-label="Apply to this job with CV (Right Arrow)">
-              <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              Apply with CV (→)
-            </button>
-          </div>
-        </article>
+          <button type="button" class="deck-nav-arrow deck-nav-next" id="btn-carousel-next" aria-label="Next opportunity (Right Arrow)" title="Next (→ Arrow)" ${currentIndex >= total - 1 ? 'disabled' : ''}>
+            <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
       </div>
     `;
   }

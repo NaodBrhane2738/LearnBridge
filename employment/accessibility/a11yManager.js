@@ -27,9 +27,17 @@ class AccessibilityManager {
     this.gatewayInterval = null;
     this.gatewayActive = false;
 
-    // Speech deduplication tracker
+    // High-definition neural audio & anti-echo state (adopted from ALX Website)
+    this.isSpeaking = false;
+    this.lastSpeakingEndedTime = 0;
     this.lastSpokenText = '';
-    this.lastSpokenTime = 0;
+    this.speakingWatchdog = null;
+    this.fetchAbortController = null;
+    this.currentAudio = null;
+    this.speakSeq = 0;
+    this.lastCommand = '';
+    this.lastCommandTime = 0;
+    this.lastSuccessfulCommandTime = 0;
   }
 
   init() {
@@ -560,49 +568,18 @@ class AccessibilityManager {
   }
 
   getSpeechLang() {
-    if (this.currentLanguage === 'am') return 'am-ET';
-    return 'en-US';
+    if (this.currentLanguage === 'am') return 'am';
+    if (this.currentLanguage === 'om') return 'om';
+    if (this.currentLanguage === 'ti') return 'ti';
+    return 'en';
   }
 
-  speak(text, lang = null) {
-    if (!this.synth) return;
+  playChime(type = 'success') {
     try {
-      this.synth.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.05;
-      utterance.pitch = 1.0;
-      utterance.lang = lang || this.getSpeechLang();
-
-      const voices = this.synth.getVoices();
-      const targetLang = utterance.lang.slice(0, 2);
-      const matchedVoice = voices.find(v => v.lang.startsWith(targetLang));
-      if (matchedVoice) {
-        utterance.voice = matchedVoice;
-      }
-
-      this.synth.speak(utterance);
-    } catch (err) {
-      console.warn("[A11yManager] Speech synthesis unavailable:", err.message);
-    }
-  }
-
-  stopSpeech() {
-    if (this.synth) {
-      this.synth.cancel();
-    }
-  }
-
-  playEarcon(type = 'chime') {
-    try {
-      if (!this.audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        this.audioCtx = new AudioContext();
-      }
-
-      if (this.audioCtx.state === 'suspended') {
-        this.audioCtx.resume();
-      }
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!this.audioCtx) this.audioCtx = new AudioCtx();
+      if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
 
       const now = this.audioCtx.currentTime;
       const osc = this.audioCtx.createOscillator();
@@ -610,29 +587,169 @@ class AccessibilityManager {
       osc.connect(gain);
       gain.connect(this.audioCtx.destination);
 
-      if (type === 'rising') {
+      if (type === 'success' || type === 'rising') {
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(523.25, now);
-        osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.12);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
         osc.start(now);
-        osc.stop(now + 0.25);
+        osc.stop(now + 0.35);
       } else if (type === 'falling') {
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(783.99, now);
         osc.frequency.exponentialRampToValueAtTime(523.25, now + 0.15);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
         osc.start(now);
-        osc.stop(now + 0.25);
+        osc.stop(now + 0.28);
       } else {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(659.25, now);
-        gain.gain.setValueAtTime(0.1, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
         osc.start(now);
-        osc.stop(now + 0.3);
+        osc.stop(now + 0.28);
       }
     } catch (_) {}
+  }
+
+  playEarcon(type = 'chime') {
+    this.playChime(type);
+  }
+
+  stopSpeech() {
+    this.speakSeq++;
+    if (this.speakingWatchdog) {
+      clearTimeout(this.speakingWatchdog);
+      this.speakingWatchdog = null;
+    }
+    if (this.fetchAbortController) {
+      try { this.fetchAbortController.abort(); } catch (_) {}
+      this.fetchAbortController = null;
+    }
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+        this.currentAudio = null;
+      } catch (_) {}
+    }
+    if (this.synth) {
+      try { this.synth.cancel(); } catch (_) {}
+    }
+    this.isSpeaking = false;
+    this.lastSpeakingEndedTime = Date.now();
+    this.updateVoiceStatusUI(this.isListeningActive, false);
+  }
+
+  async speak(text, lang = null) {
+    if (!text || !text.trim()) return;
+
+    const targetLang = (lang || this.getSpeechLang() || 'en').slice(0, 2);
+
+    this.stopSpeech();
+    const currentSeq = ++this.speakSeq;
+    this.isSpeaking = true;
+    this.currentSpokenText = text.toLowerCase().trim();
+    this.lastSpokenText = this.currentSpokenText;
+    this.updateVoiceStatusUI(true, true);
+
+    // Watchdog to auto-release speaking lock after 7 seconds max
+    clearTimeout(this.speakingWatchdog);
+    this.speakingWatchdog = setTimeout(() => {
+      if (currentSeq === this.speakSeq) {
+        this.isSpeaking = false;
+        this.currentSpokenText = '';
+        this.lastSpeakingEndedTime = Date.now();
+        this.updateVoiceStatusUI(this.isListeningActive, false);
+      }
+    }, 7000);
+
+    try {
+      this.fetchAbortController = new AbortController();
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text.trim(), lang: targetLang }),
+        signal: this.fetchAbortController.signal
+      });
+
+      if (currentSeq !== this.speakSeq) return;
+      const data = await response.json();
+      if (currentSeq !== this.speakSeq) return;
+
+      if (data && data.success && data.audioUrl) {
+        const audio = new Audio(data.audioUrl);
+        this.currentAudio = audio;
+        audio.onended = () => {
+          if (currentSeq === this.speakSeq) {
+            clearTimeout(this.speakingWatchdog);
+            this.isSpeaking = false;
+            this.currentSpokenText = '';
+            this.lastSpeakingEndedTime = Date.now();
+            this.updateVoiceStatusUI(this.isListeningActive, false);
+          }
+        };
+        audio.onerror = () => {
+          if (currentSeq === this.speakSeq) {
+            this.fallbackSpeak(text, targetLang, currentSeq);
+          }
+        };
+        try {
+          await audio.play();
+          return;
+        } catch (_) {
+          this.fallbackSpeak(text, targetLang, currentSeq);
+          return;
+        }
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      console.warn("[A11yManager] Neural TTS fetch error, falling back:", err);
+    }
+
+    if (currentSeq === this.speakSeq) {
+      this.fallbackSpeak(text, targetLang, currentSeq);
+    }
+  }
+
+  fallbackSpeak(text, lang, expectedSeq) {
+    if (expectedSeq && expectedSeq !== this.speakSeq) return;
+    if (!this.synth) {
+      this.isSpeaking = false;
+      this.updateVoiceStatusUI(this.isListeningActive, false);
+      return;
+    }
+    try {
+      this.synth.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.05;
+      utter.pitch = 1.0;
+      utter.lang = lang === 'am' ? 'am-ET' : lang === 'ti' ? 'ti-ET' : lang === 'om' ? 'om-ET' : 'en-US';
+
+      utter.onend = () => {
+        if (!expectedSeq || expectedSeq === this.speakSeq) {
+          clearTimeout(this.speakingWatchdog);
+          this.isSpeaking = false;
+          this.lastSpeakingEndedTime = Date.now();
+          this.updateVoiceStatusUI(this.isListeningActive, false);
+        }
+      };
+      utter.onerror = () => {
+        if (!expectedSeq || expectedSeq === this.speakSeq) {
+          clearTimeout(this.speakingWatchdog);
+          this.isSpeaking = false;
+          this.lastSpeakingEndedTime = Date.now();
+          this.updateVoiceStatusUI(this.isListeningActive, false);
+        }
+      };
+      this.synth.speak(utter);
+    } catch (_) {
+      this.isSpeaking = false;
+      this.updateVoiceStatusUI(this.isListeningActive, false);
+    }
   }
 
   setupSpeechRecognition() {
@@ -646,13 +763,12 @@ class AccessibilityManager {
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = true;
       this.recognition.interimResults = true;
-      this.recognition.lang = 'en-US';
+      this.recognition.lang = this.getSpeechLang(this.currentLanguage || 'en');
       this.isListeningActive = true;
 
       this.recognition.onstart = () => {
         this.voiceActive = true;
-        this.updateVoiceStatusUI(true);
-        this.announceLive("Voice listening active. Say more, apply, or pass.", false);
+        this.updateVoiceStatusUI(true, this.isSpeaking);
       };
 
       this.recognition.onend = () => {
@@ -661,10 +777,10 @@ class AccessibilityManager {
           try {
             this.recognition.start();
           } catch (_) {
-            this.updateVoiceStatusUI(false);
+            this.updateVoiceStatusUI(false, this.isSpeaking);
           }
         } else {
-          this.updateVoiceStatusUI(false);
+          this.updateVoiceStatusUI(false, this.isSpeaking);
         }
       };
 
@@ -672,20 +788,37 @@ class AccessibilityManager {
         console.warn("[A11yManager] Voice recognition error:", e.error);
         if (e.error === 'not-allowed') {
           this.isListeningActive = false;
-          this.updateVoiceStatusUI(false);
+          this.updateVoiceStatusUI(false, false);
           this.showVisualToast("Microphone access denied. Please click the microphone icon in your browser address bar to allow.");
         }
       };
 
       this.recognition.onresult = (event) => {
+        // Acoustic Isolation: Drop input if platform is speaking or within 1400ms echo window
+        if (this.isSpeaking || (Date.now() - this.lastSpeakingEndedTime < 1400)) {
+          return;
+        }
+
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           const res = event.results[i];
-          const transcript = res[0]?.transcript || '';
-          console.log("[A11yManager] Heard voice result:", transcript, "isFinal:", res.isFinal);
+          const transcript = (res[0]?.transcript || '').trim();
+          if (!transcript) continue;
+
+          // Strict echo rejection against last spoken system message
+          if (this.lastSpokenText && transcript.length > 2) {
+            const cleanT = transcript.toLowerCase();
+            const cleanS = this.lastSpokenText.toLowerCase();
+            if (cleanS.includes(cleanT) || (cleanT.length > 6 && cleanS.slice(0, 30).includes(cleanT.slice(0, 10)))) {
+              continue;
+            }
+          }
 
           if (window.app && typeof window.app.handleVoiceCommand === 'function') {
             const handled = window.app.handleVoiceCommand(transcript);
-            if (handled) break;
+            if (handled) {
+              this.playChime('success');
+              break;
+            }
           }
         }
       };
@@ -701,14 +834,14 @@ class AccessibilityManager {
     this.isListeningActive = true;
     try {
       this.recognition.start();
-      this.updateVoiceStatusUI(true);
+      this.updateVoiceStatusUI(true, this.isSpeaking);
     } catch (_) {
       // Browser requires user gesture to start microphone: hook first user interaction
       const startOnGesture = () => {
         if (this.isListeningActive && !this.voiceActive && this.recognition) {
           try {
             this.recognition.start();
-            this.updateVoiceStatusUI(true);
+            this.updateVoiceStatusUI(true, this.isSpeaking);
           } catch (_) {}
         }
       };
@@ -727,13 +860,17 @@ class AccessibilityManager {
     if (this.voiceActive || this.isListeningActive) {
       this.isListeningActive = false;
       try { this.recognition.stop(); } catch (_) {}
-      this.updateVoiceStatusUI(false);
-      this.showVisualToast("Microphone muted.");
+      this.updateVoiceStatusUI(false, this.isSpeaking);
+      this.playChime('neutral');
+      this.showVisualToast("Microphone muted (Press V to resume).");
     } else {
       this.isListeningActive = true;
       try {
+        this.recognition.lang = this.getSpeechLang(this.currentLanguage || 'en');
         this.recognition.start();
-        this.showVisualToast("Listening for voice commands: 'more', 'apply', 'pass'");
+        this.playChime('success');
+        this.updateVoiceStatusUI(true, this.isSpeaking);
+        this.showVisualToast("Listening: Say 'apply', 'pass', 'more', or 'less'");
       } catch (err) {
         console.warn("[A11yManager] Speech start error:", err);
         this.showVisualToast("Please allow microphone access in your browser.");
@@ -741,19 +878,24 @@ class AccessibilityManager {
     }
   }
 
-  updateVoiceStatusUI(isActive) {
+  updateVoiceStatusUI(isActive, isSpeaking = false) {
     this.voiceActive = isActive;
     const btns = document.querySelectorAll('.btn-deck-mic');
     btns.forEach(btn => {
-      if (isActive) {
+      const lbl = btn.querySelector('.mic-status-label');
+      if (isSpeaking) {
+        btn.classList.add('is-speaking');
+        btn.classList.remove('is-listening');
+        btn.setAttribute('aria-pressed', 'true');
+        if (lbl) lbl.textContent = 'Speaking 🔊';
+      } else if (isActive) {
+        btn.classList.remove('is-speaking');
         btn.classList.add('is-listening');
         btn.setAttribute('aria-pressed', 'true');
-        const lbl = btn.querySelector('.mic-status-label');
         if (lbl) lbl.textContent = 'Mic: Listening (V)';
       } else {
-        btn.classList.remove('is-listening');
+        btn.classList.remove('is-speaking', 'is-listening');
         btn.setAttribute('aria-pressed', 'false');
-        const lbl = btn.querySelector('.mic-status-label');
         if (lbl) lbl.textContent = 'Voice (V)';
       }
     });
