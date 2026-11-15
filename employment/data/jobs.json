@@ -1,5 +1,44 @@
 [
   {
+    "id": "job-emp-1794744349391",
+    "postedAt": "2026-11-15T12:05:49.391Z",
+    "isExpired": false,
+    "title": "Junior Cloud Infrastructure Specialist",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "verifiedEmployer": true,
+    "source": "native_employer",
+    "industry": "Technology & Software",
+    "location": "Addis Ababa, Ethiopia",
+    "region": "Addis Ababa",
+    "isRemote": false,
+    "workArrangement": "On-site",
+    "employmentType": "Full-time",
+    "experienceLevel": "Mid-level",
+    "salaryMin": 0,
+    "salaryMax": 0,
+    "currency": "ETB",
+    "salaryDisclosed": false,
+    "deadline": "2026-12-31",
+    "description": "Assist in cloud deployments.",
+    "responsibilities": [],
+    "requirements": [],
+    "skills": [],
+    "languages": [
+      "English",
+      "Amharic"
+    ],
+    "accommodations": {
+      "screen_reader_ready": {
+        "status": "not_specified"
+      },
+      "etsl_interpreter": {
+        "status": "not_specified"
+      }
+    },
+    "applicationMethod": "internal"
+  },
+  {
     "id": "job-emp-1794728056894",
     "postedAt": "2026-11-15T07:34:16.894Z",
     "isExpired": false,
@@ -129,7 +168,7 @@
     "originalJobId": "afw-9014",
     "originalUrl": "https://afriworket.com/jobs/kifiya-react-native-9014",
     "importedAt": "2026-11-14T12:55:48.001Z",
-    "lastSyncedAt": "2026-11-15T07:34:16.925Z",
+    "lastSyncedAt": "2026-11-15T12:05:49.415Z",
     "location": "Addis Ababa, Ethiopia",
     "region": "Addis Ababa",
     "isRemote": true,
@@ -177,7 +216,7 @@
     "applicationMethod": "external",
     "externalUrl": "https://afriworket.com/jobs/kifiya-react-native-9014",
     "deduplicationHash": "75b2b69b6ed785b4347f6c15d7777277b65c278e0393c7f93fdf7273689701cc",
-    "updatedAt": "2026-11-15T07:34:16.925Z"
+    "updatedAt": "2026-11-15T12:05:49.415Z"
   },
   {
     "id": "ext-afriwork_partner_api-afw-7721",
@@ -192,7 +231,7 @@
     "originalJobId": "afw-7721",
     "originalUrl": "https://afriworket.com/jobs/mercy-corps-python-dev-8821",
     "importedAt": "2026-11-14T12:55:48.000Z",
-    "lastSyncedAt": "2026-11-15T07:34:16.924Z",
+    "lastSyncedAt": "2026-11-15T12:05:49.415Z",
     "location": "Hawassa, Ethiopia",
     "region": "Hawassa",
     "isRemote": false,
@@ -240,7 +279,7 @@
     "applicationMethod": "external",
     "externalUrl": "https://afriworket.com/jobs/mercy-corps-python-dev-8821",
     "deduplicationHash": "4f5a34897c057ecd47eba5a83c8d2e98e5b9123facc80357a3525cd72ab18ed0",
-    "updatedAt": "2026-11-15T07:34:16.924Z"
+    "updatedAt": "2026-11-15T12:05:49.415Z"
   },
   {
     "id": "job-emp-1794660947982",
