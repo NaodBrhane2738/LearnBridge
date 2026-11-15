@@ -320,7 +320,7 @@ class AccessibilityManager {
 
     if (this.gatewayProgressBar) {
       this.gatewayProgressBar.style.width = '100%';
-      this.gatewayProgressBar.style.background = '#10B981';
+      this.gatewayProgressBar.style.background = 'var(--status-emerald-text)';
     }
     if (this.gatewayCountdownSeconds) {
       this.gatewayCountdownSeconds.textContent = '10';

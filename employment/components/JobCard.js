@@ -18,14 +18,14 @@ class JobCardComponent {
           <svg class="ui-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           Verified Employer
         </span>`
-      : `<span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">Standard Listing</span>`;
+      : `<span class="badge badge-standard">Standard Listing</span>`;
 
     const remoteBadge = job.isRemote
       ? `<span class="badge badge-remote">
           <svg class="ui-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
           Remote
         </span>`
-      : `<span class="badge" style="background: rgba(255,255,255,0.08); color: var(--text-secondary);">${job.workArrangement || 'On-site'}</span>`;
+      : `<span class="badge badge-onsite">${job.workArrangement || 'On-site'}</span>`;
 
     const expiredBadge = job.isExpired
       ? `<span class="badge badge-expired">Expired</span>`
@@ -88,7 +88,7 @@ class JobCardComponent {
               <a href="#job/${job.id}">${escapeHTML(job.title)}</a>
             </h3>
             <div class="job-card-employer-row">
-              <span class="job-employer-name" style="font-weight: 600; color: #FFFFFF;">${escapeHTML(job.employerName)}</span>
+              <span class="job-employer-name">${escapeHTML(job.employerName)}</span>
               <span>•</span>
               <span class="job-location">
                 <svg class="ui-icon" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -106,7 +106,7 @@ class JobCardComponent {
         </div>
 
         <div class="job-tags-row">
-          <span class="meta-pill job-salary" style="font-weight: 600; color: var(--accent-mint);">
+          <span class="meta-pill job-salary">
             <svg class="ui-icon" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
             ${salaryString}
           </span>
