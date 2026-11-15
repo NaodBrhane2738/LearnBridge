@@ -393,6 +393,12 @@ class EmploymentApp {
         window.a11y.speak(spokenSummary);
       }
     }
+
+    // Auto-focus the active card for immediate keyboard accessibility
+    const activeCard = wrapper.querySelector('.swipe-card');
+    if (activeCard) {
+      activeCard.focus({ preventScroll: true });
+    }
   }
 
   async handleCardApply() {
@@ -402,10 +408,14 @@ class EmploymentApp {
     const currentItem = this.cardDeck[this.currentCardIndex];
     const job = currentItem.job;
 
-    // Trigger visual swipe right animation
+    // Trigger visual swipe right animation & 3D stack lift
     const cardEl = document.querySelector('.swipe-card');
+    const stackEl = document.getElementById('deck-3d-stack');
     if (cardEl) {
       cardEl.classList.add('anim-swipe-right');
+    }
+    if (stackEl) {
+      stackEl.classList.add('deck-animating');
     }
 
     // Submit Application automatically using the uploaded CV
@@ -451,10 +461,14 @@ class EmploymentApp {
     const currentItem = this.cardDeck[this.currentCardIndex];
     const job = currentItem.job;
 
-    // Trigger visual swipe left animation
+    // Trigger visual swipe left animation & 3D stack lift
     const cardEl = document.querySelector('.swipe-card');
+    const stackEl = document.getElementById('deck-3d-stack');
     if (cardEl) {
       cardEl.classList.add('anim-swipe-left');
+    }
+    if (stackEl) {
+      stackEl.classList.add('deck-animating');
     }
 
     const passMsg = `Passed on ${job.title}`;
@@ -906,15 +920,23 @@ class EmploymentApp {
 
     // Swipeable Card Keyboard Navigation: Left = Pass, Right = Apply
     window.addEventListener('keydown', (e) => {
-      if (e.target.matches('input, textarea, select')) return;
-      if (this.currentRoute !== 'search') return;
+      if (e.target && e.target.matches && e.target.matches('input, textarea, select')) return;
+      if (document.querySelector('dialog[open]') || document.querySelector('.modal-overlay.active')) return;
+
+      const deckStage = document.getElementById('swipe-deck-stage');
+      if (!deckStage || deckStage.style.display === 'none') return;
       if (!this.cardDeck || this.cardDeck.length === 0 || this.currentCardIndex >= this.cardDeck.length) return;
 
-      if (e.key === 'ArrowRight') {
+      const isRight = e.key === 'ArrowRight' || e.code === 'ArrowRight' || e.key === 'Right' || e.keyCode === 39;
+      const isLeft = e.key === 'ArrowLeft' || e.code === 'ArrowLeft' || e.key === 'Left' || e.keyCode === 37;
+
+      if (isRight) {
         e.preventDefault();
+        e.stopPropagation();
         this.handleCardApply();
-      } else if (e.key === 'ArrowLeft') {
+      } else if (isLeft) {
         e.preventDefault();
+        e.stopPropagation();
         this.handleCardPass();
       }
     });
