@@ -19,7 +19,7 @@
 
   <!-- High Visibility Visual Event Toast for Deaf & Hard of Hearing Users -->
   <div id="visual-event-toast" class="visual-toast" role="status" aria-hidden="true">
-    <svg class="ui-icon" style="width: 20px; height: 20px; color: var(--accent-mint);" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <svg class="ui-icon" style="width: 20px; height: 20px; color: var(--status-emerald-text);" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
     <span id="visual-toast-text">System alert</span>
   </div>
 
@@ -125,7 +125,7 @@
       <div class="dashboard-hero">
         <div>
           <h2 class="hero-welcome-title" id="dash-welcome-heading">
-            <span data-i18n="dashboard.welcome">Welcome back</span>, <span id="dash-cand-name" style="color: var(--accent-primary);">Yohannes</span>!
+            <span data-i18n="dashboard.welcome">Welcome back</span>, <span id="dash-cand-name" style="color: var(--alx-crimson);">Yohannes</span>!
           </h2>
           <p class="hero-subtitle" data-i18n="dashboard.subtitle">
             Discover tailored career opportunities with verified workplace accommodations and assistive technology support.
@@ -150,7 +150,7 @@
         <div class="metric-card">
           <div class="metric-header">
             <span class="metric-title" data-i18n="dashboard.profileCompletion">Profile Completion</span>
-            <svg class="ui-icon" style="color: var(--accent-mint);" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <svg class="ui-icon" style="color: var(--status-emerald-text);" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           </div>
           <div class="metric-value" id="dash-profile-num">90%</div>
           <div class="progress-track" role="progressbar" aria-label="Profile completion progress" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
@@ -162,7 +162,7 @@
         <div class="metric-card">
           <div class="metric-header">
             <span class="metric-title" data-i18n="dashboard.activeApplications">Active Applications</span>
-            <svg class="ui-icon" style="color: #93C5FD;" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <svg class="ui-icon" style="color: var(--status-blue-text);" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
           </div>
           <div class="metric-value" id="dash-apps-num">2</div>
           <span class="metric-desc">1 in review · 1 interview scheduled</span>
@@ -171,7 +171,7 @@
         <div class="metric-card">
           <div class="metric-header">
             <span class="metric-title" data-i18n="dashboard.savedCount">Saved Opportunities</span>
-            <svg class="ui-icon" style="color: var(--accent-gold);" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <svg class="ui-icon" style="color: var(--status-amber-text);" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </div>
           <div class="metric-value" id="dash-saved-num">3</div>
           <span class="metric-desc">Vacancies bookmarked for later review.</span>
@@ -183,7 +183,7 @@
         <div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
             <h3 style="font-size: 1.35rem; font-weight: 800;" data-i18n="dashboard.newMatches">Recommended for You</h3>
-            <span style="font-size: 0.8125rem; color: var(--accent-primary); font-weight: 600;">✓ Explainable Matching</span>
+            <span style="font-size: 0.8125rem; color: var(--status-emerald-text); font-weight: 700;">✓ Explainable Matching</span>
           </div>
           <div id="dash-recommendations-list">
             <!-- Populated via JS -->
@@ -431,8 +431,8 @@
           </div>
 
           <!-- Strict Separation: Voluntary Accommodations Profile -->
-          <div style="margin-top: 28px; border-top: 1px solid var(--border); padding-top: 20px;">
-            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--accent-primary);" data-i18n="candidate.accommodationsSection">
+          <div style="margin-top: 28px; border-top: 1px solid var(--border-line); padding-top: 20px;">
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--alx-crimson);" data-i18n="candidate.accommodationsSection">
               Voluntary Workplace Accommodations
             </h3>
             <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 4px;" data-i18n="candidate.accommodationsExplainer">
@@ -504,8 +504,8 @@
       </div>
 
       <!-- Anti-Discrimination Guardrail Notice -->
-      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 14px 20px; margin-bottom: 24px; font-size: 0.875rem;">
-        <strong style="color: var(--accent-primary);">Equal Opportunity & Accessibility Notice:</strong>
+      <div style="background: var(--status-emerald-bg); border: 1px solid var(--status-emerald-border); border-radius: var(--radius-subcard); padding: 14px 20px; margin-bottom: 24px; font-size: 0.875rem;">
+        <strong style="color: var(--status-emerald-text);">Equal Opportunity & Accessibility Notice:</strong>
         <p style="color: var(--text-secondary); margin-top: 4px;" data-i18n="employer.guardrailNotice">
           LearnBridge strictly forbids filtering or rejecting candidates based on disability or accessibility preferences. Matching and evaluation must be based solely on qualifications and merit.
         </p>
@@ -664,7 +664,7 @@
         <div id="apply-modal-employer" style="color: var(--text-secondary); font-size: 0.875rem;">Employer Name</div>
       </div>
 
-      <div id="apply-error-banner" style="display: none; background: rgba(244,63,94,0.15); border: 1px solid var(--accent-rose); color: var(--accent-rose); padding: 10px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.875rem;"></div>
+      <div id="apply-error-banner" style="display: none; background: var(--status-rose-bg); border: 1px solid var(--status-rose-border); color: var(--status-rose-text); padding: 10px; border-radius: var(--radius-control); margin-bottom: 14px; font-size: 0.875rem;"></div>
 
       <div class="filter-group" style="margin-bottom: 14px;">
         <label for="apply-resume-select" class="filter-label">Select Saved CV / Resume</label>
@@ -705,10 +705,10 @@
       <p style="color: var(--text-main); font-size: 1rem; line-height: 1.6;">
         You are leaving LearnBridge to apply directly on the partner portal for:
       </p>
-      <div style="background: var(--surface-elevated); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin: 14px 0;">
-        <h4 id="ext-modal-title" style="font-weight: 700; font-size: 1.15rem;">Job Title</h4>
+      <div style="background: var(--bg-surface-secondary); padding: 14px; border-radius: var(--radius-subcard); border: 1px solid var(--border-line); margin: 14px 0;">
+        <h4 id="ext-modal-title" style="font-weight: 700; font-size: 1.15rem; color: var(--text-main);">Job Title</h4>
         <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 4px;">
-          Partner Source: <strong id="ext-modal-provider" style="color: var(--accent-cyan);">Afriwork Feed</strong>
+          Partner Source: <strong id="ext-modal-provider" style="color: var(--alx-crimson);">Afriwork Feed</strong>
         </div>
         <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px; word-break: break-all;" id="ext-modal-destination">
           Destination URL
@@ -734,7 +734,7 @@
       <button type="button" class="btn-close" aria-label="Close CV parser">&times;</button>
     </div>
 
-    <div id="cv-error-banner" style="display: none; background: rgba(244,63,94,0.15); border: 1px solid var(--accent-rose); color: var(--accent-rose); padding: 10px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.875rem;"></div>
+    <div id="cv-error-banner" style="display: none; background: var(--status-rose-bg); border: 1px solid var(--status-rose-border); color: var(--status-rose-text); padding: 10px; border-radius: var(--radius-control); margin-bottom: 14px; font-size: 0.875rem;"></div>
 
     <!-- Step 1: Upload / Paste -->
     <div id="cv-upload-step">
@@ -742,7 +742,7 @@
         Choose a file to extract profile fields, or paste text directly:
       </p>
 
-      <div style="border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 24px; text-align: center; margin-bottom: 16px;">
+      <div style="border: 2px dashed var(--border-strong); border-radius: var(--radius-card); padding: 24px; text-align: center; margin-bottom: 16px; background: var(--bg-surface-secondary);">
         <label for="cv-file-picker" class="btn btn-secondary" style="cursor: pointer;">
           Choose File (PDF / Text)
         </label>
@@ -761,8 +761,8 @@
 
     <!-- Step 2: Review & Confirm -->
     <div id="cv-review-step" style="display: none;">
-      <div style="background: rgba(245,158,11,0.1); border: 1px solid var(--accent-amber); padding: 10px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 0.8125rem; color: var(--accent-amber);">
-        <strong style="color: var(--accent-gold);">Verification Required:</strong> Review and correct any extracted details below. No changes are saved to your profile without your explicit confirmation.
+      <div style="background: var(--status-amber-bg); border: 1px solid var(--status-amber-border); padding: 10px; border-radius: var(--radius-control); margin-bottom: 16px; font-size: 0.8125rem; color: var(--status-amber-text);">
+        <strong style="color: var(--status-amber-text);">Verification Required:</strong> Review and correct any extracted details below. No changes are saved to your profile without your explicit confirmation.
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 12px;">
@@ -871,8 +871,8 @@
         </div>
 
         <!-- Accommodations Available -->
-        <fieldset style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px;">
-          <legend style="font-size: 0.8125rem; font-weight: 700; color: var(--accent-primary); padding: 0 6px;">Available Accommodations</legend>
+        <fieldset style="border: 1px solid var(--border-line); border-radius: var(--radius-subcard); padding: 12px; background: var(--bg-surface-secondary);">
+          <legend style="font-size: 0.8125rem; font-weight: 700; color: var(--alx-crimson); padding: 0 6px;">Available Accommodations</legend>
           <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
             <label class="checkbox-label"><input type="checkbox" id="post-accomm-screen-reader" checked> <span>Screen-reader compatible internal software</span></label>
             <label class="checkbox-label"><input type="checkbox" id="post-accomm-etsl"> <span>Certified Ethiopian Sign Language interpreter available</span></label>
@@ -935,7 +935,7 @@
 
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
         <button type="button" class="btn btn-outline" onclick="document.getElementById('report-dialog').close()">Cancel</button>
-        <button type="submit" class="btn btn-primary" style="background: var(--accent-rose); border-color: var(--accent-rose); color: #fff;">
+        <button type="submit" class="btn btn-primary" style="background: var(--alx-crimson); border-color: var(--alx-crimson); color: #fff;">
           Submit Report
         </button>
       </div>
@@ -948,7 +948,7 @@
   <div id="etsl-dock-window" class="etsl-dock-window" style="display: none;" role="region" aria-label="Ethiopian Sign Language Guide">
     <div class="etsl-dock-header">
       <div style="display: flex; align-items: center; gap: 6px;">
-        <span style="font-weight: 700; color: #FFFFFF;">ETSL Guide</span>
+        <span style="font-weight: 700; color: var(--text-main);">ETSL Guide</span>
         <span id="etsl-status-badge" class="badge badge-verified">Verified</span>
       </div>
       <div style="display: flex; gap: 4px;">
@@ -967,7 +967,7 @@
     </div>
 
     <div class="etsl-disclaimer-card">
-      <div style="font-weight: 700; color: var(--accent-primary); margin-bottom: 2px;" id="etsl-variety-label">
+      <div style="font-weight: 700; color: var(--alx-crimson); margin-bottom: 2px;" id="etsl-variety-label">
         Ethiopian Sign Language (ETSL) — Addis Ababa Dialect
       </div>
       <p id="etsl-disclaimer-text">

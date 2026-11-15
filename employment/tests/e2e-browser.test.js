@@ -63,8 +63,8 @@ async function runBrowserTests() {
     assert.ok(gatewayOpen, "Gateway must open on fresh load");
     passed++;
 
-    // 2. Gateway Step 1: Select Language (Press E for English)
-    await page.keyboard.press('KeyE');
+    // 2. Gateway Step 1: Select Language (Click English or press E)
+    await page.click('.gateway-lang-choice[data-lang="en"]');
     await page.waitForFunction(() => {
       const s2 = document.getElementById('gateway-step-a11y');
       return s2 && !s2.hidden;

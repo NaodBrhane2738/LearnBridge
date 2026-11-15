@@ -231,7 +231,7 @@ class EmploymentApp {
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px;">
           <div>
             <h4 style="font-size: 1.15rem; font-weight: 700; line-height: 1.3;">
-              <a href="#job/${r.job.id}" style="color: #FFFFFF; text-decoration: none;">${r.job.title}</a>
+              <a href="#job/${r.job.id}" style="color: var(--text-main); text-decoration: none;">${r.job.title}</a>
             </h4>
             <div style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px;">${r.job.employerName} · ${r.job.location}</div>
           </div>
@@ -240,11 +240,11 @@ class EmploymentApp {
             ${r.matchScore}% Match
           </span>
         </div>
-        <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.28); padding: 9px 13px; border-radius: var(--radius-subcard); font-size: 0.8125rem; color: #FFFFFF; margin-bottom: 12px;">
-          <strong style="color: var(--accent-mint);">Why recommended:</strong> ${r.explanation.summary}
+        <div style="background: var(--status-emerald-bg); border: 1px solid var(--status-emerald-border); padding: 9px 13px; border-radius: var(--radius-subcard); font-size: 0.8125rem; color: var(--text-main); margin-bottom: 12px;">
+          <strong style="color: var(--status-emerald-text);">Why recommended:</strong> ${r.explanation.summary}
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-weight: 600; color: var(--accent-mint); font-size: 0.9rem;">
+          <span style="font-weight: 700; color: var(--alx-crimson); font-size: 0.9rem;">
             ${r.job.salaryDisclosed ? `${r.job.salaryMin.toLocaleString()} ${r.job.currency}` : 'Competitive'}
           </span>
           <a href="#job/${r.job.id}" class="btn btn-sm btn-secondary">Review & Apply →</a>
@@ -366,13 +366,16 @@ class EmploymentApp {
               : `<button class="btn btn-primary btn-open-apply-modal" data-id="${job.id}">Submit Application</button>`
           }
           <button class="btn btn-outline btn-save-job" data-id="${job.id}">
-            ${isSaved ? '★ Saved to Favorites' : '☆ Save Vacancy'}
+            <svg class="ui-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            ${isSaved ? 'Saved to Favorites' : 'Save Vacancy'}
           </button>
           <button class="btn btn-outline btn-listen-summary" data-id="${job.id}">
-            🔊 Listen to Spoken Summary
+            <svg class="ui-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Listen to Spoken Summary
           </button>
-          <button class="btn btn-outline" id="btn-open-report-dialog" style="color: var(--accent-rose); border-color: rgba(244,63,94,0.3);">
-            🚩 Report this Vacancy
+          <button class="btn btn-outline" id="btn-open-report-dialog" style="color: var(--status-rose-text); border-color: var(--status-rose-border);">
+            <svg class="ui-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            Report this Vacancy
           </button>
         </div>
       `;
