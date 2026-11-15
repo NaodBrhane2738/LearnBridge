@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || '127.0.0.1';
+const HOST = process.env.HOST || '0.0.0.0';
 
 // Middlewares
 app.use(cors());
@@ -16,7 +17,26 @@ app.use(express.static(FRONTEND_DIR));
 
 // Serve Standalone Anime Assistant Module
 const ASSISTANT_DIR = path.join(__dirname, '..', 'anime-assistant');
-app.use('/anime-assistant', express.static(ASSISTANT_DIR));
+if (fs.existsSync(ASSISTANT_DIR)) {
+  app.use('/anime-assistant', express.static(ASSISTANT_DIR));
+}
+
+// Serve Integrated Employment & Job Portal (run from anywhere on same domain/port)
+let EMPLOYMENT_DIR = path.join(__dirname, '..', 'employment');
+if (!fs.existsSync(EMPLOYMENT_DIR)) {
+  EMPLOYMENT_DIR = path.resolve(__dirname, '..', '..', 'employment');
+}
+if (fs.existsSync(EMPLOYMENT_DIR)) {
+  app.use('/employment', express.static(EMPLOYMENT_DIR));
+  app.use('/job-portal', express.static(EMPLOYMENT_DIR));
+  try {
+    const employmentRoutes = require(path.join(EMPLOYMENT_DIR, 'api', 'routes'));
+    app.use('/api/v1/employment', employmentRoutes);
+    console.log('✓ Mounted Employment REST API at /api/v1/employment');
+  } catch (err) {
+    console.warn('Note: Could not mount employment routes:', err.message);
+  }
+}
 
 // Mock User & Programs Database
 const userState = {
@@ -193,7 +213,6 @@ app.post('/api/plugin/vid-maker/generate', (req, res) => {
 // Microsoft Edge Neural Voices: Amharic (Ameha/Mekdes), Tigrinya, Afaan Oromoo (Rafiki), English (Jenny)
 // ==========================================================
 const crypto = require('crypto');
-const fs = require('fs');
 const { spawn } = require('child_process');
 
 const AUDIO_CACHE_DIR = path.join(__dirname, '..', 'frontend', 'assets', 'audio_cache');
@@ -244,13 +263,13 @@ app.post('/api/tts', (req, res) => {
   py.stdin.end();
 });
 
-// Start Server
+// Start Server (listening on 0.0.0.0 - accessible from anywhere)
 app.listen(PORT, HOST, () => {
   console.log(`=======================================================`);
   console.log(` 🚀 ALX Test Website & Vid Maker Host Backend`);
-  console.log(` URL: http://${HOST}:${PORT}`);
-  console.log(` Login Page: http://${HOST}:${PORT}/#login`);
-  console.log(` eHub Dashboard: http://${HOST}:${PORT}/#ehub`);
-  console.log(` API Endpoint: http://${HOST}:${PORT}/api/health`);
+  console.log(` Listening: http://${HOST}:${PORT} (0.0.0.0 - accessible from anywhere)`);
+  console.log(` Main Website: /#login`);
+  console.log(` Integrated Job Portal: /job-portal`);
+  console.log(` Health API: /api/health`);
   console.log(`=======================================================`);
 });

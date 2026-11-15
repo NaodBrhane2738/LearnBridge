@@ -3860,7 +3860,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
                    currentLang === 'ti' ? 'ናይ ስራሕ መድረኽ ይኸፍት ኣሎ...' :
                    'Opening ALX Job Portal...');
         setTimeout(() => {
-          window.open('http://127.0.0.1:4174', '_blank');
+          window.open('/job-portal', '_blank');
         }, 500);
         return true;
       }
