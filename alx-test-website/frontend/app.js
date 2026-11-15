@@ -2911,9 +2911,11 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     const manualDividerLabel = document.getElementById('manualDividerLabel');
     if (manualDividerLabel) manualDividerLabel.textContent = d.manualDividerLabel;
 
-    // 8. Voice HUD
+    // 8. Voice HUD & Chat Assistant Status
     const voiceHudState = document.getElementById('voiceHudState');
     if (voiceHudState) voiceHudState.textContent = d.voiceActive;
+    const chatStatusSub = document.getElementById('chatStatusSub');
+    if (chatStatusSub) chatStatusSub.textContent = d.voiceActive;
 
     document.documentElement.lang = lang;
 
@@ -3013,15 +3015,255 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       this.currentAudio = null;
 
       this.hudWidget = document.getElementById('assistantCornerWidget');
-      this.hudBubble = document.getElementById('assistantSpeechBubble');
-      this.hudDot = document.getElementById('voiceHudDot');
-      this.hudState = document.getElementById('voiceHudState');
-      this.hudHeard = document.getElementById('voiceHudHeard');
+      this.chatPanel = document.getElementById('assistantChatPanel');
+      this.dialogueFeed = document.getElementById('chatDialogueFeed');
+      this.chatTextInput = document.getElementById('chatTextInput');
+      this.chatInputForm = document.getElementById('chatInputForm');
+      this.btnChatMicToggle = document.getElementById('btnChatMicToggle');
+      this.chatMicLabel = document.getElementById('chatMicLabel');
+      this.chatMicIcon = document.getElementById('chatMicIcon');
+      this.btnChatHelp = document.getElementById('btnChatHelp');
+      this.btnChatMinimize = document.getElementById('btnChatMinimize');
+      this.chatStatusSub = document.getElementById('chatStatusSub');
+      this.chatOnlineDot = document.getElementById('chatOnlineDot');
       this.btnAssistantBot = document.getElementById('btnAssistantBot');
       this.botVoiceRing = document.getElementById('botVoiceRing');
       this.botMicIndicator = document.getElementById('botMicIndicator');
 
+      this._lastBotMsgText = '';
+      this._lastBotMsgTime = 0;
+      this.lastActionLabel = '';
+
+      const self = this;
+      this.hudHeard = {
+        set textContent(val) {
+          self.onHudHeardUpdated(val);
+        },
+        get textContent() {
+          return self.lastActionLabel || '';
+        }
+      };
+
+      this.hudState = {
+        set textContent(val) {
+          if (self.chatStatusSub) {
+            self.chatStatusSub.textContent = val;
+          }
+        },
+        get textContent() {
+          return self.chatStatusSub ? self.chatStatusSub.textContent : '';
+        }
+      };
+
+      this.hudBubble = {
+        classList: {
+          add(cls) { if (cls === 'visible') self.openChat(); },
+          remove(cls) {}
+        }
+      };
+
       this.init();
+    }
+
+    escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    addDialogueMessage(sender, text, status = 'done', detail = null) {
+      if (!this.dialogueFeed) {
+        this.dialogueFeed = document.getElementById('chatDialogueFeed');
+      }
+      if (!this.dialogueFeed) return;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `chat-msg chat-msg-${sender}`;
+
+      if (sender === 'user') {
+        msgDiv.innerHTML = `
+          <div class="chat-msg-content">
+            <div class="chat-msg-bubble">
+              <p>${this.escapeHtml(text)}</p>
+            </div>
+            <span class="chat-msg-time">${timeStr}</span>
+          </div>
+        `;
+      } else {
+        let statusTagHtml = '';
+        if (status === 'done') {
+          statusTagHtml = `<div class="msg-status-tag tag-done">✓ Done</div>`;
+        } else if (status === 'running') {
+          statusTagHtml = `<div class="msg-status-tag tag-running">⚡ Executing</div>`;
+        } else if (status === 'ready') {
+          statusTagHtml = `<div class="msg-status-tag tag-ready">● AI Ready</div>`;
+        } else if (status === 'help') {
+          statusTagHtml = `<div class="msg-status-tag tag-help">❓ Commands Guide</div>`;
+        }
+
+        let detailHtml = '';
+        if (detail) {
+          detailHtml = `<div class="msg-detail-box">${detail}</div>`;
+        }
+
+        const isRawHtml = typeof text === 'string' && text.trim().startsWith('<');
+        const contentHtml = isRawHtml ? text : `<p>${this.escapeHtml(text)}</p>`;
+
+        msgDiv.innerHTML = `
+          <div class="chat-msg-avatar">🤖</div>
+          <div class="chat-msg-content">
+            <div class="chat-msg-bubble">
+              ${statusTagHtml}
+              <div>${contentHtml}</div>
+              ${detailHtml}
+            </div>
+            <span class="chat-msg-time">${timeStr}</span>
+          </div>
+        `;
+      }
+
+      this.dialogueFeed.appendChild(msgDiv);
+      this.dialogueFeed.scrollTop = this.dialogueFeed.scrollHeight;
+    }
+
+    onHudHeardUpdated(val) {
+      if (!val || typeof val !== 'string') return;
+      const trimmed = val.trim();
+      if (!trimmed) return;
+
+      // If speech transcript / interim text with quotes e.g. "planning..."
+      if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+        if (this.chatStatusSub) {
+          this.chatStatusSub.textContent = (this.isSpeaking ? 'Speaking 🔊 ' : 'Hearing: ') + trimmed;
+        }
+        return;
+      }
+
+      this.lastActionLabel = trimmed;
+      if (this.chatStatusSub) {
+        this.chatStatusSub.textContent = `✓ ${trimmed.length > 28 ? trimmed.substring(0, 26) + '...' : trimmed}`;
+      }
+
+      const now = Date.now();
+      if (this._lastBotMsgText === trimmed && (now - (this._lastBotMsgTime || 0)) < 1500) {
+        return;
+      }
+      this._lastBotMsgText = trimmed;
+      this._lastBotMsgTime = now;
+
+      this.addDialogueMessage('bot', trimmed, 'done');
+    }
+
+    openChat() {
+      if (!this.chatPanel) {
+        this.chatPanel = document.getElementById('assistantChatPanel');
+      }
+      if (!this.chatPanel) return;
+      this.chatPanel.classList.remove('minimized');
+      this.chatPanel.setAttribute('aria-hidden', 'false');
+      if (this.dialogueFeed) {
+        this.dialogueFeed.scrollTop = this.dialogueFeed.scrollHeight;
+      }
+      if (this.chatTextInput) {
+        setTimeout(() => {
+          try { this.chatTextInput.focus(); } catch (_) {}
+        }, 150);
+      }
+    }
+
+    minimizeChat() {
+      if (!this.chatPanel) {
+        this.chatPanel = document.getElementById('assistantChatPanel');
+      }
+      if (!this.chatPanel) return;
+      this.chatPanel.classList.add('minimized');
+      this.chatPanel.setAttribute('aria-hidden', 'true');
+    }
+
+    toggleChat() {
+      if (!this.chatPanel) {
+        this.chatPanel = document.getElementById('assistantChatPanel');
+      }
+      if (!this.chatPanel) return;
+      if (this.chatPanel.classList.contains('minimized')) {
+        this.openChat();
+      } else {
+        this.minimizeChat();
+      }
+    }
+
+    showCommandsHelpDialogue() {
+      this.openChat();
+      const html = `
+        <div style="font-size:0.80rem; line-height:1.4;">
+          <p style="margin:0 0 6px 0; color:#f8fafc; font-weight:700;">All Platform Voice & Chat Commands</p>
+          <p style="margin:0 0 8px 0; font-size:0.72rem; color:#94a3b8;">Click any pill below to execute instantly or speak it into your mic:</p>
+          
+          <div class="chat-help-category">💼 Jobs & Careers</div>
+          <div class="chat-cmd-grid">
+            <button type="button" class="chat-cmd-pill" data-cmd="job portal">💼 job portal</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="jobs">jobs</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="careers">careers</button>
+          </div>
+
+          <div class="chat-help-category">📍 Where am I & Schedule</div>
+          <div class="chat-cmd-grid">
+            <button type="button" class="chat-cmd-pill" data-cmd="where am i">📍 where am i</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="what do i have today">📅 what do i have today</button>
+          </div>
+
+          <div class="chat-help-category">🧭 Core Platform Navigation</div>
+          <div class="chat-cmd-grid">
+            <button type="button" class="chat-cmd-pill" data-cmd="planning">planning</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="access learning">learning</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="projects">projects</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="quizzes">quizzes</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="profile">profile</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="announcements">announcements</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="support">support</button>
+          </div>
+
+          <div class="chat-help-category">🎬 Video & Learning Controls</div>
+          <div class="chat-cmd-grid">
+            <button type="button" class="chat-cmd-pill" data-cmd="play video">▶️ play video</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="pause video">⏸️ pause video</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="video maker">🎥 video maker</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="continue sprint">continue sprint</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="complete module">complete module</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="review quiz">review quiz</button>
+          </div>
+
+          <div class="chat-help-category">♿ Accessible Media & Controls</div>
+          <div class="chat-cmd-grid">
+            <button type="button" class="chat-cmd-pill" data-cmd="sign language">🤟 sign language</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="braille">⠃ braille embosser</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="subtitles">subtitles</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="volume up">🔊 volume up</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="volume down">🔉 volume down</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="forward 10 seconds">⏩ forward 10s</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="rewind 10 seconds">⏪ rewind 10s</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="scroll down">scroll down</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="scroll up">scroll up</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="close dialog">close dialog</button>
+          </div>
+
+          <div class="chat-help-category">🌐 Languages (ቋንቋ / Afaan)</div>
+          <div class="chat-cmd-grid">
+            <button type="button" class="chat-cmd-pill" data-cmd="switch to amharic">🇪🇹 አማርኛ</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="switch to oromiffa">Afaan Oromoo</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="switch to tigrinya">ትግርኛ</button>
+            <button type="button" class="chat-cmd-pill" data-cmd="switch to english">English</button>
+          </div>
+        </div>
+      `;
+      this.addDialogueMessage('bot', html, 'help');
     }
 
     init() {
@@ -3495,6 +3737,24 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           this.btnAssistantBot.classList.remove('voice-active');
         }
       }
+      if (this.chatStatusSub) {
+        this.chatStatusSub.textContent = label || (active ? (currentLang === 'am' ? 'እየሰማ ነው 🎙️' : 'Listening 🎙️ · Hands-Free Active') : (currentLang === 'am' ? 'ማይክ ቆሟል 🔇' : 'Mic Paused 🔇 · Click to resume'));
+      }
+      if (this.chatOnlineDot) {
+        this.chatOnlineDot.style.background = active ? '#10b981' : '#94a3b8';
+        this.chatOnlineDot.style.boxShadow = active ? '0 0 8px #10b981' : 'none';
+      }
+      if (this.btnChatMicToggle) {
+        if (active) {
+          this.btnChatMicToggle.classList.remove('mic-off');
+          if (this.chatMicLabel) this.chatMicLabel.textContent = 'Mic ON';
+          if (this.chatMicIcon) this.chatMicIcon.textContent = '🎙️';
+        } else {
+          this.btnChatMicToggle.classList.add('mic-off');
+          if (this.chatMicLabel) this.chatMicLabel.textContent = 'Mic OFF';
+          if (this.chatMicIcon) this.chatMicIcon.textContent = '🔇';
+        }
+      }
       if (this.hudState) {
         this.hudState.textContent = label || (active ? (currentLang === 'am' ? 'እየሰማ ነው' : 'VOICE ACTIVE') : (currentLang === 'am' ? 'ተዘግቷል' : 'VOICE PAUSED'));
       }
@@ -3521,7 +3781,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       }
     }
 
-    dispatchCommand(raw) {
+    dispatchCommand(raw, isExplicitUserAction = false) {
       if (!raw) return false;
       const text = raw.toLowerCase()
         .replace(/[.,!?;:'"\\-_/\\()]/g, ' ')
@@ -3532,30 +3792,55 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
       const now = Date.now();
 
-      // GOD-MODE ACOUSTIC LOCKOUT:
-      // Drop commands completely while speaking or in echo cooldown window
-      if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 1500) {
-        return false;
+      // GOD-MODE ACOUSTIC LOCKOUT (for hands-free voice only):
+      if (!isExplicitUserAction) {
+        if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 1500) {
+          return false;
+        }
+        if ((now - (this.lastSuccessfulCommandTime || 0)) < 1000) {
+          return false;
+        }
+        if (text === this.lastCommand && (now - this.lastCommandTime) < 2000) {
+          return false;
+        }
       }
 
-      // Global execution cooldown: prevent multiple triggers within 1200ms
-      if ((now - (this.lastSuccessfulCommandTime || 0)) < 1200) {
-        return false;
+      console.log(`[ALX Voice Navigator] Command detected: "${text}" (explicit: ${isExplicitUserAction})`);
+
+      // Special handling for Help / Commands Guide
+      if (/(?<![\p{L}\p{N}])(help|assist|commands|all commands|command list|command guide|እርዳታ|ሓገዝ|gargaarsa|ትዕዛዞች)(?![\p{L}\p{N}])/iu.test(text)) {
+        this.addDialogueMessage('user', isExplicitUserAction ? raw : `🎙️ "${raw}"`);
+        this.openChat();
+        this.lastSuccessfulCommandTime = Date.now();
+        this.lastCommand = text;
+        this.lastCommandTime = this.lastSuccessfulCommandTime;
+        this.playChime('success');
+        this.showCommandsHelpDialogue();
+        this.speak(currentLang === 'am' ? 'የድምጽ ረዳቱን ትዕዛዞች በውይይት መስኮቱ ላይ አቅርቤያለሁ።' : 'Here are all available voice and chat commands.');
+        return true;
       }
 
-      // Drop duplicate triggers of the exact same command within 2000ms
-      if (text === this.lastCommand && (now - this.lastCommandTime) < 2000) {
-        return false;
+      // If user explicitly typed or clicked, show their message immediately
+      if (isExplicitUserAction) {
+        this.addDialogueMessage('user', raw);
+        this.openChat();
       }
 
-      console.log(`[ALX Voice Navigator] Command detected: "${text}"`);
       const executed = this._executeDispatch(text, raw, now);
       if (executed) {
+        if (!isExplicitUserAction) {
+          this.addDialogueMessage('user', `🎙️ "${raw}"`);
+          this.openChat();
+        }
         this.lastSuccessfulCommandTime = Date.now();
         this.lastCommand = text;
         this.lastCommandTime = this.lastSuccessfulCommandTime;
         console.log(`[ALX Voice Navigator] Successfully executed command: "${text}" at ${this.lastSuccessfulCommandTime}`);
+        return true;
+      } else if (isExplicitUserAction) {
+        this.addDialogueMessage('bot', `I didn't recognize "${this.escapeHtml(raw)}". Click "❓ All Commands" or type "help" to see available actions.`, 'ready');
       }
+
       return executed;
     }
 
@@ -4845,15 +5130,83 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     }
 
     setupDomEvents() {
+      // 1. Toggle Chat Panel when yellow bot avatar button is clicked
       if (this.btnAssistantBot) {
         this.btnAssistantBot.addEventListener('click', (e) => {
           e.stopPropagation();
-          openMockup('voice-commands');
-          if (this.hudHeard) this.hudHeard.textContent = 'Voice Commands Guide';
-          this.playChime('success');
+          this.toggleChat();
+          this.playChime('neutral');
         });
       }
 
+      // 2. Chat Header Minimize [✕]
+      if (this.btnChatMinimize) {
+        this.btnChatMinimize.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.minimizeChat();
+        });
+      }
+
+      // 3. Chat Header [❓ Help]
+      if (this.btnChatHelp) {
+        this.btnChatHelp.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.showCommandsHelpDialogue();
+        });
+      }
+
+      // 4. Chat Header Mic Toggle
+      if (this.btnChatMicToggle) {
+        this.btnChatMicToggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.toggle();
+        });
+      }
+
+      // 5. Chat Input Form Submission
+      if (this.chatInputForm) {
+        this.chatInputForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (!this.chatTextInput) return;
+          const val = this.chatTextInput.value.trim();
+          if (val) {
+            this.chatTextInput.value = '';
+            this.dispatchCommand(val, true);
+          }
+        });
+      }
+
+      // 6. Quick Action Chips Bar (above input bar)
+      document.querySelectorAll('.chat-quick-chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const cmd = chip.getAttribute('data-cmd');
+          if (cmd) {
+            if (cmd === 'help') {
+              this.addDialogueMessage('user', '❓ All Commands');
+              this.showCommandsHelpDialogue();
+            } else {
+              this.dispatchCommand(cmd, true);
+            }
+          }
+        });
+      });
+
+      // 7. Interactive Clickable Pills inside Dialogue Messages
+      if (this.dialogueFeed) {
+        this.dialogueFeed.addEventListener('click', (e) => {
+          const pill = e.target.closest('.chat-cmd-pill');
+          if (pill) {
+            e.stopPropagation();
+            const cmd = pill.getAttribute('data-cmd') || pill.textContent.trim();
+            if (cmd) {
+              this.dispatchCommand(cmd, true);
+            }
+          }
+        });
+      }
+
+      // Legacy fallback bindings
       const bubbleMicBtn = document.getElementById('btnBubbleMicToggle');
       if (bubbleMicBtn) {
         bubbleMicBtn.addEventListener('click', (e) => {
@@ -4861,7 +5214,6 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           this.toggle();
         });
       }
-
       const voiceForm = document.getElementById('voiceInputForm');
       const voiceInput = document.getElementById('voiceInputManual');
       if (voiceForm && voiceInput) {
@@ -4870,20 +5222,10 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           const val = voiceInput.value.trim();
           if (val) {
             voiceInput.value = '';
-            this.dispatchCommand(val);
+            this.dispatchCommand(val, true);
           }
         });
       }
-
-      document.querySelectorAll('.voice-pill-chip').forEach(chip => {
-        chip.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const cmd = chip.getAttribute('data-cmd');
-          if (cmd) {
-            this.dispatchCommand(cmd);
-          }
-        });
-      });
 
       // Keep microphone permanently open across all gestures and pages
       const ensureMicAlwaysOpen = () => {
@@ -4899,7 +5241,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (e.key === 'v' || e.key === 'V') {
           e.preventDefault();
-          openMockup('voice-commands');
+          this.toggleChat();
         }
       });
     }
