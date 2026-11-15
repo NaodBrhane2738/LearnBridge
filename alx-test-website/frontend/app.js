@@ -163,8 +163,16 @@
   }
 
   function selectAndLoginAccount(index) {
-    if (state.isAuthenticating || state.isAuthenticated) return;
+    if (state.isAuthenticated) return;
     state.isAuthenticating = true;
+
+    // Immediately stop any speaking and clear welcome timer
+    if (voiceNav) {
+      voiceNav.stopSpeaking();
+      if (typeof voiceNav.clearWelcomeTimer === 'function') {
+        voiceNav.clearWelcomeTimer();
+      }
+    }
 
     const acct = AVAILABLE_ACCOUNTS.find(a => a.index === Number(index)) || AVAILABLE_ACCOUNTS[0];
 
@@ -194,9 +202,13 @@
       switchTab('home');
 
       if (voiceNav) {
+        voiceNav.stopSpeaking();
+        if (typeof voiceNav.clearWelcomeTimer === 'function') {
+          voiceNav.clearWelcomeTimer();
+        }
         voiceNav.playChime('success');
       }
-    }, 350);
+    }, 200);
   }
 
   function authenticateWithProvider(providerName) {
@@ -284,8 +296,15 @@
   }
 
   async function performLoginWithCredentials(email, password) {
-    if (state.isAuthenticating || state.isAuthenticated) return;
+    if (state.isAuthenticated) return;
     state.isAuthenticating = true;
+
+    if (voiceNav) {
+      voiceNav.stopSpeaking();
+      if (typeof voiceNav.clearWelcomeTimer === 'function') {
+        voiceNav.clearWelcomeTimer();
+      }
+    }
 
     const submitBtn = document.getElementById('btn-login-submit');
     if (submitBtn) {
@@ -323,9 +342,13 @@
         switchTab('home');
 
         if (voiceNav) {
+          voiceNav.stopSpeaking();
+          if (typeof voiceNav.clearWelcomeTimer === 'function') {
+            voiceNav.clearWelcomeTimer();
+          }
           voiceNav.playChime('success');
         }
-      }, 350);
+      }, 200);
     }
   }
 
@@ -3272,28 +3295,27 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       this.announceWelcome();
     }
 
+    clearWelcomeTimer() {
+      if (this.welcomeTimer) {
+        clearTimeout(this.welcomeTimer);
+        this.welcomeTimer = null;
+      }
+    }
+
     announceWelcome() {
-      setTimeout(() => {
+      this.clearWelcomeTimer();
+      this.welcomeTimer = setTimeout(() => {
         if (!this.isEnabled) return;
+        if (state.isAuthenticated) return; // Never announce login prompt if already logged in!
         const isLoginPage = !state.isAuthenticated || (pageLogin && pageLogin.classList.contains('active'));
         if (isLoginPage) {
           const onboardingPrompts = {
-            am: "እንኳን ወደ ኤ ኤል ኤክስ በደህና መጡ! ሙሉ የድምጽ አሰሳ በርቷል። በድምጽ ለመግባት 'ግባ' ይበሉ፤ ወይም በጉግል፣ በሊንክድኢን፣ ወይም በፌስቡክ መግባት ይችላሉ። ሁሉንም የድምጽ ትዕዛዞች ለመስማት 'እርዳታ' ይበሉ።",
-            en: "Welcome to ALX Learning! Complete hands-free voice navigation is active. Say 'Log in' to authenticate by voice, or sign in with Google, LinkedIn, or Facebook. Say 'Help' to hear every available voice command.",
-            om: "Baga gara ALX Learning dhuftan! Sagaleedhaan seenuuf 'Seeni' jedhaa, yookiin Google, LinkedIn ykn Facebook dhaan seenaa. Ajajoota hunda dhaga'uuf 'Gargaarsa' jedhaa.",
-            ti: "እንቋዕ ናብ ኤ ኤል ኤክስ ብደሓን መጻእኹም! ብድምጺ ንምእታው 'እቶ' በሉ፣ ወይ ብጉግል፣ ሊንክድኢን ወይ ፌስቡክ ክትኣትዉ ትኽእሉ ኢኹም። ንኹሉ ትእዛዛት ንምስማዕ 'ሓገዝ' በሉ።"
+            am: "እንኳን ወደ ኤ ኤል ኤክስ በደህና መጡ! ለመግባት 'ግባ' ይበሉ።",
+            en: "Welcome to ALX Learning! Say 'Log in' to enter your dashboard.",
+            om: "Baga nagaan dhuftan! Seenuuf 'Seeni' jedhaa.",
+            ti: "እንቋዕ ብደሓን መጻእኹም! ንምእታው 'እቶ' በሉ፤"
           };
           this.speak(onboardingPrompts[currentLang] || onboardingPrompts.en);
-        } else {
-          if (currentLang === 'am') {
-            this.speak("እንኳን ወደ ኤ ኤል ኤክስ የመማሪያ መድረክ በደህና መጡ። የድምጽ ትዕዛዝ በርቷል። ማንኛውንም አዝራር ስም በመናገር ወይም 'እርዳታ' በማለት ማሰስ ይችላሉ።");
-          } else if (currentLang === 'om') {
-            this.speak("Baga gara ALX Learning dhuftan. Ajajni sagalee hojjetaa jira. Maqaa qabduu kamiyyuu waamuun naanna'uu dandeessu.");
-          } else if (currentLang === 'ti') {
-            this.speak("እንቋዕ ናብ ኤ ኤል ኤክስ የመማሪያ መድረኽ ብደሓን መጻእኹም። ንኹሉ ንጥፈታት ብድምጺ ምቁጽጻር ትኽእሉ ኢኹም።");
-          } else {
-            this.speak("Welcome to ALX Learning. Complete hands-free voice navigation is active. Speak any button name or say 'Help' for instructions.");
-          }
         }
       }, 1000);
     }
@@ -3362,6 +3384,10 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
     async speak(text, targetLang) {
       if (!text || !text.trim()) return;
+      // If user is authenticated, block any legacy/queued login prompts from ever being spoken
+      if (state.isAuthenticated && (/log in|sign in|welcome to alx|authenticate|ይግቡ|ግባ|seeni|እቶ/i.test(text))) {
+        return;
+      }
       const lang = targetLang || currentLang || 'en';
 
       this.stopSpeaking();
@@ -3618,16 +3644,18 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           if (!rawText) return;
 
           const now = Date.now();
-          // GOD-MODE ACOUSTIC ISOLATION:
-          // 1. If the assistant is actively speaking, or ended speaking within the last 1500ms,
-          // DROP ALL MICROPHONE INPUT UNCONDITIONALLY! Zero audio from the speakers can ever enter dispatch!
-          if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 1500) {
+          const normRaw = rawText.toLowerCase().replace(/[.,!?;:'"\\-_/\\()]/g, ' ').trim();
+          const isBargeInCommand = /^(login|log in|sign in|ግባ|seeni|እቶ|stop|ዝም|dhaabi|job portal|jobs|career|apply|reject|pass|planning|home|learning|projects)/i.test(normRaw);
+
+          // If user speaks a command during assistant speech, immediately silence and execute
+          if (isBargeInCommand && this.isSpeaking) {
+            this.stopSpeaking();
+          } else if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 250) {
             return;
           }
 
-          // 2. Strict Echo Rejection: If the recognized phrase contains parts of what was recently spoken, drop it!
-          if (this.lastSpokenText) {
-            const normRaw = rawText.toLowerCase().replace(/[.,!?;:'"\\-_/\\()]/g, ' ').trim();
+          // Strict Echo Rejection: If the recognized phrase contains parts of what was recently spoken, drop it!
+          if (!isBargeInCommand && this.lastSpokenText) {
             if (this.lastSpokenText.includes(normRaw) || (normRaw.length > 3 && this.lastSpokenText.includes(normRaw.substring(0, 8)))) {
               return;
             }
@@ -3792,15 +3820,18 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
       const now = Date.now();
 
-      // GOD-MODE ACOUSTIC LOCKOUT (for hands-free voice only):
+      // Dynamic acoustic isolation (allow immediate barge-in for commands)
       if (!isExplicitUserAction) {
-        if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 1500) {
+        const isBargeIn = /^(login|log in|sign in|ግባ|seeni|እቶ|stop|ዝም|dhaabi|job portal|jobs|career|apply|reject|pass)/i.test(text);
+        if (isBargeIn && this.isSpeaking) {
+          this.stopSpeaking();
+        } else if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 250) {
           return false;
         }
-        if ((now - (this.lastSuccessfulCommandTime || 0)) < 1000) {
+        if (!isBargeIn && (now - (this.lastSuccessfulCommandTime || 0)) < 400) {
           return false;
         }
-        if (text === this.lastCommand && (now - this.lastCommandTime) < 2000) {
+        if (text === this.lastCommand && (now - this.lastCommandTime) < 1500) {
           return false;
         }
       }
@@ -3848,7 +3879,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       const isLoginContext = !state.isAuthenticated || (pageLogin && pageLogin.classList.contains('active'));
 
       // 00-JOB-PORTAL. OPEN ALX JOB PORTAL / EMPLOYMENT PLATFORM
-      if (/(?<![\p{L}\p{N}])(job portal|jobs portal|job|jobs|career|careers|employment|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|hojii|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||
+      if (/(?<![\p{L}\p{N}])(job portal|jobs portal|job|jobs|career|careers|employment|open job portal|open jobs|open portal|go to job portal|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|hojii|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||
           text.includes('job portal') || text.includes('open jobs') || text.includes('open job portal') || text.includes('የስራ መድረክ') || text.includes('ስራዎች')) {
         this.stopSpeaking();
         this.lastCommand = text;
@@ -3860,8 +3891,8 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
                    currentLang === 'ti' ? 'ናይ ስራሕ መድረኽ ይኸፍት ኣሎ...' :
                    'Opening ALX Job Portal...');
         setTimeout(() => {
-          window.open('/job-portal', '_blank');
-        }, 500);
+          window.location.href = '/job-portal';
+        }, 300);
         return true;
       }
 
@@ -3895,18 +3926,29 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         return true;
       }
 
-      // 00-LOGIN. SIGN IN / LOG IN (Hands-free voice login for blind learners, manual credentials for deaf learners)
-      if ((/(?<![\\p{L}\\p{N}])(sign in|log in|login|submit login|enter|sign up|signup|ተመዝገብ|ግባ|ግባ በል|seeni|እቶ|ሎጊን|ሎግ ኢን)(?![\\p{L}\\p{N}])/iu.test(text) ||
-          text.includes('login') || text.includes('sign in') || text.includes('sign up') || text.includes('signup') || text.includes('ተመዝገብ') || text.includes('ግባ') || text.includes('ሎጊን')) && !state.isAuthenticated) {
-        if (state.isAuthenticating) return true;
+      // 00-LOGIN. SIGN IN / LOG IN (Instant hands-free login)
+      if (/(?<![\\p{L}\\p{N}])(sign in|log in|login|submit login|enter|sign up|signup|ተመዝገብ|ግባ|ግባ በል|seeni|እቶ|ሎጊን|ሎግ ኢን)(?![\\p{L}\\p{N}])/iu.test(text) ||
+          text.includes('login') || text.includes('log in') || text.includes('sign in') || text.includes('sign up') || text.includes('signup') || text.includes('ተመዝገብ') || text.includes('ግባ') || text.includes('ሎጊን') || text.includes('seeni') || text.includes('እቶ')) {
         this.stopSpeaking();
+        this.clearWelcomeTimer();
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.lastSuccessfulCommandTime = now;
         this.playChime('success');
 
+        if (state.isAuthenticated) {
+          if (this.hudHeard) this.hudHeard.textContent = 'Already logged in';
+          return true;
+        }
+
         const hasTypedCreds = emailInput && emailInput.value.trim() && passwordInput && passwordInput.value;
         if (hasTypedCreds) {
+          performLoginWithCredentials(emailInput.value.trim(), passwordInput.value);
+        } else {
+          selectAndLoginAccount(1);
+        }
+        return true;
+      }
           performLoginWithCredentials(emailInput.value.trim(), passwordInput.value);
         } else {
           // Hands-free voice login for blind learners - NO native popups / pure smooth voice entry

@@ -794,8 +794,22 @@ class AccessibilityManager {
       };
 
       this.recognition.onresult = (event) => {
-        // Acoustic Isolation: Drop input if platform is speaking or within 1400ms echo window
-        if (this.isSpeaking || (Date.now() - this.lastSpeakingEndedTime < 1400)) {
+        // Allow instant barge-in for commands like apply, reject, pass, stop
+        if (this.isSpeaking) {
+          let hasCommand = false;
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            const tr = (event.results[i][0]?.transcript || '').toLowerCase();
+            if (tr.includes('apply') || tr.includes('reject') || tr.includes('pass') || tr.includes('stop') || tr.includes('dashboard') || tr.includes('አመልክት') || tr.includes('ውድቅ') || tr.includes('ቀጣይ')) {
+              hasCommand = true;
+              break;
+            }
+          }
+          if (hasCommand) {
+            this.stopSpeech();
+          } else {
+            return;
+          }
+        } else if (Date.now() - this.lastSpeakingEndedTime < 200) {
           return;
         }
 

@@ -354,9 +354,9 @@ class JobCardComponent {
             <svg class="ui-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             Pass (←)
           </button>
-          <button type="button" class="btn btn-card-apply" ${isCenter ? 'id="btn-card-apply"' : ''} data-id="${job.id}" aria-label="Apply to this job with CV (Right Arrow)">
+          <button type="button" class="btn btn-card-apply" ${isCenter ? 'id="btn-card-apply"' : ''} data-id="${job.id}" aria-label="Apply to this job (Right Arrow or Enter)">
             <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-            Apply with CV (→)
+            Apply (→)
           </button>
         </div>
       </article>
