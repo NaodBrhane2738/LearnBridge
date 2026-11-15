@@ -78,10 +78,11 @@ app.use('/learning', express.static(path.resolve(__dirname, '..')));
 app.use('/', express.static(path.resolve(__dirname)));
 
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`[LearnBridge Employment] Running on http://127.0.0.1:${PORT}`);
-    console.log(`[LearnBridge Employment] API Explorer: http://127.0.0.1:${PORT}/api/v1/employment/jobs`);
-    console.log(`[LearnBridge Employment] Neural TTS: http://127.0.0.1:${PORT}/api/tts`);
+  const HOST = process.env.HOST || '0.0.0.0';
+  app.listen(PORT, HOST, () => {
+    console.log(`[LearnBridge Employment] Running on port ${PORT} (0.0.0.0 - accessible from anywhere)`);
+    console.log(`[LearnBridge Employment] API Explorer: /api/v1/employment/jobs`);
+    console.log(`[LearnBridge Employment] Neural TTS: /api/tts`);
   });
 }
 

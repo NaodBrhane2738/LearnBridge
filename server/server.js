@@ -56,18 +56,18 @@ app.use(errorHandler);
 
 // 6. Startup if executed directly
 const PORT = process.env.PORT || 4173;
-const HOST = process.env.HOST || '127.0.0.1';
+const HOST = process.env.HOST || '0.0.0.0';
 
 if (require.main === module) {
   app.listen(PORT, HOST, () => {
     console.log(`=======================================================`);
     console.log(` LearnBridge Universal Accessibility REST API Engine`);
-    console.log(` Status: Running at http://${HOST}:${PORT}`);
-    console.log(` REST API: http://${HOST}:${PORT}/api/v1/health`);
-    console.log(` OpenAPI Docs: http://${HOST}:${PORT}/api/v1/docs`);
-    console.log(` Savanna LMS Demo: http://${HOST}:${PORT}/integrations/savanna-lms/`);
-    console.log(` Job Portal Demo: http://${HOST}:${PORT}/integrations/job-portal/`);
-    console.log(` Studio UI: http://${HOST}:${PORT}/index.html`);
+    console.log(` Status: Running at http://${HOST}:${PORT} (0.0.0.0 - accessible from anywhere)`);
+    console.log(` REST API: /api/v1/health`);
+    console.log(` OpenAPI Docs: /api/v1/docs`);
+    console.log(` Savanna LMS Demo: /integrations/savanna-lms/`);
+    console.log(` Job Portal Demo: /integrations/job-portal/`);
+    console.log(` Studio UI: /index.html`);
     console.log(`=======================================================`);
   });
 }
