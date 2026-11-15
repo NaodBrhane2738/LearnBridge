@@ -440,6 +440,45 @@ textarea:focus-visible,
   color: var(--text-secondary);
 }
 
+.btn-deck-mic {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-muted);
+  border: 1px solid var(--border-strong);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-deck-mic:hover, .btn-deck-mic:focus-visible {
+  border-color: var(--primary-red);
+  color: var(--primary-red);
+}
+
+.btn-deck-mic.is-listening {
+  background: var(--primary-red-tint);
+  border-color: var(--primary-red);
+  color: var(--primary-red);
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.25);
+  animation: pulse-mic 1.6s infinite ease-in-out;
+}
+
+.btn-deck-mic .mic-icon {
+  width: 12px;
+  height: 12px;
+}
+
+@keyframes pulse-mic {
+  0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(211, 47, 47, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+}
+
 .match-score-pill {
   display: inline-flex;
   align-items: center;

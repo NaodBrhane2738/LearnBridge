@@ -189,15 +189,15 @@ async function runBrowserTests() {
     assert.ok(firstCardTitle && firstCardTitle.length > 0);
     passed++;
 
-    // 12. Test Tab Key to Reveal More Job Information
-    await page.keyboard.press('Tab');
+    // 12. Test 'M' Key to Reveal More Job Information
+    await page.keyboard.press('m');
     await page.waitForTimeout(300);
-    const detailsVisibleAfterTab = await page.evaluate(() => {
+    const detailsVisibleAfterM = await page.evaluate(() => {
       const el = document.querySelector('.swipe-card-expanded-details');
       return el && el.style.display !== 'none';
     });
-    console.log(`✓ 14. Pressed Tab key: Expanded job details visible = ${detailsVisibleAfterTab}`);
-    assert.strictEqual(detailsVisibleAfterTab, true, "Pressing Tab must expand full job details");
+    console.log(`✓ 14. Pressed 'M' key: Expanded job details visible = ${detailsVisibleAfterM}`);
+    assert.strictEqual(detailsVisibleAfterM, true, "Pressing 'M' must expand full job details");
     passed++;
 
     // 13. Test Right Arrow While Viewing Full Details (Arrow keys must still work!)
@@ -208,8 +208,8 @@ async function runBrowserTests() {
     assert.ok(secondCardTitle && secondCardTitle !== firstCardTitle);
     passed++;
 
-    // 14. Test Tab Key on Next Card and Left Arrow to Pass While Expanded
-    await page.keyboard.press('Tab');
+    // 14. Test 'M' Key on Next Card and Left Arrow to Pass While Expanded
+    await page.keyboard.press('m');
     await page.waitForTimeout(300);
     await page.keyboard.press('ArrowLeft');
     await page.waitForTimeout(400);

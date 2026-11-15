@@ -394,9 +394,23 @@ class EmploymentApp {
       };
     }
 
+    // Bind Voice Microphone toggle button
+    const micBtn = wrapper.querySelector('#btn-deck-mic');
+    if (micBtn) {
+      micBtn.onclick = (e) => {
+        e.preventDefault();
+        if (window.a11y) window.a11y.toggleVoiceListening();
+      };
+      if (window.a11y && window.a11y.voiceActive) {
+        micBtn.classList.add('is-listening');
+        const lbl = micBtn.querySelector('.mic-status-label');
+        if (lbl) lbl.textContent = 'Mic: Listening (V)';
+      }
+    }
+
     // Accessible announcements for screen readers & TTS
     const job = currentItem.job;
-    const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply with CV, Left Arrow to pass, or Tab for full details.`;
+    const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply with CV, Left Arrow to pass, or M for full details.`;
     if (window.a11y) {
       window.a11y.announceLive(spokenSummary, false);
       if (window.a11y.currentMode === 'blind') {
@@ -427,10 +441,10 @@ class EmploymentApp {
       if (toggleBtn) {
         toggleBtn.setAttribute('aria-expanded', 'false');
         const txt = toggleBtn.querySelector('.toggle-text');
-        if (txt) txt.textContent = 'More Details (Tab or say "more")';
+        if (txt) txt.textContent = 'More Details (Press M or click)';
       }
       if (window.a11y) {
-        window.a11y.announceLive("Collapsed details. Press Right Arrow to apply, Left Arrow to pass, Tab for more details.", false);
+        window.a11y.announceLive("Collapsed details. Press Right Arrow to apply, Left Arrow to pass, M for details.", false);
       }
     } else {
       detailsEl.style.display = 'block';
@@ -439,12 +453,12 @@ class EmploymentApp {
       if (toggleBtn) {
         toggleBtn.setAttribute('aria-expanded', 'true');
         const txt = toggleBtn.querySelector('.toggle-text');
-        if (txt) txt.textContent = 'Less Details (Tab to collapse)';
+        if (txt) txt.textContent = 'Less Details (Press M to collapse)';
       }
       if (window.a11y) {
         const currentItem = this.cardDeck[this.currentCardIndex];
         const job = currentItem?.job;
-        const spoken = `Full details for ${job?.title || 'job'}. Press Right Arrow to apply with CV, Left Arrow to pass, or Tab to collapse.`;
+        const spoken = `Full details for ${job?.title || 'job'}. Press Right Arrow to apply with CV, Left Arrow to pass, or M to collapse.`;
         window.a11y.announceLive(spoken, false);
         if (window.a11y.currentMode === 'blind') {
           window.a11y.speak(spoken);
@@ -1083,12 +1097,17 @@ class EmploymentApp {
 
       const isRight = e.key === 'ArrowRight' || e.code === 'ArrowRight' || e.key === 'Right' || e.keyCode === 39;
       const isLeft = e.key === 'ArrowLeft' || e.code === 'ArrowLeft' || e.key === 'Left' || e.keyCode === 37;
-      const isTab = e.key === 'Tab' || e.code === 'Tab' || e.keyCode === 9;
+      const isMore = e.key === 'm' || e.key === 'M' || e.code === 'KeyM';
+      const isVoice = e.key === 'v' || e.key === 'V' || e.code === 'KeyV';
 
-      if (isTab) {
+      if (isMore) {
         e.preventDefault();
         e.stopPropagation();
         this.toggleCardDetails();
+      } else if (isVoice) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (window.a11y) window.a11y.toggleVoiceListening();
       } else if (isRight) {
         e.preventDefault();
         e.stopPropagation();
