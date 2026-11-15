@@ -29,6 +29,7 @@ class EmploymentApp {
     this.activeSpeechJobId = null;
     this.translations = {};
     this.currentLang = 'en';
+    window.app = this;
   }
 
   async init() {
@@ -384,9 +385,18 @@ class EmploymentApp {
       };
     }
 
+    // Bind More Details toggle button
+    const toggleBtn = wrapper.querySelector('#btn-card-toggle-details');
+    if (toggleBtn) {
+      toggleBtn.onclick = (e) => {
+        e.preventDefault();
+        this.toggleCardDetails();
+      };
+    }
+
     // Accessible announcements for screen readers & TTS
     const job = currentItem.job;
-    const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply with CV, Left Arrow to pass.`;
+    const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply with CV, Left Arrow to pass, or Tab for full details.`;
     if (window.a11y) {
       window.a11y.announceLive(spokenSummary, false);
       if (window.a11y.currentMode === 'blind') {
@@ -398,7 +408,147 @@ class EmploymentApp {
     const activeCard = wrapper.querySelector('.swipe-card');
     if (activeCard) {
       activeCard.focus({ preventScroll: true });
+      this.bindSwipeGestures(activeCard);
     }
+  }
+
+  toggleCardDetails() {
+    const cardEl = document.querySelector('.swipe-card');
+    if (!cardEl) return;
+    const detailsEl = cardEl.querySelector('.swipe-card-expanded-details');
+    const toggleBtn = cardEl.querySelector('#btn-card-toggle-details');
+    if (!detailsEl) return;
+
+    const isExpanded = detailsEl.style.display !== 'none';
+    if (isExpanded) {
+      detailsEl.style.display = 'none';
+      detailsEl.setAttribute('aria-hidden', 'true');
+      cardEl.classList.remove('is-expanded');
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        const txt = toggleBtn.querySelector('.toggle-text');
+        if (txt) txt.textContent = 'More Details (Tab or say "more")';
+      }
+      if (window.a11y) {
+        window.a11y.announceLive("Collapsed details. Press Right Arrow to apply, Left Arrow to pass, Tab for more details.", false);
+      }
+    } else {
+      detailsEl.style.display = 'block';
+      detailsEl.setAttribute('aria-hidden', 'false');
+      cardEl.classList.add('is-expanded');
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        const txt = toggleBtn.querySelector('.toggle-text');
+        if (txt) txt.textContent = 'Less Details (Tab to collapse)';
+      }
+      if (window.a11y) {
+        const currentItem = this.cardDeck[this.currentCardIndex];
+        const job = currentItem?.job;
+        const spoken = `Full details for ${job?.title || 'job'}. Press Right Arrow to apply with CV, Left Arrow to pass, or Tab to collapse.`;
+        window.a11y.announceLive(spoken, false);
+        if (window.a11y.currentMode === 'blind') {
+          window.a11y.speak(spoken);
+        }
+      }
+    }
+  }
+
+  handleVoiceCommand(transcript) {
+    const lower = (transcript || '').toLowerCase().trim();
+    if (lower.includes('more') || lower.includes('detail') || lower.includes('expand') || lower.includes('info')) {
+      this.toggleCardDetails();
+      if (window.a11y) window.a11y.showVisualToast('Voice: Revealed Details');
+      return true;
+    }
+    if (lower.includes('apply') || lower.includes('right') || lower.includes('yes')) {
+      this.handleCardApply();
+      if (window.a11y) window.a11y.showVisualToast('Voice: Applied with CV');
+      return true;
+    }
+    if (lower.includes('pass') || lower.includes('skip') || lower.includes('left') || lower.includes('no')) {
+      this.handleCardPass();
+      if (window.a11y) window.a11y.showVisualToast('Voice: Passed Opportunity');
+      return true;
+    }
+    return false;
+  }
+
+  bindSwipeGestures(cardEl) {
+    if (!cardEl) return;
+
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let isDragging = false;
+    const threshold = 75; // px distance to trigger swipe
+
+    const onPointerDown = (e) => {
+      // Don't drag if interacting with interactive controls inside
+      if (e.target.closest('button, a, input, select, textarea, kbd')) return;
+      if (this.isCardAnimating) return;
+
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      currentX = startX;
+      currentY = startY;
+
+      cardEl.style.transition = 'none';
+      if (cardEl.setPointerCapture) {
+        try { cardEl.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+    };
+
+    const onPointerMove = (e) => {
+      if (!isDragging) return;
+
+      currentX = e.clientX;
+      currentY = e.clientY;
+
+      const deltaX = currentX - startX;
+      const deltaY = currentY - startY;
+
+      // Dynamic tilt and resistance
+      const rot = Math.max(-16, Math.min(16, deltaX * 0.06));
+      cardEl.style.transform = `translate(${deltaX}px, ${deltaY * 0.25}px) rotate(${rot}deg)`;
+    };
+
+    const onPointerUp = (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+
+      const deltaX = currentX - startX;
+      if (cardEl.releasePointerCapture) {
+        try { cardEl.releasePointerCapture(e.pointerId); } catch (_) {}
+      }
+
+      // Restore transition
+      cardEl.style.transition = 'transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.24s ease';
+
+      if (deltaX > threshold) {
+        // Swiped Right -> Apply
+        this.handleCardApply();
+      } else if (deltaX < -threshold) {
+        // Swiped Left -> Pass
+        this.handleCardPass();
+      } else {
+        // Snap back to neutral stacked position
+        cardEl.style.transform = '';
+      }
+    };
+
+    const onPointerCancel = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      cardEl.style.transition = 'transform 0.24s ease';
+      cardEl.style.transform = '';
+    };
+
+    cardEl.addEventListener('pointerdown', onPointerDown);
+    cardEl.addEventListener('pointermove', onPointerMove);
+    cardEl.addEventListener('pointerup', onPointerUp);
+    cardEl.addEventListener('pointercancel', onPointerCancel);
   }
 
   async handleCardApply() {
@@ -412,6 +562,8 @@ class EmploymentApp {
     const cardEl = document.querySelector('.swipe-card');
     const stackEl = document.getElementById('deck-3d-stack');
     if (cardEl) {
+      cardEl.style.transform = '';
+      cardEl.style.transition = '';
       cardEl.classList.add('anim-swipe-right');
     }
     if (stackEl) {
@@ -465,6 +617,8 @@ class EmploymentApp {
     const cardEl = document.querySelector('.swipe-card');
     const stackEl = document.getElementById('deck-3d-stack');
     if (cardEl) {
+      cardEl.style.transform = '';
+      cardEl.style.transition = '';
       cardEl.classList.add('anim-swipe-left');
     }
     if (stackEl) {
@@ -929,8 +1083,13 @@ class EmploymentApp {
 
       const isRight = e.key === 'ArrowRight' || e.code === 'ArrowRight' || e.key === 'Right' || e.keyCode === 39;
       const isLeft = e.key === 'ArrowLeft' || e.code === 'ArrowLeft' || e.key === 'Left' || e.keyCode === 37;
+      const isTab = e.key === 'Tab' || e.code === 'Tab' || e.keyCode === 9;
 
-      if (isRight) {
+      if (isTab) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleCardDetails();
+      } else if (isRight) {
         e.preventDefault();
         e.stopPropagation();
         this.handleCardApply();

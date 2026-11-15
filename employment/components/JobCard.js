@@ -185,6 +185,29 @@ class JobCardComponent {
     const hasLayer1 = remaining > 1;
     const hasLayer2 = remaining > 2;
 
+    const resps = (job.responsibilities || []).slice(0, 4).map(r => `<li>${escapeHTML(r)}</li>`).join('');
+    const reqs = (job.requirements || []).slice(0, 4).map(r => `<li>${escapeHTML(r)}</li>`).join('');
+
+    const accommTags = [];
+    if (job.accommodations) {
+      if (job.accommodations.screen_reader_ready?.status === 'supported') {
+        accommTags.push(`<span class="meta-pill">Screen-Reader Ready</span>`);
+      }
+      if (job.accommodations.etsl_interpreter?.status === 'supported') {
+        accommTags.push(`<span class="meta-pill">ETSL Supported</span>`);
+      }
+      if (job.accommodations.captioned_meetings?.status === 'supported') {
+        accommTags.push(`<span class="meta-pill">Captioned Meetings</span>`);
+      }
+      if (job.accommodations.wheelchair_accessible?.status === 'supported') {
+        accommTags.push(`<span class="meta-pill">Barrier-Free</span>`);
+      }
+      if (job.accommodations.flexible_hours?.status === 'supported') {
+        accommTags.push(`<span class="meta-pill">Flexible Hours</span>`);
+      }
+    }
+    const accommHtml = accommTags.join(' ');
+
     return `
       <div class="deck-3d-stack" id="deck-3d-stack">
         ${hasLayer2 ? `<div class="deck-card-layer deck-layer-deep" aria-hidden="true"></div>` : ''}
@@ -247,11 +270,50 @@ class JobCardComponent {
             ` : ''}
           </div>
 
+          <!-- Toggle More Details Button (Tab key or click) -->
+          <button type="button" class="btn-card-toggle-details" id="btn-card-toggle-details" aria-expanded="false" aria-controls="card-expanded-details-${job.id}" aria-label="Toggle full job details (Press Tab or say more)">
+            <span class="toggle-text">More Details (Tab or say "more")</span>
+            <svg class="ui-icon toggle-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+
+          <!-- Expanded Full Details (Revealed via Tab or 'More') -->
+          <div class="swipe-card-expanded-details" id="card-expanded-details-${job.id}" style="display: none;" aria-hidden="true">
+            ${resps ? `
+              <div class="swipe-card-section">
+                <h4 class="swipe-section-heading">Key Responsibilities</h4>
+                <ul class="bullet-list">${resps}</ul>
+              </div>
+            ` : ''}
+
+            ${reqs ? `
+              <div class="swipe-card-section">
+                <h4 class="swipe-section-heading">Requirements & Qualifications</h4>
+                <ul class="bullet-list">${reqs}</ul>
+              </div>
+            ` : ''}
+
+            ${accommHtml ? `
+              <div class="swipe-card-section">
+                <h4 class="swipe-section-heading">Verified Workplace Accommodations</h4>
+                <div class="job-tags-row">${accommHtml}</div>
+              </div>
+            ` : ''}
+
+            <div class="swipe-card-section swipe-card-footer-info">
+              <span class="info-pill">Employer: <strong>${escapeHTML(job.employerName)}</strong></span>
+              <span class="info-pill">Location: <strong>${escapeHTML(job.location)}</strong></span>
+            </div>
+          </div>
+
           <!-- Keyboard Controls Indicator -->
           <div class="swipe-keyboard-hint compact-hint" aria-hidden="true">
             <div class="hint-col hint-left">
               <kbd class="key-kbd">← Arrow</kbd>
               <span>Pass</span>
+            </div>
+            <div class="hint-col hint-mid">
+              <kbd class="key-kbd">Tab</kbd>
+              <span>More Info</span>
             </div>
             <div class="hint-col hint-right">
               <span>Apply</span>

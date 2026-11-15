@@ -56,7 +56,10 @@ async function runBrowserTests() {
 
     // 1. Fresh Load: Universal Access Gateway Opens Automatically
     await page.goto('http://127.0.0.1:4174/', { waitUntil: 'networkidle' });
-    await page.waitForTimeout(600);
+    await page.waitForFunction(() => {
+      const g = document.getElementById('gateway-dialog');
+      return g && (g.open || g.style.display === 'flex' || !g.hidden);
+    }, { timeout: 5000 });
     const gatewayOpen = await page.evaluate(() => {
       const g = document.getElementById('gateway-dialog');
       return g && (g.open || g.style.display === 'flex' || !g.hidden);
@@ -186,20 +189,33 @@ async function runBrowserTests() {
     assert.ok(firstCardTitle && firstCardTitle.length > 0);
     passed++;
 
-    // 12. Test Keyboard Right Arrow (Instant Apply)
+    // 12. Test Tab Key to Reveal More Job Information
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(300);
+    const detailsVisibleAfterTab = await page.evaluate(() => {
+      const el = document.querySelector('.swipe-card-expanded-details');
+      return el && el.style.display !== 'none';
+    });
+    console.log(`✓ 14. Pressed Tab key: Expanded job details visible = ${detailsVisibleAfterTab}`);
+    assert.strictEqual(detailsVisibleAfterTab, true, "Pressing Tab must expand full job details");
+    passed++;
+
+    // 13. Test Right Arrow While Viewing Full Details (Arrow keys must still work!)
     await page.keyboard.press('ArrowRight');
     await page.waitForTimeout(400);
     const secondCardTitle = await page.textContent('.swipe-card-title');
-    console.log(`✓ 14. Pressed ArrowRight: Applied to vacancy and advanced deck to: "${secondCardTitle}"`);
-    assert.ok(secondCardTitle && secondCardTitle.length > 0);
+    console.log(`✓ 15. Pressed ArrowRight while expanded: Applied with CV and advanced deck to: "${secondCardTitle}"`);
+    assert.ok(secondCardTitle && secondCardTitle !== firstCardTitle);
     passed++;
 
-    // 13. Test Keyboard Left Arrow (Pass / Skip)
+    // 14. Test Tab Key on Next Card and Left Arrow to Pass While Expanded
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(300);
     await page.keyboard.press('ArrowLeft');
     await page.waitForTimeout(400);
     const thirdCardTitle = await page.textContent('.swipe-card-title');
-    console.log(`✓ 15. Pressed ArrowLeft: Passed on vacancy and advanced deck to: "${thirdCardTitle}"`);
-    assert.ok(thirdCardTitle && thirdCardTitle.length > 0);
+    console.log(`✓ 16. Pressed ArrowLeft while expanded: Passed on vacancy and advanced deck to: "${thirdCardTitle}"`);
+    assert.ok(thirdCardTitle && thirdCardTitle !== secondCardTitle);
     passed++;
 
     await page.screenshot({ path: path.join(EVIDENCE_DIR, '02-swipeable-card-deck.png') });
