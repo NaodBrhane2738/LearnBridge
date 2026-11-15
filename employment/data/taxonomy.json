@@ -1,0 +1,104 @@
+{
+  "industries": [
+    "Technology & Software",
+    "Banking & Financial Services",
+    "Telecommunications",
+    "Non-Governmental Organizations (NGO)",
+    "Healthcare & Pharmaceuticals",
+    "Education & EdTech",
+    "Manufacturing & Engineering",
+    "Creative & Media",
+    "Agriculture & AgTech",
+    "Logistics & Supply Chain",
+    "Customer Support & BPO",
+    "Legal & Compliance"
+  ],
+  "employmentTypes": [
+    "Full-time",
+    "Part-time",
+    "Freelance",
+    "Contract",
+    "Internship",
+    "Apprenticeship",
+    "Remote",
+    "Temporary",
+    "Casual",
+    "Volunteering"
+  ],
+  "experienceLevels": [
+    "Entry-level",
+    "Mid-level",
+    "Senior-level",
+    "Lead / Principal",
+    "Executive / Director"
+  ],
+  "locations": [
+    "Addis Ababa, Ethiopia",
+    "Hawassa, Sidama, Ethiopia",
+    "Dire Dawa, Ethiopia",
+    "Bahir Dar, Amhara, Ethiopia",
+    "Adama, Oromia, Ethiopia",
+    "Mekelle, Tigray, Ethiopia",
+    "Jimma, Oromia, Ethiopia",
+    "Bishoftu, Oromia, Ethiopia",
+    "International Remote (Africa & Europe Timezones)",
+    "International Remote (Worldwide / Async)",
+    "International Remote (East Africa Eligible)"
+  ],
+  "currencies": [
+    "ETB",
+    "USD",
+    "EUR",
+    "GBP"
+  ],
+  "accommodations": [
+    {
+      "id": "screen_reader_ready",
+      "name": "Screen-Reader Compatible Software & Workflow",
+      "category": "digital",
+      "description": "Internal enterprise software, documentation, and assessments tested with NVDA/JAWS/VoiceOver."
+    },
+    {
+      "id": "etsl_interpreter",
+      "name": "Ethiopian Sign Language (ETSL) Interpreter Available",
+      "category": "communication",
+      "description": "Certified ETSL interpreter provided for interviews, team standups, and all-hands meetings."
+    },
+    {
+      "id": "captioned_meetings",
+      "name": "Synchronized Captions for Meetings & Interviews",
+      "category": "communication",
+      "description": "Live automated or human-transcribed captions enabled across all virtual communication channels."
+    },
+    {
+      "id": "wheelchair_accessible",
+      "name": "Wheelchair Accessible Physical Facility",
+      "category": "physical",
+      "description": "Ramped entrances, elevators, wide corridors, and accessible restrooms on premises."
+    },
+    {
+      "id": "flexible_hours",
+      "name": "Flexible Work Hours & Asynchronous Scheduling",
+      "category": "schedule",
+      "description": "Accommodates medical appointments, energy rhythms, and variable transit arrangements."
+    },
+    {
+      "id": "full_remote",
+      "name": "100% Remote Work Option",
+      "category": "workplace",
+      "description": "Work from home with stipend for ergonomic equipment and accessible peripherals."
+    },
+    {
+      "id": "accessible_onboarding",
+      "name": "Accessible Digital Onboarding & Formats",
+      "category": "learning",
+      "description": "HR contracts, employee handbooks, and training videos provided with transcripts, alt-text, and audio."
+    },
+    {
+      "id": "adaptive_hardware",
+      "name": "Assistive Hardware & Ergo Peripheral Support",
+      "category": "hardware",
+      "description": "Employer provisions braille displays, single-switch inputs, screen magnifiers, or ergonomic keyboards upon request."
+    }
+  ]
+}
