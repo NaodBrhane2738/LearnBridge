@@ -66,6 +66,9 @@ class EmploymentApp {
       if (candJson.success) {
         this.currentCandidate = candJson.data;
         this.savedJobIds = new Set(this.currentCandidate.savedJobIds || []);
+        if (!this.activeCandidateProfile && !localStorage.getItem('lb_active_cv')) {
+          this.activeCandidateProfile = this.currentCandidate;
+        }
       }
 
       // Initial Jobs Load
@@ -338,7 +341,7 @@ class EmploymentApp {
     }
   }
 
-  renderActiveCard() {
+  renderActiveCard(swapClass = null) {
     const deckStage = document.getElementById('swipe-deck-stage');
     const uploadStage = document.getElementById('cv-upload-stage');
     const wrapper = document.getElementById('active-card-wrapper');
@@ -361,11 +364,18 @@ class EmploymentApp {
     if (emptyState) emptyState.style.display = 'none';
 
     const currentItem = this.cardDeck[this.currentCardIndex];
-    wrapper.innerHTML = window.JobCardComponent.renderSwipeCard(
-      currentItem,
-      this.currentCardIndex,
-      this.cardDeck.length
+    wrapper.innerHTML = window.JobCardComponent.renderSwipeDeck(
+      this.cardDeck,
+      this.currentCardIndex
     );
+
+    if (swapClass) {
+      const stageEl = wrapper.querySelector('#deck-carousel-stage');
+      if (stageEl) {
+        stageEl.classList.add(swapClass);
+        setTimeout(() => stageEl.classList.remove(swapClass), 400);
+      }
+    }
 
     // Bind card action buttons
     const passBtn = wrapper.querySelector('#btn-card-pass');
@@ -384,6 +394,74 @@ class EmploymentApp {
         this.handleCardApply();
       };
     }
+
+    // Bind Carousel Navigation Controls (Circular Arrows + Pagination Dots from Image 2)
+    const carouselPrev = wrapper.querySelector('#btn-carousel-prev');
+    if (carouselPrev) {
+      carouselPrev.onclick = (e) => {
+        e.preventDefault();
+        this.handleCardPrevious();
+      };
+    }
+
+    const carouselNext = wrapper.querySelector('#btn-carousel-next');
+    if (carouselNext) {
+      carouselNext.onclick = (e) => {
+        e.preventDefault();
+        this.handleCardNext();
+      };
+    }
+
+    // Bind Side Background Cards Click to Navigate
+    const sidePrev = wrapper.querySelector('#deck-slide-prev');
+    if (sidePrev) {
+      sidePrev.onclick = (e) => {
+        e.preventDefault();
+        const target = sidePrev.getAttribute('data-target-index');
+        const targetIdx = parseInt(target, 10);
+        if (!isNaN(targetIdx) && targetIdx >= 0) {
+          if (targetIdx < this.currentCardIndex) {
+            this.handleCardPrevious();
+          } else {
+            this.handleCardNext();
+          }
+        } else {
+          this.handleCardPrevious();
+        }
+      };
+      sidePrev.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          sidePrev.click();
+        }
+      };
+    }
+
+    const sideNext = wrapper.querySelector('#deck-slide-next');
+    if (sideNext) {
+      sideNext.onclick = (e) => {
+        e.preventDefault();
+        this.handleCardNext();
+      };
+      sideNext.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.handleCardNext();
+        }
+      };
+    }
+
+    // Bind Pagination Dots
+    const pageDots = wrapper.querySelectorAll('.deck-page-dot');
+    pageDots.forEach(dot => {
+      dot.onclick = (e) => {
+        e.preventDefault();
+        const targetIdx = parseInt(dot.getAttribute('data-jump-index'), 10);
+        if (!isNaN(targetIdx)) {
+          this.jumpToCard(targetIdx);
+        }
+      };
+    });
 
     // Bind More Details toggle button
     const toggleBtn = wrapper.querySelector('#btn-card-toggle-details');
@@ -553,47 +631,83 @@ class EmploymentApp {
 
   handleVoiceCommand(transcript) {
     if (!transcript) return false;
-    const clean = transcript.toLowerCase().replace(/[^\w\s]/g, ' ').trim();
+    const raw = transcript.trim();
+    const clean = raw.toLowerCase().replace(/[^\w\s\u1200-\u137F\u00C0-\u024F]/g, ' ').trim();
     const words = clean.split(/\s+/);
-    console.log("[EmploymentApp] Voice command heard:", transcript, "clean:", clean);
+    console.log("[EmploymentApp] Voice command heard:", raw, "clean:", clean);
 
-    // 1. More / Details Command
+    // Multilingual command keywords
+    const isApply = words.includes('apply') || words.includes('right') || words.includes('yes') ||
+                    words.includes('submit') || words.includes('accept') ||
+                    clean.includes('apply') || clean.includes('አመልክት') || clean.includes('አመልክቺ') ||
+                    clean.includes('iyyadhu') || clean.includes('ኣመልክት');
+
+    if (isApply) {
+      if (window.a11y) {
+        window.a11y.stopSpeech();
+        window.a11y.playChime('success');
+      }
+      this.handleCardApply();
+      const ack = this.currentLang === 'am' ? 'በሲቪ አመልክተዋል' : 'Applied with your uploaded CV';
+      if (window.a11y) {
+        window.a11y.showVisualToast(`Voice: ${ack}`);
+        window.a11y.speak(ack);
+      }
+      return true;
+    }
+
+    const isPass = words.includes('pass') || words.includes('skip') || words.includes('left') ||
+                   words.includes('no') || words.includes('next') ||
+                   clean.includes('pass') || clean.includes('skip') || clean.includes('ለፍ') ||
+                   clean.includes('ቀጣይ') || clean.includes('darbi') || clean.includes('ሕለፍ');
+
+    if (isPass) {
+      if (window.a11y) {
+        window.a11y.stopSpeech();
+        window.a11y.playChime('neutral');
+      }
+      this.handleCardPass();
+      const ack = this.currentLang === 'am' ? 'ቀጣይ እድል' : 'Passed to next opportunity';
+      if (window.a11y) {
+        window.a11y.showVisualToast(`Voice: ${ack}`);
+        window.a11y.speak(ack);
+      }
+      return true;
+    }
+
     const isMore = words.includes('more') || words.includes('detail') || words.includes('details') ||
                    words.includes('info') || words.includes('information') || words.includes('expand') ||
-                   words.includes('full') || words.includes('read') || clean.includes('more');
+                   words.includes('full') || words.includes('read') || clean.includes('more') ||
+                   clean.includes('ተጨማሪ') || clean.includes('ዝርዝር') || clean.includes('bal ina');
 
     if (isMore) {
+      if (window.a11y) window.a11y.playChime('success');
       this.showCardDetailsAndRead();
       if (window.a11y) window.a11y.showVisualToast('Voice: Reading full job details aloud');
       return true;
     }
 
-    // 2. Collapse / Less Command
     const isLess = words.includes('less') || words.includes('collapse') || words.includes('close') ||
-                   words.includes('hide') || words.includes('stop');
+                   words.includes('hide') || words.includes('stop') ||
+                   clean.includes('ዝጋ') || clean.includes('dhaabi') || clean.includes('ዕጸው');
+
     if (isLess) {
+      if (window.a11y) window.a11y.playChime('neutral');
       this.collapseCardDetails();
       if (window.a11y) window.a11y.showVisualToast('Voice: Collapsed details');
       return true;
     }
 
-    // 3. Apply / Right Command
-    const isApply = words.includes('apply') || words.includes('right') || words.includes('yes') ||
-                    words.includes('submit') || clean.includes('apply');
-    if (isApply) {
-      if (window.a11y) window.a11y.stopSpeech();
-      this.handleCardApply();
-      if (window.a11y) window.a11y.showVisualToast('Voice: Applied with CV');
-      return true;
-    }
+    const isBack = words.includes('back') || words.includes('previous') ||
+                   clean.includes('ተመለስ') || clean.includes('dudduuba');
 
-    // 4. Pass / Left Command
-    const isPass = words.includes('pass') || words.includes('skip') || words.includes('left') ||
-                   words.includes('no') || words.includes('next') || clean.includes('pass') || clean.includes('skip');
-    if (isPass) {
-      if (window.a11y) window.a11y.stopSpeech();
-      this.handleCardPass();
-      if (window.a11y) window.a11y.showVisualToast('Voice: Passed Opportunity');
+    if (isBack) {
+      if (window.a11y) {
+        window.a11y.stopSpeech();
+        window.a11y.playChime('neutral');
+      }
+      this.handleCardPrevious();
+      if (window.a11y) window.a11y.showVisualToast('Voice: Previous opportunity');
       return true;
     }
 
@@ -655,9 +769,11 @@ class EmploymentApp {
 
       if (deltaX > threshold) {
         // Swiped Right -> Apply
+        cardEl.style.transform = '';
         this.handleCardApply();
       } else if (deltaX < -threshold) {
         // Swiped Left -> Pass
+        cardEl.style.transform = '';
         this.handleCardPass();
       } else {
         // Snap back to neutral stacked position
@@ -727,11 +843,18 @@ class EmploymentApp {
       window.a11y.announceLive(successMsg, true);
     }
 
+    // Trigger visual 3D swap: front card flies right, background right comes forward
+    const stageEl = document.getElementById('deck-carousel-stage');
+    if (stageEl) {
+      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
+      stageEl.classList.add('is-swapping-apply');
+    }
+
     setTimeout(() => {
       this.currentCardIndex++;
       this.isCardAnimating = false;
-      this.renderActiveCard();
-    }, 240);
+      this.renderActiveCard('has-just-swapped');
+    }, 360);
   }
 
   handleCardPass() {
@@ -742,16 +865,11 @@ class EmploymentApp {
     const currentItem = this.cardDeck[this.currentCardIndex];
     const job = currentItem.job;
 
-    // Trigger visual swipe left animation & 3D stack lift
-    const cardEl = document.querySelector('.swipe-card');
-    const stackEl = document.getElementById('deck-3d-stack');
-    if (cardEl) {
-      cardEl.style.transform = '';
-      cardEl.style.transition = '';
-      cardEl.classList.add('anim-swipe-left');
-    }
-    if (stackEl) {
-      stackEl.classList.add('deck-animating');
+    // Trigger visual 3D swap: front card flies left, background right comes forward
+    const stageEl = document.getElementById('deck-carousel-stage');
+    if (stageEl) {
+      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
+      stageEl.classList.add('is-swapping-pass');
     }
 
     const passMsg = `Passed on ${job.title}`;
@@ -763,8 +881,76 @@ class EmploymentApp {
     setTimeout(() => {
       this.currentCardIndex++;
       this.isCardAnimating = false;
-      this.renderActiveCard();
-    }, 240);
+      this.renderActiveCard('has-just-swapped');
+    }, 360);
+  }
+
+  handleCardPrevious() {
+    if (this.isCardAnimating || this.currentCardIndex <= 0) return;
+    this.isCardAnimating = true;
+    if (window.a11y) window.a11y.stopSpeech();
+
+    const stageEl = document.getElementById('deck-carousel-stage');
+    if (stageEl) {
+      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
+      stageEl.classList.add('is-swapping-prev');
+    }
+
+    const prevJob = this.cardDeck[this.currentCardIndex - 1]?.job;
+    const msg = prevJob ? `Previous: ${prevJob.title}` : 'Previous opportunity';
+    if (window.a11y) {
+      window.a11y.showVisualToast(msg, 1400);
+    }
+
+    setTimeout(() => {
+      this.currentCardIndex--;
+      this.isCardAnimating = false;
+      this.renderActiveCard('has-just-swapped-prev');
+    }, 360);
+  }
+
+  handleCardNext() {
+    if (this.isCardAnimating || this.currentCardIndex >= this.cardDeck.length - 1) return;
+    this.isCardAnimating = true;
+    if (window.a11y) window.a11y.stopSpeech();
+
+    const stageEl = document.getElementById('deck-carousel-stage');
+    if (stageEl) {
+      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
+      stageEl.classList.add('is-swapping-pass');
+    }
+
+    const nextJob = this.cardDeck[this.currentCardIndex + 1]?.job;
+    const msg = nextJob ? `Next: ${nextJob.title}` : 'Next opportunity';
+    if (window.a11y) {
+      window.a11y.showVisualToast(msg, 1200);
+    }
+
+    setTimeout(() => {
+      this.currentCardIndex++;
+      this.isCardAnimating = false;
+      this.renderActiveCard('has-just-swapped');
+    }, 340);
+  }
+
+  jumpToCard(targetIndex) {
+    if (this.isCardAnimating || targetIndex === this.currentCardIndex) return;
+    if (targetIndex < 0 || targetIndex >= this.cardDeck.length) return;
+    this.isCardAnimating = true;
+    if (window.a11y) window.a11y.stopSpeech();
+
+    const isFwd = targetIndex > this.currentCardIndex;
+    const stageEl = document.getElementById('deck-carousel-stage');
+    if (stageEl) {
+      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
+      stageEl.classList.add(isFwd ? 'is-swapping-pass' : 'is-swapping-prev');
+    }
+
+    setTimeout(() => {
+      this.currentCardIndex = targetIndex;
+      this.isCardAnimating = false;
+      this.renderActiveCard(isFwd ? 'has-just-swapped' : 'has-just-swapped-prev');
+    }, 340);
   }
 
   async processCvText(cvText, fileName = 'uploaded-cv.txt') {

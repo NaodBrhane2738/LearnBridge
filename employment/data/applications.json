@@ -1,5 +1,379 @@
 [
   {
+    "id": "app-1794772027766",
+    "appliedAt": "2026-11-15T19:47:07.766Z",
+    "updatedAt": "2026-11-15T19:47:07.766Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T19:47:07.766Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-emp-1794683702659",
+    "jobTitle": "Junior Cloud Infrastructure Specialist",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (55% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794770007378",
+    "appliedAt": "2026-11-15T19:13:27.378Z",
+    "updatedAt": "2026-11-15T19:13:27.378Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T19:13:27.378Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-emp-1794728056894",
+    "jobTitle": "Junior Cloud Infrastructure Specialist",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (55% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794770003366",
+    "appliedAt": "2026-11-15T19:13:23.366Z",
+    "updatedAt": "2026-11-15T19:13:23.366Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T19:13:23.366Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-eth-008",
+    "jobTitle": "Customer Service & Telebirr Operations Trainee",
+    "employerId": "emp-ethio-telecom",
+    "employerName": "Ethio Telecom",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (65% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794767646264",
+    "appliedAt": "2026-11-15T18:34:06.264Z",
+    "updatedAt": "2026-11-15T18:34:06.264Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T18:34:06.264Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-ext-005",
+    "jobTitle": "Junior Python / Django Developer — Youth Health Information System",
+    "employerId": "emp-mercy-corps",
+    "employerName": "Mercy Corps Ethiopia",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (65% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794766358446",
+    "appliedAt": "2026-11-15T18:12:38.447Z",
+    "updatedAt": "2026-11-15T18:12:38.447Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T18:12:38.447Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-eth-002",
+    "jobTitle": "Ethiopian Sign Language (ETSL) Video Specialist",
+    "employerId": "emp-mint-gov",
+    "employerName": "Ministry of Innovation & Technology (MInT)",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (65% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794766353612",
+    "appliedAt": "2026-11-15T18:12:33.612Z",
+    "updatedAt": "2026-11-15T18:12:33.612Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T18:12:33.612Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-eth-006",
+    "jobTitle": "Data Labeling & NLP Annotation Specialist (Afaan Oromo & Tigrinya)",
+    "employerId": "emp-gebeya",
+    "employerName": "Gebeya Inc.",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (75% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794765514456",
+    "appliedAt": "2026-11-15T17:58:34.456Z",
+    "updatedAt": "2026-11-15T17:58:34.456Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T17:58:34.456Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-emp-1794744349391",
+    "jobTitle": "Junior Cloud Infrastructure Specialist",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (55% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794765405901",
+    "appliedAt": "2026-11-15T17:56:45.901Z",
+    "updatedAt": "2026-11-15T17:56:45.901Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T17:56:45.901Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-eth-004",
+    "jobTitle": "Inclusive Digital Banking Product Associate",
+    "employerId": "emp-cbe",
+    "employerName": "Commercial Bank of Ethiopia (CBE)",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (65% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794765404915",
+    "appliedAt": "2026-11-15T17:56:44.915Z",
+    "updatedAt": "2026-11-15T17:56:44.915Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T17:56:44.915Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "ext-afriwork_partner_api-afw-7721",
+    "jobTitle": "Junior Python / Django Developer",
+    "employerId": "emp-ext-mercy-corps-ethiopia",
+    "employerName": "Mercy Corps Ethiopia",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (65% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794765403650",
+    "appliedAt": "2026-11-15T17:56:43.650Z",
+    "updatedAt": "2026-11-15T17:56:43.650Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T17:56:43.650Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-eth-009",
+    "jobTitle": "Inclusive Education Volunteering Coordinator",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (75% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
+    "id": "app-1794765403109",
+    "appliedAt": "2026-11-15T17:56:43.109Z",
+    "updatedAt": "2026-11-15T17:56:43.109Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T17:56:43.109Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-int-007",
+    "jobTitle": "Technical Customer Support Representative (Async / Remote)",
+    "employerId": "emp-openremote-global",
+    "employerName": "OpenRemote Technologies (International)",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (75% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
     "id": "app-1794746222245",
     "appliedAt": "2026-11-15T12:37:02.245Z",
     "updatedAt": "2026-11-15T12:37:02.245Z",
