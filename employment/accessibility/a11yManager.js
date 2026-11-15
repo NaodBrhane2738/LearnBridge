@@ -647,7 +647,7 @@ class AccessibilityManager {
       this.recognition.continuous = true;
       this.recognition.interimResults = false;
       this.recognition.lang = 'en-US';
-      this.isListeningActive = false;
+      this.isListeningActive = true;
 
       this.recognition.onstart = () => {
         this.voiceActive = true;
@@ -687,8 +687,32 @@ class AccessibilityManager {
           window.app.handleVoiceCommand(transcript);
         }
       };
+
+      // Auto-start microphone by default on load or first interaction
+      this.startMicDefault();
     } catch (err) {
       console.warn("[A11yManager] Failed to init SpeechRecognition:", err);
+    }
+  }
+
+  startMicDefault() {
+    this.isListeningActive = true;
+    try {
+      this.recognition.start();
+      this.updateVoiceStatusUI(true);
+    } catch (_) {
+      // Browser requires user gesture to start microphone: hook first user interaction
+      const startOnGesture = () => {
+        if (this.isListeningActive && !this.voiceActive && this.recognition) {
+          try {
+            this.recognition.start();
+            this.updateVoiceStatusUI(true);
+          } catch (_) {}
+        }
+      };
+      window.addEventListener('click', startOnGesture, { once: true });
+      window.addEventListener('keydown', startOnGesture, { once: true });
+      window.addEventListener('pointerdown', startOnGesture, { once: true });
     }
   }
 
