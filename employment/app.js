@@ -426,64 +426,177 @@ class EmploymentApp {
     }
   }
 
-  toggleCardDetails() {
+  buildFullSpokenDetails(job, currentItem) {
+    if (!job) return '';
+    const parts = [];
+
+    // Title, Employer & Location
+    parts.push(`Opportunity: ${job.title} at ${job.employerName}, located in ${job.location}.`);
+
+    // Compensation & Salary
+    if (job.salaryDisclosed && job.salaryMin) {
+      const sal = job.salaryMax
+        ? `${job.salaryMin.toLocaleString()} to ${job.salaryMax.toLocaleString()} ${job.currency}`
+        : `From ${job.salaryMin.toLocaleString()} ${job.currency}`;
+      parts.push(`Compensation: ${sal}.`);
+    } else {
+      parts.push(`Compensation is disclosed upon interview.`);
+    }
+
+    // Industry & Work Arrangement
+    parts.push(`Industry: ${job.industry || 'Technology'}. Work type: ${job.employmentType || 'Full-time'}, ${job.isRemote ? 'Remote' : (job.workArrangement || 'On-site')}.`);
+
+    // Match Score & Reason
+    if (currentItem?.matchScore) {
+      parts.push(`Candidate match: ${currentItem.matchScore} percent.`);
+    }
+    if (currentItem?.explanation?.summary) {
+      parts.push(`Match reason: ${currentItem.explanation.summary}.`);
+    }
+
+    // Description Overview
+    if (job.description) {
+      parts.push(`Role overview: ${job.description}.`);
+    }
+
+    // Key Responsibilities
+    if (job.responsibilities && job.responsibilities.length > 0) {
+      parts.push(`Key responsibilities include: ${job.responsibilities.join('. ')}.`);
+    }
+
+    // Requirements & Qualifications
+    if (job.requirements && job.requirements.length > 0) {
+      parts.push(`Requirements and qualifications: ${job.requirements.join('. ')}.`);
+    }
+
+    // Verified Workplace Accommodations
+    const accomms = [];
+    if (job.accommodations) {
+      if (job.accommodations.screen_reader_ready?.status === 'supported') accomms.push('Screen reader workflows');
+      if (job.accommodations.etsl_interpreter?.status === 'supported') accomms.push('Ethiopian Sign Language interpreter available');
+      if (job.accommodations.captioned_meetings?.status === 'supported') accomms.push('Captioned meetings');
+      if (job.accommodations.wheelchair_accessible?.status === 'supported') accomms.push('Barrier-free wheelchair access');
+      if (job.accommodations.flexible_hours?.status === 'supported') accomms.push('Flexible work hours');
+    }
+    if (accomms.length > 0) {
+      parts.push(`Verified workplace accommodations supported: ${accomms.join(', ')}.`);
+    }
+
+    // Next actions
+    parts.push(`To apply with your uploaded CV, press Right Arrow or say Apply. To skip to the next opportunity, press Left Arrow or say Pass. To collapse details, press M or say Less.`);
+
+    return parts.join(' ');
+  }
+
+  showCardDetailsAndRead() {
     const cardEl = document.querySelector('.swipe-card');
     if (!cardEl) return;
     const detailsEl = cardEl.querySelector('.swipe-card-expanded-details');
     const toggleBtn = cardEl.querySelector('#btn-card-toggle-details');
     if (!detailsEl) return;
 
-    const isExpanded = detailsEl.style.display !== 'none';
-    if (isExpanded) {
-      detailsEl.style.display = 'none';
-      detailsEl.setAttribute('aria-hidden', 'true');
-      cardEl.classList.remove('is-expanded');
-      if (toggleBtn) {
-        toggleBtn.setAttribute('aria-expanded', 'false');
-        const txt = toggleBtn.querySelector('.toggle-text');
-        if (txt) txt.textContent = 'More Details (Press M or click)';
-      }
-      if (window.a11y) {
-        window.a11y.announceLive("Collapsed details. Press Right Arrow to apply, Left Arrow to pass, M for details.", false);
-      }
-    } else {
-      detailsEl.style.display = 'block';
-      detailsEl.setAttribute('aria-hidden', 'false');
-      cardEl.classList.add('is-expanded');
-      if (toggleBtn) {
-        toggleBtn.setAttribute('aria-expanded', 'true');
-        const txt = toggleBtn.querySelector('.toggle-text');
-        if (txt) txt.textContent = 'Less Details (Press M to collapse)';
-      }
-      if (window.a11y) {
-        const currentItem = this.cardDeck[this.currentCardIndex];
-        const job = currentItem?.job;
-        const spoken = `Full details for ${job?.title || 'job'}. Press Right Arrow to apply with CV, Left Arrow to pass, or M to collapse.`;
-        window.a11y.announceLive(spoken, false);
-        if (window.a11y.currentMode === 'blind') {
-          window.a11y.speak(spoken);
-        }
+    detailsEl.style.display = 'block';
+    detailsEl.setAttribute('aria-hidden', 'false');
+    cardEl.classList.add('is-expanded');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      const txt = toggleBtn.querySelector('.toggle-text');
+      if (txt) txt.textContent = 'Less Details (Press M to collapse)';
+    }
+
+    if (window.a11y) {
+      const currentItem = this.cardDeck[this.currentCardIndex];
+      const job = currentItem?.job;
+      if (job) {
+        const fullReadout = this.buildFullSpokenDetails(job, currentItem);
+        window.a11y.announceLive(fullReadout, false);
+        window.a11y.speak(fullReadout);
       }
     }
   }
 
+  collapseCardDetails() {
+    const cardEl = document.querySelector('.swipe-card');
+    if (!cardEl) return;
+    const detailsEl = cardEl.querySelector('.swipe-card-expanded-details');
+    const toggleBtn = cardEl.querySelector('#btn-card-toggle-details');
+    if (!detailsEl) return;
+
+    detailsEl.style.display = 'none';
+    detailsEl.setAttribute('aria-hidden', 'true');
+    cardEl.classList.remove('is-expanded');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      const txt = toggleBtn.querySelector('.toggle-text');
+      if (txt) txt.textContent = 'More Details (Press M or click)';
+    }
+
+    if (window.a11y) {
+      window.a11y.stopSpeech();
+      window.a11y.announceLive("Collapsed details. Press Right Arrow to apply, Left Arrow to pass, M for details.", false);
+    }
+  }
+
+  toggleCardDetails() {
+    const cardEl = document.querySelector('.swipe-card');
+    if (!cardEl) return;
+    const detailsEl = cardEl.querySelector('.swipe-card-expanded-details');
+    if (!detailsEl) return;
+
+    const isExpanded = detailsEl.style.display !== 'none';
+    if (isExpanded) {
+      this.collapseCardDetails();
+    } else {
+      this.showCardDetailsAndRead();
+    }
+  }
+
   handleVoiceCommand(transcript) {
-    const lower = (transcript || '').toLowerCase().trim();
-    if (lower.includes('more') || lower.includes('detail') || lower.includes('expand') || lower.includes('info')) {
-      this.toggleCardDetails();
-      if (window.a11y) window.a11y.showVisualToast('Voice: Revealed Details');
+    if (!transcript) return false;
+    const clean = transcript.toLowerCase().replace(/[^\w\s]/g, ' ').trim();
+    const words = clean.split(/\s+/);
+    console.log("[EmploymentApp] Voice command heard:", transcript, "clean:", clean);
+
+    // 1. More / Details Command
+    const isMore = words.includes('more') || words.includes('detail') || words.includes('details') ||
+                   words.includes('info') || words.includes('information') || words.includes('expand') ||
+                   words.includes('full') || words.includes('read') || clean.includes('more');
+
+    if (isMore) {
+      this.showCardDetailsAndRead();
+      if (window.a11y) window.a11y.showVisualToast('Voice: Reading full job details aloud');
       return true;
     }
-    if (lower.includes('apply') || lower.includes('right') || lower.includes('yes')) {
+
+    // 2. Collapse / Less Command
+    const isLess = words.includes('less') || words.includes('collapse') || words.includes('close') ||
+                   words.includes('hide') || words.includes('stop');
+    if (isLess) {
+      this.collapseCardDetails();
+      if (window.a11y) window.a11y.showVisualToast('Voice: Collapsed details');
+      return true;
+    }
+
+    // 3. Apply / Right Command
+    const isApply = words.includes('apply') || words.includes('right') || words.includes('yes') ||
+                    words.includes('submit') || clean.includes('apply');
+    if (isApply) {
+      if (window.a11y) window.a11y.stopSpeech();
       this.handleCardApply();
       if (window.a11y) window.a11y.showVisualToast('Voice: Applied with CV');
       return true;
     }
-    if (lower.includes('pass') || lower.includes('skip') || lower.includes('left') || lower.includes('no')) {
+
+    // 4. Pass / Left Command
+    const isPass = words.includes('pass') || words.includes('skip') || words.includes('left') ||
+                   words.includes('no') || words.includes('next') || clean.includes('pass') || clean.includes('skip');
+    if (isPass) {
+      if (window.a11y) window.a11y.stopSpeech();
       this.handleCardPass();
       if (window.a11y) window.a11y.showVisualToast('Voice: Passed Opportunity');
       return true;
     }
+
     return false;
   }
 
@@ -568,6 +681,7 @@ class EmploymentApp {
   async handleCardApply() {
     if (this.isCardAnimating || this.currentCardIndex >= this.cardDeck.length) return;
     this.isCardAnimating = true;
+    if (window.a11y) window.a11y.stopSpeech();
 
     const currentItem = this.cardDeck[this.currentCardIndex];
     const job = currentItem.job;
@@ -623,6 +737,7 @@ class EmploymentApp {
   handleCardPass() {
     if (this.isCardAnimating || this.currentCardIndex >= this.cardDeck.length) return;
     this.isCardAnimating = true;
+    if (window.a11y) window.a11y.stopSpeech();
 
     const currentItem = this.cardDeck[this.currentCardIndex];
     const job = currentItem.job;

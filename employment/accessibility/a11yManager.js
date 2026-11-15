@@ -645,7 +645,7 @@ class AccessibilityManager {
     try {
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = true;
-      this.recognition.interimResults = false;
+      this.recognition.interimResults = true;
       this.recognition.lang = 'en-US';
       this.isListeningActive = true;
 
@@ -678,13 +678,15 @@ class AccessibilityManager {
       };
 
       this.recognition.onresult = (event) => {
-        const lastResult = event.results[event.results.length - 1];
-        if (!lastResult) return;
-        const transcript = lastResult[0].transcript;
-        console.log("[A11yManager] Heard voice:", transcript);
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          const res = event.results[i];
+          const transcript = res[0]?.transcript || '';
+          console.log("[A11yManager] Heard voice result:", transcript, "isFinal:", res.isFinal);
 
-        if (window.app && typeof window.app.handleVoiceCommand === 'function') {
-          window.app.handleVoiceCommand(transcript);
+          if (window.app && typeof window.app.handleVoiceCommand === 'function') {
+            const handled = window.app.handleVoiceCommand(transcript);
+            if (handled) break;
+          }
         }
       };
 

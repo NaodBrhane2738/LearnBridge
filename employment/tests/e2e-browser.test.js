@@ -218,6 +218,25 @@ async function runBrowserTests() {
     assert.ok(thirdCardTitle && thirdCardTitle !== secondCardTitle);
     passed++;
 
+    // 14b. Test Saying the Word 'more' Directly (Expands & Reads Full Details from the beginning)
+    const voiceSpokenText = await page.evaluate(() => {
+      let lastSpoken = '';
+      if (window.a11y) {
+        const origSpeak = window.a11y.speak.bind(window.a11y);
+        window.a11y.speak = (text, lang) => {
+          lastSpoken = text;
+          origSpeak(text, lang);
+        };
+      }
+      window.app.handleVoiceCommand('more');
+      return lastSpoken;
+    });
+    console.log(`✓ 17. Voice command 'more' triggered full spoken readout (${voiceSpokenText.slice(0, 80)}...)`);
+    assert.ok(voiceSpokenText.includes('Opportunity:'), "Speech must start from beginning with Opportunity title");
+    assert.ok(voiceSpokenText.includes('Compensation:'), "Speech must include compensation/salary");
+    assert.ok(voiceSpokenText.includes('Industry:'), "Speech must include industry");
+    passed++;
+
     await page.screenshot({ path: path.join(EVIDENCE_DIR, '02-swipeable-card-deck.png') });
 
     // 14. Test Job Details View
