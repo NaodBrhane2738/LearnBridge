@@ -558,6 +558,73 @@ textarea:focus-visible,
   margin-top: 6px;
 }
 
+/* More Details Toggle Button */
+.btn-card-toggle-details {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-subcard);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  margin-top: 6px;
+  margin-bottom: 10px;
+  transition: all 0.15s ease;
+}
+
+.btn-card-toggle-details:hover, .btn-card-toggle-details:focus-visible {
+  border-color: var(--primary-red);
+  background: var(--primary-red-tint);
+  color: var(--primary-red);
+}
+
+.btn-card-toggle-details .toggle-icon {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+}
+
+.swipe-card.is-expanded .btn-card-toggle-details .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Expanded Details Section */
+.swipe-card-expanded-details {
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-bottom: 12px;
+  border-top: 1px dashed var(--border-line);
+  padding-top: 8px;
+}
+
+.swipe-card-expanded-details .bullet-list {
+  margin-left: 18px;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.swipe-card-footer-info {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-line);
+}
+
+.info-pill {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
 .swipe-section-heading {
   font-size: 12px;
   text-transform: uppercase;
@@ -585,6 +652,10 @@ textarea:focus-visible,
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.hint-mid {
+  color: var(--text-main);
 }
 
 .hint-right {

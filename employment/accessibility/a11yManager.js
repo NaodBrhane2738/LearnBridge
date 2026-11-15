@@ -670,6 +670,10 @@ class AccessibilityManager {
 
     this.recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
+      if (window.app && typeof window.app.handleVoiceCommand === 'function') {
+        const handled = window.app.handleVoiceCommand(transcript);
+        if (handled) return;
+      }
       if (onResultCallback) onResultCallback(transcript);
     };
 
