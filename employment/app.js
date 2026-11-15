@@ -401,10 +401,10 @@ class EmploymentApp {
         e.preventDefault();
         if (window.a11y) window.a11y.toggleVoiceListening();
       };
-      if (window.a11y && window.a11y.voiceActive) {
+      if (window.a11y && window.a11y.isListeningActive) {
         micBtn.classList.add('is-listening');
         const lbl = micBtn.querySelector('.mic-status-label');
-        if (lbl) lbl.textContent = 'Mic: Listening (V)';
+        if (lbl) lbl.textContent = 'Mic: On (V)';
       }
     }
 
