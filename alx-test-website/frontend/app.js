@@ -3949,13 +3949,6 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         }
         return true;
       }
-          performLoginWithCredentials(emailInput.value.trim(), passwordInput.value);
-        } else {
-          // Hands-free voice login for blind learners - NO native popups / pure smooth voice entry
-          selectAndLoginAccount(1);
-        }
-        return true;
-      }
 
       // 00A. SELECT FIRST ACCOUNT (Abenezer Habtamu - abenezer@alx.app)
       if (/(?<![\\p{L}\\p{N}])(the first|first|first one|first email|first account|number one|account one|account 1|number 1|1|one|abenezer|abenezer habtamu|አንደኛ|አንደኛው|አንደኛውን|አንደኛ ኢሜይል|ቁጥር አንድ|አንድ|አበነዘር|አቤኔዘር|tokkoffaa|tokko|ቀዳማይ|ቀዳመይቲ|ቀዳማይ ኢመይል|ሓደ)(?![\\p{L}\\p{N}])/iu.test(text)) {
