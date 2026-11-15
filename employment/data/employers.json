@@ -127,13 +127,13 @@
     "website": "https://kifiya.et",
     "registrationNumber": "ET-TECH-PLC-2010-4491",
     "verificationStatus": "verified",
-    "verificationDate": "2026-11-15T12:05:49.407Z",
+    "verificationDate": "2026-11-15T12:31:10.725Z",
     "verifiedBy": "LearnBridge Compliance Bureau",
     "logo": "kifiya.svg",
     "description": "Digital payment innovator and micro-lending infrastructure platform in Ethiopia.",
     "contactEmail": "talent@kifiya.et",
     "accommodationsPolicy": "Hybrid office in Bole with accessible meeting rooms and remote accommodation options.",
-    "updatedAt": "2026-11-15T12:05:49.407Z"
+    "updatedAt": "2026-11-15T12:31:10.726Z"
   },
   {
     "id": "emp-1794660947977",
@@ -192,6 +192,28 @@
     "id": "emp-1794744349385",
     "verificationStatus": "pending",
     "createdAt": "2026-11-15T12:05:49.385Z",
+    "name": "Bole Innovative Tech",
+    "registrationNumber": "ET-TECH-2026-9901",
+    "website": "",
+    "industry": "Technology & Software",
+    "location": "Addis Ababa",
+    "contactEmail": "hr@boletech.et"
+  },
+  {
+    "id": "emp-1794745772672",
+    "verificationStatus": "pending",
+    "createdAt": "2026-11-15T12:29:32.672Z",
+    "name": "Bole Innovative Tech",
+    "registrationNumber": "ET-TECH-2026-9901",
+    "website": "",
+    "industry": "Technology & Software",
+    "location": "Addis Ababa",
+    "contactEmail": "hr@boletech.et"
+  },
+  {
+    "id": "emp-1794745870710",
+    "verificationStatus": "pending",
+    "createdAt": "2026-11-15T12:31:10.710Z",
     "name": "Bole Innovative Tech",
     "registrationNumber": "ET-TECH-2026-9901",
     "website": "",

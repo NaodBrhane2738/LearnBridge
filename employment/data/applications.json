@@ -1,5 +1,39 @@
 [
   {
+    "id": "app-1794746222245",
+    "appliedAt": "2026-11-15T12:37:02.245Z",
+    "updatedAt": "2026-11-15T12:37:02.245Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-15T12:37:02.245Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "ext-afriwork_partner_api-afw-9014",
+    "jobTitle": "Mid-Level React Native Developer (Fintech)",
+    "employerId": "emp-ext-kifiya-financial-technologies",
+    "employerName": "Kifiya Financial Technologies",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (75% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
     "id": "app-001",
     "jobId": "job-eth-001",
     "jobTitle": "Digital Accessibility QA Engineer",
@@ -32,7 +66,7 @@
     },
     "status": "interview",
     "appliedAt": "2026-11-10T14:30:00.000Z",
-    "updatedAt": "2026-11-15T12:05:49.399Z",
+    "updatedAt": "2026-11-15T12:31:10.719Z",
     "timeline": [
       {
         "status": "applied",
@@ -77,6 +111,16 @@
       {
         "status": "interview",
         "date": "2026-11-15T12:05:49.399Z",
+        "note": "Technical interview confirmed."
+      },
+      {
+        "status": "interview",
+        "date": "2026-11-15T12:29:32.684Z",
+        "note": "Technical interview confirmed."
+      },
+      {
+        "status": "interview",
+        "date": "2026-11-15T12:31:10.719Z",
         "note": "Technical interview confirmed."
       }
     ],
