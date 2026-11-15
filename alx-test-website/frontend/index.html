@@ -1331,39 +1331,88 @@
     </div>
   </div>
 
-  <!-- Integrated Yellow Voice AI Assistant (Bottom-Right Corner - Always Available) -->
+  <!-- Modern Floating Mini Chat AI Voice Assistant -->
   <aside class="assistant-corner-widget" id="assistantCornerWidget" role="region" aria-live="polite" aria-label="ALX AI Voice Assistant">
-    <!-- Live Speech Bubble & Quick Action Drawer -->
-    <div class="assistant-speech-bubble" id="assistantSpeechBubble">
-      <div class="speech-bubble-row">
-        <span class="bubble-pulse-dot" id="voiceHudDot" aria-hidden="true"></span>
-        <span class="bubble-status-text" id="voiceHudState">LISTENING</span>
-        <span class="bubble-transcript" id="voiceHudHeard">Speak or tap a command</span>
-        <button type="button" class="btn-hud-mic" id="btnBubbleMicToggle" title="Toggle Microphone">
-          <span class="mic-status-label">Mic ON</span>
-        </button>
-      </div>
-      <div class="voice-cmd-quick-bar">
-        <form class="voice-input-form" id="voiceInputForm" action="javascript:void(0);">
-          <input type="text" class="voice-manual-input" id="voiceInputManual" placeholder="Type command (e.g. 'planning', 'የት ነኝ')..." aria-label="Type or speak a voice command" />
-          <button type="submit" class="btn-voice-run" id="btnVoiceRunManual" title="Run Command">▶</button>
-        </form>
-        <div class="voice-chips-scroll">
-          <button type="button" class="voice-pill-chip" data-cmd="where am i">📍 Where am I?</button>
-          <button type="button" class="voice-pill-chip" data-cmd="planning">📅 Planning</button>
-          <button type="button" class="voice-pill-chip" data-cmd="access learning">📚 Learning</button>
-          <button type="button" class="voice-pill-chip" data-cmd="projects">🚀 Projects</button>
-          <button type="button" class="voice-pill-chip" data-cmd="quizzes">📝 Quizzes</button>
-          <button type="button" class="voice-pill-chip" data-cmd="switch to amharic">🇪🇹 አማርኛ</button>
-          <button type="button" class="voice-pill-chip" data-cmd="switch to oromiffa">Afaan Oromoo</button>
-          <button type="button" class="voice-pill-chip" data-cmd="switch to tigrinya">ትግርኛ</button>
-          <button type="button" class="voice-pill-chip" data-cmd="switch to english">English</button>
+    
+    <!-- Modern Floating Mini Chat Panel -->
+    <div class="assistant-chat-panel" id="assistantChatPanel" role="dialog" aria-label="ALX AI Assistant Chat" aria-hidden="false">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <div class="chat-bot-avatar">
+            <svg class="bot-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="#1e293b" aria-hidden="true">
+              <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/>
+            </svg>
+            <span class="chat-online-dot" id="chatOnlineDot" aria-hidden="true"></span>
+          </div>
+          <div class="chat-title-group">
+            <h4 class="chat-title">ALX AI Assistant</h4>
+            <span class="chat-status-sub" id="chatStatusSub">Listening 🎙️ · Hands-Free Active</span>
+          </div>
         </div>
+        <div class="chat-header-actions">
+          <button type="button" class="chat-header-btn chat-mic-toggle" id="btnChatMicToggle" title="Toggle Live Voice Microphone (or press V)">
+            <span id="chatMicIcon">🎙️</span>
+            <span class="chat-mic-label" id="chatMicLabel">Mic ON</span>
+          </button>
+          <button type="button" class="chat-header-btn chat-help-btn" id="btnChatHelp" title="View all available commands">
+            <span>❓ Help</span>
+          </button>
+          <button type="button" class="chat-header-btn chat-minimize-btn" id="btnChatMinimize" title="Minimize Assistant" aria-label="Minimize Assistant">
+            <span>✕</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Dialogue & Messages Stream -->
+      <div class="chat-dialogue-feed" id="chatDialogueFeed" role="log" aria-live="polite">
+        <!-- Welcome Dialogue Message -->
+        <div class="chat-msg chat-msg-bot">
+          <div class="chat-msg-avatar">🤖</div>
+          <div class="chat-msg-content">
+            <div class="chat-msg-bubble">
+              <div class="msg-status-tag tag-ready">● AI Ready</div>
+              <p><strong>Welcome to ALX Learning!</strong> I'm your hands-free voice & dialogue assistant. Every command you speak or type is tracked right here.</p>
+              <p class="chat-msg-tip">💡 <em>Try saying "Where am I?", "Job Portal", "Planning", or tap any quick action below.</em></p>
+            </div>
+            <span class="chat-msg-time">Just now</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Chips Bar (Directly Above Input Bar) -->
+      <div class="chat-quick-actions-bar">
+        <div class="quick-chips-scroll" id="quickChipsScroll">
+          <button type="button" class="chat-quick-chip chip-help" data-cmd="help">❓ All Commands</button>
+          <button type="button" class="chat-quick-chip chip-job" data-cmd="job portal">💼 Job Portal</button>
+          <button type="button" class="chat-quick-chip" data-cmd="where am i">📍 Where am I?</button>
+          <button type="button" class="chat-quick-chip" data-cmd="planning">📅 Planning</button>
+          <button type="button" class="chat-quick-chip" data-cmd="access learning">📚 Learning</button>
+          <button type="button" class="chat-quick-chip" data-cmd="projects">🚀 Projects</button>
+          <button type="button" class="chat-quick-chip" data-cmd="quizzes">📝 Quizzes</button>
+          <button type="button" class="chat-quick-chip" data-cmd="switch to amharic">🇪🇹 አማርኛ</button>
+          <button type="button" class="chat-quick-chip" data-cmd="switch to oromiffa">Afaan Oromoo</button>
+          <button type="button" class="chat-quick-chip" data-cmd="switch to tigrinya">ትግርኛ</button>
+          <button type="button" class="chat-quick-chip" data-cmd="switch to english">English</button>
+        </div>
+      </div>
+
+      <!-- Modern Input Bar -->
+      <div class="chat-input-area">
+        <form class="chat-input-form" id="chatInputForm" action="javascript:void(0);">
+          <input type="text" class="chat-text-input" id="chatTextInput" placeholder="Type command (e.g. 'planning', 'job portal', 'የት ነኝ')..." aria-label="Type or speak a command" />
+          <button type="submit" class="chat-send-btn" id="btnChatSend" title="Run Command" aria-label="Send Command">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
       </div>
     </div>
 
     <!-- Yellow Assistant Avatar Button with Pulsing Voice Ring -->
-    <button type="button" class="floating-chat-bot voice-active" id="btnAssistantBot" title="ALX AI Voice Assistant · Click for Commands &amp; Guide (or press V)" aria-label="ALX AI Voice Assistant · Click for Commands &amp; Guide">
+    <button type="button" class="floating-chat-bot voice-active" id="btnAssistantBot" title="ALX AI Voice Assistant (Click to toggle chat · Press V for mic)" aria-label="ALX AI Voice Assistant">
       <span class="bot-voice-ring" id="botVoiceRing" aria-hidden="true"></span>
       <span class="bot-mic-indicator" id="botMicIndicator" aria-hidden="true">🎙️</span>
       <svg class="bot-icon-svg" width="28" height="28" viewBox="0 0 24 24" fill="#1e293b" aria-hidden="true">
