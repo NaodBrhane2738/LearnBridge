@@ -315,7 +315,7 @@ class JobCardComponent {
           <div class="swipe-keyboard-hint compact-hint" aria-hidden="true">
             <div class="hint-col hint-left">
               <kbd class="key-kbd">← Arrow</kbd>
-              <span>Pass</span>
+              <span>Pass / Reject</span>
             </div>
             <div class="hint-col hint-mid">
               <kbd class="key-kbd">M</kbd>
@@ -329,11 +329,11 @@ class JobCardComponent {
 
           <!-- Action Buttons -->
           <div class="swipe-card-actions tinder-actions">
-            <button type="button" class="btn btn-card-pass" id="btn-card-pass" data-id="${job.id}" aria-label="Pass on this job (Left Arrow)">
+            <button type="button" class="btn btn-card-pass" id="btn-card-pass" data-id="${job.id}" aria-label="Pass or Reject this job (Left Arrow, say 'Pass' or 'Reject')">
               <svg class="ui-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Pass (←)
+              Pass / Reject (←)
             </button>
-            <button type="button" class="btn btn-card-apply" id="btn-card-apply" data-id="${job.id}" aria-label="Apply to this job with CV (Right Arrow)">
+            <button type="button" class="btn btn-card-apply" id="btn-card-apply" data-id="${job.id}" aria-label="Apply to this job with CV (Right Arrow, say 'Apply')">
               <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
               Apply with CV (→)
             </button>

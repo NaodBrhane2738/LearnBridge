@@ -163,9 +163,43 @@ console.log('\n--- 4. Voice Bridge & Cross-Frame Security ---');
 runTest('Cross-frame allowed actions whitelist is strictly enforced', () => {
   assert.ok(ALLOWED_FRAME_ACTIONS.includes('JOB_APPLY'));
   assert.ok(ALLOWED_FRAME_ACTIONS.includes('JOB_PASS'));
+  assert.ok(ALLOWED_FRAME_ACTIONS.includes('JOB_REJECT'));
   assert.ok(ALLOWED_FRAME_ACTIONS.includes('JOB_DETAILS'));
+  assert.ok(ALLOWED_FRAME_ACTIONS.includes('STOP_SPEECH'));
   assert.strictEqual(ALLOWED_FRAME_ACTIONS.includes('EXECUTE_SHELL'), false);
   assert.strictEqual(ALLOWED_FRAME_ACTIONS.includes('EVAL_JS'), false);
+});
+
+runTest('Job Portal Voice Commands: Pass and Reject recognized and routed', () => {
+  const reg = new CommandRegistry();
+  const passResult = reg.execute('pass');
+  assert.ok(passResult.executed);
+  assert.strictEqual(passResult.intent, 'EMPLOYMENT_PASS');
+
+  const rejectResult = reg.execute('reject');
+  assert.ok(rejectResult.executed);
+  assert.strictEqual(rejectResult.intent, 'EMPLOYMENT_REJECT');
+
+  const amharicReject = reg.execute('ውድቅ');
+  assert.ok(amharicReject.executed);
+
+  const oromoPass = reg.execute('didi');
+  assert.ok(oromoPass.executed);
+});
+
+runTest('Voice Stop Command: Immediately silences speech', () => {
+  const reg = new CommandRegistry();
+  const stopResult = reg.execute('stop');
+  assert.ok(stopResult.executed);
+  assert.strictEqual(stopResult.intent, 'STOP_SPEECH');
+
+  const quietResult = reg.execute('quiet');
+  assert.ok(quietResult.executed);
+  assert.strictEqual(quietResult.intent, 'STOP_SPEECH');
+
+  const amharicStop = reg.execute('ዝም');
+  assert.ok(amharicStop.executed);
+  assert.strictEqual(amharicStop.intent, 'STOP_SPEECH');
 });
 
 // 5. LANGUAGE CAPABILITY REPORTING
@@ -203,6 +237,18 @@ runTest('Controller allows instant barge-in commands (stop, quiet, ዝም) durin
   // Barge in should match stop rule
   assert.strictEqual(ctrl._isAcousticEcho('stop'), true);
   assert.strictEqual(ctrl._isAcousticEcho('ዝም'), true);
+});
+
+runTest('Controller never drops registered user commands as lexical echoes', () => {
+  const ctrl = new LearnBridgeVoiceController();
+  ctrl.onSpeechStart('Ready, say access learning to start learning');
+  ctrl.onSpeechEnd();
+  ctrl._lastSpeakingEndedTime = Date.now() - 400;
+
+  // Even though assistant prompt contained "access learning", it must NOT be dropped!
+  assert.strictEqual(ctrl._isAcousticEcho('access learning'), false);
+  assert.strictEqual(ctrl._isAcousticEcho('pass'), false);
+  assert.strictEqual(ctrl._isAcousticEcho('reject'), false);
 });
 
 console.log('\n----------------------------------------------------');

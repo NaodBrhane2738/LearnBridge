@@ -108,6 +108,18 @@ class AccessibilityManager {
         this.openGateway(false);
       });
     }
+
+    // Stop all active speech when navigating, turning page, clicking buttons or pressing Escape
+    window.addEventListener('hashchange', () => this.stopSpeech());
+    window.addEventListener('popstate', () => this.stopSpeech());
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') this.stopSpeech();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a, button, .emp-nav-link, .tab-btn, .btn, .swipe-card, .btn-card-pass, .btn-card-apply')) {
+        this.stopSpeech();
+      }
+    }, true);
   }
 
   // -------------------------------------------------------------
@@ -659,7 +671,7 @@ class AccessibilityManager {
       this.recognition.onstart = () => {
         this.voiceActive = true;
         this.updateVoiceStatusUI(true);
-        this.announceLive("Voice listening active. Say more, apply, or pass.", false);
+        this.announceLive("Voice listening active. Say pass, reject, apply, or details.", false);
       };
 
       this.recognition.onend = () => {
@@ -684,15 +696,29 @@ class AccessibilityManager {
         }
       };
 
+      let lastHandledClean = '';
+      let lastHandledTime = 0;
+
       this.recognition.onresult = (event) => {
+        const now = Date.now();
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           const res = event.results[i];
           const transcript = res[0]?.transcript || '';
-          console.log("[A11yManager] Heard voice result:", transcript, "isFinal:", res.isFinal);
+          if (!transcript) continue;
+          const clean = transcript.toLowerCase().trim();
+
+          // Rapid debouncing to avoid double execution on interim + final results
+          if (clean === lastHandledClean && (now - lastHandledTime) < 500) {
+            continue;
+          }
 
           if (window.app && typeof window.app.handleVoiceCommand === 'function') {
             const handled = window.app.handleVoiceCommand(transcript);
-            if (handled) break;
+            if (handled) {
+              lastHandledClean = clean;
+              lastHandledTime = now;
+              break;
+            }
           }
         }
       };

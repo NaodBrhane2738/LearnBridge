@@ -30,7 +30,56 @@
   // ==========================================================
   // 1. ROUTING & PAGE SWITCHING (AUTHENTICATION BOUNDARY)
   // ==========================================================
+  function stopAllSpeech(reason = 'generic') {
+    if (typeof window === 'undefined') return;
+    try {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    } catch (_) {}
+    try {
+      if (window.voiceNav) {
+        window.voiceNav.stopSpeaking();
+        if (typeof window.voiceNav.clearWelcomeTimer === 'function') {
+          window.voiceNav.clearWelcomeTimer();
+        }
+      }
+    } catch (_) {}
+    try {
+      if (window.lbSpeechOutput) {
+        window.lbSpeechOutput.stop();
+      }
+    } catch (_) {}
+    try {
+      if (window.a11y) {
+        window.a11y.stopSpeech();
+      }
+    } catch (_) {}
+    try {
+      document.querySelectorAll('audio').forEach(a => {
+        try { a.pause(); a.currentTime = 0; } catch (_) {}
+      });
+    } catch (_) {}
+    try {
+      const iframe = document.getElementById('jobPortalIframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'LB_VOICE_ACTION', action: 'STOP_SPEECH' }, '*');
+      }
+    } catch (_) {}
+    try {
+      const speechTextEl = document.getElementById('voiceAssistantSpeechText');
+      if (speechTextEl) {
+        speechTextEl.style.display = 'none';
+        speechTextEl.textContent = '';
+      }
+      const botRing = document.getElementById('botVoiceRing');
+      if (botRing) botRing.classList.remove('pulse');
+    } catch (_) {}
+  }
+  window.stopAllSpeech = stopAllSpeech;
+
   function handleRoute() {
+    stopAllSpeech('route_change');
     const rawHash = window.location.hash.replace('#', '').toLowerCase();
     const hasValidToken = !!sessionStorage.getItem('lb_auth_token');
     const isGuestDemo = state.isDemoMode || sessionStorage.getItem('lb_demo_mode') === 'true';
@@ -74,6 +123,7 @@
   }
 
   function showPage(pageName) {
+    stopAllSpeech('page_change');
     if (pageName === 'login') {
       pageLogin.classList.add('active');
       pageLearning.classList.remove('active');
@@ -89,6 +139,7 @@
   // 2. LMS SIDEBAR TAB SWITCHING (ALL 9 MOCKUPS)
   // ==========================================================
   function switchTab(tabId) {
+    stopAllSpeech('tab_change');
     state.activeTab = tabId;
 
     // Update active nav-link
@@ -3192,7 +3243,21 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
   // ==========================================================
   // 6. INITIALIZATION
   // ==========================================================
-  window.addEventListener('hashchange', handleRoute);
+  window.addEventListener('hashchange', () => {
+    stopAllSpeech('hashchange');
+    handleRoute();
+  });
+  window.addEventListener('click', (e) => {
+    const isNav = e.target.closest('a, button, .nav-link, .quick-link, [data-tab], .btn-action, .gateway-lang-choice, .account-card, .menu-item');
+    if (isNav) {
+      stopAllSpeech('nav_click');
+    }
+  }, true);
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      stopAllSpeech('escape_key');
+    }
+  });
 
   // Initial Route Check
   if (!window.location.hash) {
@@ -3715,6 +3780,11 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       this.lastSpeakingEndedTime = Date.now();
       if (this.botVoiceRing) this.botVoiceRing.classList.remove('pulse');
       if (this.hudBubble) this.hudBubble.classList.remove('visible');
+      const speechTextEl = document.getElementById('voiceAssistantSpeechText');
+      if (speechTextEl) {
+        speechTextEl.style.display = 'none';
+        speechTextEl.textContent = '';
+      }
       if (this.hudState) {
         this.hudState.textContent = (currentLang === 'am' ? 'እየሰማ ነው' : currentLang === 'om' ? 'DHAGGEEFFATA' : currentLang === 'ti' ? 'ይሰምዕ ኣሎ' : 'LISTENING');
       }
@@ -3725,7 +3795,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           if (this.isEnabled && !this.isSpeaking && !this.isListening) {
             this.startSafe();
           }
-        }, 200);
+        }, 150);
       }
     }
 
@@ -3749,6 +3819,11 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       if ('speechSynthesis' in window) {
         try { window.speechSynthesis.cancel(); } catch (_) {}
       }
+      const speechTextEl = document.getElementById('voiceAssistantSpeechText');
+      if (speechTextEl) {
+        speechTextEl.style.display = 'none';
+        speechTextEl.textContent = '';
+      }
       this._onSpeakingEnded();
     }
 
@@ -3758,83 +3833,8 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       if (state.isAuthenticated && (/log in|sign in|welcome to alx|authenticate|ይግቡ|ግባ|seeni|እቶ/i.test(text))) {
         return;
       }
-      const lang = targetLang || currentLang || 'en';
-
-      this.stopSpeaking();
-      const currentSeq = ++this.speakSeq;
-      this.isSpeaking = true;
-      this.currentSpokenText = text.toLowerCase().trim();
-      this.lastSpokenText = this.currentSpokenText;
-      if (this.botVoiceRing) this.botVoiceRing.classList.add('pulse');
-      if (this.hudState) {
-        this.hudState.textContent = (currentLang === 'am' ? 'እየተናገረ ነው' : currentLang === 'om' ? 'DUBBACHAA JIRA' : currentLang === 'ti' ? 'ይዛረብ ኣሎ' : 'SPEAKING');
-      }
-
-      // Safety watchdog: auto-release speaking lock after 4 seconds
-      clearTimeout(this.speakingWatchdog);
-      this.speakingWatchdog = setTimeout(() => {
-        if (currentSeq === this.speakSeq) {
-          this._onSpeakingEnded();
-        }
-      }, 4000);
-
-      const speechTextEl = document.getElementById('voiceAssistantSpeechText');
-      if (speechTextEl) {
-        speechTextEl.textContent = text;
-        speechTextEl.style.display = 'block';
-      }
-      if (this.hudHeard) {
-        this.hudHeard.textContent = `"${text.length > 28 ? text.substring(0, 28) + '...' : text}"`;
-      }
-      if (this.hudBubble) {
-        this.hudBubble.classList.add('visible');
-      }
-
-      this.fetchAbortController = new AbortController();
-      try {
-        const response = await fetch('/api/tts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: text.trim(), lang }),
-          signal: this.fetchAbortController.signal
-        });
-        if (currentSeq !== this.speakSeq) return;
-
-        const data = await response.json();
-        if (currentSeq !== this.speakSeq) return;
-
-        if (data && data.success && data.audioUrl) {
-          const audio = new Audio(data.audioUrl);
-          this.currentAudio = audio;
-          audio.onended = () => {
-            if (currentSeq === this.speakSeq) {
-              this._onSpeakingEnded();
-            }
-          };
-          audio.onerror = () => {
-            if (currentSeq === this.speakSeq) {
-              this.fallbackSpeak(text, lang, currentSeq);
-            }
-          };
-          try {
-            await audio.play();
-            return;
-          } catch (playErr) {
-            console.warn('Audio play error (user gesture required):', playErr);
-            if (currentSeq === this.speakSeq) {
-              this.fallbackSpeak(text, lang, currentSeq);
-            }
-            return;
-          }
-        }
-      } catch (err) {
-        if (err.name === 'AbortError') return;
-        console.warn('Backend Neural TTS fetch error, falling back:', err);
-      }
-
-      if (currentSeq === this.speakSeq) {
-        this.fallbackSpeak(text, lang, currentSeq);
-      }
+      // Instant ultra-low-latency speech output directly via browser SpeechSynthesis
+      this.speakInstant(text, targetLang);
     }
 
     fallbackSpeak(text, lang, expectedSeq) {
@@ -3998,20 +3998,18 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
           const now = Date.now();
           const normRaw = rawText.toLowerCase().replace(/[.,!?;:'"\\-_/\\()]/g, ' ').trim();
-          // STRICT ECHO SUPPRESSION:
-          // Never process recognition while assistant is speaking or right after (< 350ms)
-          if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 350) {
-            if (/^(stop|quiet|silence|ዝም|ቆም)/i.test(normRaw)) {
-              this.stopSpeaking();
-            }
+
+          // INSTANT BARGE-IN FOR STOP:
+          if (/^(stop|quiet|silence|shut up|mute|pause|ዝም|ቆም|ደው|dhaabi|ስቕ)/i.test(normRaw)) {
+            this.stopSpeaking();
+            if (typeof window.stopAllSpeech === 'function') window.stopAllSpeech('barge_in_stop');
             return;
           }
 
-          // Strict Echo Rejection: If the recognized phrase contains parts of what was recently spoken, drop it!
-          if (this.lastSpokenText) {
-            if (this.lastSpokenText.includes(normRaw) || (normRaw.length > 3 && this.lastSpokenText.includes(normRaw.substring(0, 8)))) {
-              return;
-            }
+          // STRICT ACOUSTIC ISOLATION:
+          // Never process recognition while assistant is speaking or right after (< 250ms)
+          if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 250) {
+            return;
           }
 
           // Live visual feedback in HUD while user is speaking
@@ -4019,14 +4017,11 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
             this.hudHeard.textContent = `"${rawText.length > 28 ? rawText.substring(0, 28) + '...' : rawText}"`;
           }
 
-          // ONLY execute commands on FINAL utterance to prevent interim false triggers
-          if (finalUtterance.trim()) {
-            for (const cand of candidatePhrases) {
-              const executed = this.dispatchCommand(cand);
-              if (executed) {
-                clearTimeout(this.interimDebounceTimer);
-                return;
-              }
+          // FAST RESPONSIVE DISPATCH: Test candidates immediately!
+          for (const cand of candidatePhrases) {
+            const executed = this.dispatchCommand(cand);
+            if (executed) {
+              return;
             }
           }
         };
@@ -4218,6 +4213,93 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
     _executeDispatch(text, raw, now) {
       const isLoginContext = !state.isAuthenticated || (pageLogin && pageLogin.classList.contains('active'));
+
+      // 00-STOP. STOP ALL SPEECH IMMEDIATELY (ZERO LAG)
+      if (/^(stop|quiet|silence|shut up|pause speech|mute|ዝም|ዝም በል|ቁም|ደው|dhaabi|ስቕ|ስቕ በል)/i.test(text) ||
+          text === 'stop' || text === 'quiet' || text === 'silence' || text === 'ዝም' || text === 'ቆም' || text === 'ደው' || text === 'dhaabi' || text === 'ስቕ') {
+        this.stopSpeaking();
+        if (typeof window.stopAllSpeech === 'function') window.stopAllSpeech('voice_command');
+        this.playChime('neutral');
+        if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'ድምፅ ቆሟል' : 'Speech stopped');
+        return true;
+      }
+
+      // 00-JOB-PASS & REJECT. PASS / REJECT JOB OPPORTUNITY
+      if (/(?<![\p{L}\p{N}])(pass|reject|skip|pass job|reject job|next job|skip job|swipe left|dislike|decline|ውድቅ|ቀጣይ|እለፍ|ለፍ|ተው|didi|didii|darbi|ንጸግ|ሕለፍ)(?![\p{L}\p{N}])/iu.test(text) ||
+          text === 'pass' || text === 'reject' || text === 'skip' || text === 'next' || text === 'ውድቅ' || text === 'እለፍ' || text === 'didi') {
+        this.stopSpeaking();
+        this.lastCommand = text;
+        this.lastCommandTime = now;
+        this.playChime('neutral');
+        if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'ስራ አልፏል / ውድቅ' : 'Job Passed / Rejected');
+
+        // Forward to embedded Job Portal iframe
+        const iframe = document.getElementById('jobPortalIframe');
+        if (iframe && iframe.contentWindow) {
+          try {
+            iframe.contentWindow.postMessage({ type: 'LB_VOICE_ACTION', action: 'JOB_PASS', command: text }, '*');
+          } catch (_) {}
+        }
+        if (window.lbVoiceBridge) {
+          try { window.lbVoiceBridge.sendActionToFrame('JOB_PASS'); } catch (_) {}
+        }
+        if (window.app && typeof window.app.handleCardPass === 'function') {
+          window.app.handleCardPass();
+        }
+
+        this.speakInstant(currentLang === 'am' ? 'ስራው አልፏል። ቀጣይ ዕድል።' : 'Passed. Next match.');
+        return true;
+      }
+
+      // 00-JOB-APPLY. APPLY / SUBMIT CV FOR JOB
+      if (/(?<![\p{L}\p{N}])(apply|apply now|submit application|submit cv|swipe right|accept job|apply for job|አመልክት|አመልክቺ|ማመልከቻ|iyyadhu|ኣመልክት)(?![\p{L}\p{N}])/iu.test(text) ||
+          text === 'apply' || text === 'አመልክት' || text === 'iyyadhu') {
+        this.stopSpeaking();
+        this.lastCommand = text;
+        this.lastCommandTime = now;
+        this.playChime('success');
+        if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'ማመልከቻ ቀርቧል' : 'Applied with CV');
+
+        const iframe = document.getElementById('jobPortalIframe');
+        if (iframe && iframe.contentWindow) {
+          try {
+            iframe.contentWindow.postMessage({ type: 'LB_VOICE_ACTION', action: 'JOB_APPLY', command: text }, '*');
+          } catch (_) {}
+        }
+        if (window.lbVoiceBridge) {
+          try { window.lbVoiceBridge.sendActionToFrame('JOB_APPLY'); } catch (_) {}
+        }
+        if (window.app && typeof window.app.handleCardApply === 'function') {
+          window.app.handleCardApply();
+        }
+
+        this.speakInstant(currentLang === 'am' ? 'ማመልከቻዎ ተልኳል።' : 'Application submitted with CV.');
+        return true;
+      }
+
+      // 00-JOB-DETAILS. MORE / FULL JOB DETAILS READOUT
+      if (/(?<![\p{L}\p{N}])(more details|job details|more info|tell me more|expand job|read job|ዝርዝር|ተጨማሪ መረጃ|odeeffannoo|ዝርዝር ሓበሬታ)(?![\p{L}\p{N}])/iu.test(text) ||
+          text === 'more' || text === 'details' || text === 'info' || text === 'ዝርዝር') {
+        this.stopSpeaking();
+        this.lastCommand = text;
+        this.lastCommandTime = now;
+        this.playChime('success');
+        if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'የስራ ዝርዝር' : 'Job Details');
+
+        const iframe = document.getElementById('jobPortalIframe');
+        if (iframe && iframe.contentWindow) {
+          try {
+            iframe.contentWindow.postMessage({ type: 'LB_VOICE_ACTION', action: 'JOB_DETAILS', command: text }, '*');
+          } catch (_) {}
+        }
+        if (window.lbVoiceBridge) {
+          try { window.lbVoiceBridge.sendActionToFrame('JOB_DETAILS'); } catch (_) {}
+        }
+        if (window.app && typeof window.app.showCardDetailsAndRead === 'function') {
+          window.app.showCardDetailsAndRead();
+        }
+        return true;
+      }
 
       // 00-JOB-PORTAL. OPEN ALX JOB PORTAL / EMPLOYMENT PLATFORM
       if (/(?<![\p{L}\p{N}])(job portal|jobs portal|job|jobs|career|careers|employment|open job portal|open jobs|open portal|go to job portal|show jobs|view jobs|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|hojii|waltajjii hojii|carraa hojii|ስራሕ|ዕድላት ስራሕ|መድረኽ ስራሕ|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||

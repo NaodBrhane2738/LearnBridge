@@ -74,6 +74,46 @@ class EmploymentApp {
     this.loadInitialData().catch(() => {});
 
     window.refreshAppState = () => this.refreshData();
+
+    // 7. Cross-frame Voice Action Listener from Parent LMS
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (!data || data.type !== 'LB_VOICE_ACTION') return;
+      const action = data.action;
+      console.log('[EmploymentApp] Received cross-frame voice action:', action);
+
+      if (action === 'JOB_PASS' || action === 'JOB_REJECT') {
+        if (window.a11y) window.a11y.stopSpeech();
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        this.handleCardPass();
+        if (window.a11y) window.a11y.showVisualToast('Voice: Rejected / Passed Opportunity');
+      } else if (action === 'JOB_APPLY') {
+        if (window.a11y) window.a11y.stopSpeech();
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        this.handleCardApply();
+        if (window.a11y) window.a11y.showVisualToast('Voice: Applied with Verified CV');
+      } else if (action === 'JOB_DETAILS') {
+        this.showCardDetailsAndRead();
+        if (window.a11y) window.a11y.showVisualToast('Voice: Reading job details aloud');
+      } else if (action === 'JOB_COLLAPSE') {
+        this.collapseCardDetails();
+      } else if (action === 'STOP_SPEECH') {
+        if (window.a11y) window.a11y.stopSpeech();
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+
+      // Acknowledge back to parent frame for VoiceBridge tracking
+      if (data.requestId && event.source && typeof event.source.postMessage === 'function') {
+        try {
+          event.source.postMessage({
+            type: 'LB_VOICE_ACTION_ACK',
+            requestId: data.requestId,
+            action,
+            success: true
+          }, '*');
+        } catch (_) {}
+      }
+    });
   }
 
   async loadInitialData() {
@@ -165,6 +205,10 @@ class EmploymentApp {
   // ROUTING SYSTEM
   // -------------------------------------------------------------
   handleRoute() {
+    if (window.a11y) window.a11y.stopSpeech();
+    if ('speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch (_) {}
+    }
     const hash = window.location.hash.slice(1) || 'search';
     const parts = hash.split('/');
     const mainView = parts[0];
@@ -575,14 +619,25 @@ class EmploymentApp {
 
   handleVoiceCommand(transcript) {
     if (!transcript) return false;
-    const clean = transcript.toLowerCase().replace(/[^\w\s]/g, ' ').trim();
+    const clean = transcript.toLowerCase().replace(/[^\w\s\u1200-\u137F]/g, ' ').trim();
     const words = clean.split(/\s+/);
     console.log("[EmploymentApp] Voice command heard:", transcript, "clean:", clean);
+
+    // 0. Instant Stop / Quiet Command
+    if (words.includes('stop') || words.includes('quiet') || words.includes('silence') ||
+        words.includes('mute') || words.includes('shut') ||
+        clean.includes('ዝም') || clean.includes('ቁም') || clean.includes('ደው') || clean.includes('dhaabi') || clean.includes('ስቕ')) {
+      if (window.a11y) window.a11y.stopSpeech();
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      if (window.a11y) window.a11y.showVisualToast('Speech stopped');
+      return true;
+    }
 
     // 1. More / Details Command
     const isMore = words.includes('more') || words.includes('detail') || words.includes('details') ||
                    words.includes('info') || words.includes('information') || words.includes('expand') ||
-                   words.includes('full') || words.includes('read') || clean.includes('more');
+                   words.includes('full') || words.includes('read') || clean.includes('more') ||
+                   clean.includes('ዝርዝር') || clean.includes('odeeffannoo');
 
     if (isMore) {
       this.showCardDetailsAndRead();
@@ -592,7 +647,7 @@ class EmploymentApp {
 
     // 2. Collapse / Less Command
     const isLess = words.includes('less') || words.includes('collapse') || words.includes('close') ||
-                   words.includes('hide') || words.includes('stop');
+                   words.includes('hide');
     if (isLess) {
       this.collapseCardDetails();
       if (window.a11y) window.a11y.showVisualToast('Voice: Collapsed details');
@@ -601,21 +656,30 @@ class EmploymentApp {
 
     // 3. Apply / Right Command
     const isApply = words.includes('apply') || words.includes('right') || words.includes('yes') ||
-                    words.includes('submit') || clean.includes('apply');
+                    words.includes('submit') || words.includes('accept') ||
+                    clean.includes('apply') || clean.includes('አመልክት') || clean.includes('iyyadhu') || clean.includes('ኣመልክት');
     if (isApply) {
       if (window.a11y) window.a11y.stopSpeech();
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       this.handleCardApply();
       if (window.a11y) window.a11y.showVisualToast('Voice: Applied with CV');
       return true;
     }
 
-    // 4. Pass / Left Command
-    const isPass = words.includes('pass') || words.includes('skip') || words.includes('left') ||
-                   words.includes('no') || words.includes('next') || clean.includes('pass') || clean.includes('skip');
+    // 4. Pass / Reject / Next Command
+    const isPass = words.includes('pass') || words.includes('reject') || words.includes('skip') ||
+                   words.includes('left') || words.includes('no') || words.includes('next') ||
+                   words.includes('dislike') || words.includes('decline') ||
+                   clean.includes('pass') || clean.includes('reject') || clean.includes('skip') ||
+                   clean.includes('next job') || clean.includes('pass job') || clean.includes('reject job') ||
+                   clean.includes('ውድቅ') || clean.includes('ቀጣይ') || clean.includes('እለፍ') ||
+                   clean.includes('ተው') || clean.includes('didi') || clean.includes('darbi') ||
+                   clean.includes('ንጸግ') || clean.includes('ሕለፍ');
     if (isPass) {
       if (window.a11y) window.a11y.stopSpeech();
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       this.handleCardPass();
-      if (window.a11y) window.a11y.showVisualToast('Voice: Passed Opportunity');
+      if (window.a11y) window.a11y.showVisualToast('Voice: Passed / Rejected Opportunity');
       return true;
     }
 
@@ -757,12 +821,28 @@ class EmploymentApp {
   }
 
   handleCardPass() {
-    if (this.isCardAnimating || this.currentCardIndex >= this.cardDeck.length) return;
-    this.isCardAnimating = true;
+    if (this.isCardAnimating) return;
     if (window.a11y) window.a11y.stopSpeech();
+    if ('speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch (_) {}
+    }
+
+    const detailView = document.getElementById('view-job-detail');
+    if (detailView && detailView.style.display !== 'none') {
+      window.location.hash = '#search';
+      this.handleRoute();
+      if (this.currentCardIndex < this.cardDeck.length) {
+        this.currentCardIndex++;
+        this.renderActiveCard();
+      }
+      return;
+    }
+
+    if (this.currentCardIndex >= this.cardDeck.length) return;
+    this.isCardAnimating = true;
 
     const currentItem = this.cardDeck[this.currentCardIndex];
-    const job = currentItem.job;
+    const job = currentItem ? currentItem.job : null;
 
     // Trigger visual swipe left animation & 3D stack lift
     const cardEl = document.querySelector('.swipe-card');
@@ -776,10 +856,12 @@ class EmploymentApp {
       stackEl.classList.add('deck-animating');
     }
 
-    const passMsg = `Passed on ${job.title}`;
+    const title = job ? job.title : 'Opportunity';
+    const passMsg = `Passed / Rejected: ${title}`;
     if (window.a11y) {
       window.a11y.showVisualToast(passMsg, 1800);
       window.a11y.announceLive(passMsg, false);
+      window.a11y.playEarcon('falling');
     }
 
     setTimeout(() => {

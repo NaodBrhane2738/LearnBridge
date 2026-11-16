@@ -110,10 +110,9 @@ class LearnBridgeVoiceController {
   // -------------------------------------------------------------
 
   startListening() {
-    // Check half-duplex mute: cannot start if system is actively speaking
+    // If assistant is speaking, stop it instantly so user's voice is welcomed without delay
     if (this.speechOutput && this.speechOutput.isSpeaking) {
-      console.log('[LearnBridgeVoiceController] Refusing to start listening: Assistant is currently speaking.');
-      return false;
+      this.speechOutput.stop();
     }
 
     const SpeechRecognition = typeof window !== 'undefined' ?
@@ -277,7 +276,7 @@ class LearnBridgeVoiceController {
     const now = Date.now();
     if (this._isAcousticMuted || (now - this._lastSpeakingEndedTime) < 350) {
       // Allow instant 'stop' barge-in to cancel speech
-      if (/^(stop|quiet|silence|ዝም|ቆም)/i.test(clean)) {
+      if (/^(stop|quiet|silence|shut up|mute|ዝም|ቆም|ደው|dhaabi|ስቕ)/i.test(clean)) {
         if (this.speechOutput) this.speechOutput.stop();
         return true;
       }
@@ -285,9 +284,14 @@ class LearnBridgeVoiceController {
       return true;
     }
 
-    // 2. Lexical fence: compare against recent spoken assistant outputs
+    // 2. Lexical fence: Valid registered user commands are NEVER an echo
+    if (this.commandRegistry && this.commandRegistry.interpret(clean)) {
+      return false;
+    }
+
+    // Only drop if it is an exact echo or a substantial portion of the assistant's speech
     for (const echo of this._recentSpokenEchoes) {
-      if (echo.includes(clean) || (clean.length > 6 && echo.includes(clean.slice(0, 10)))) {
+      if (clean === echo || (clean.length >= 15 && echo.startsWith(clean))) {
         console.log(`[LearnBridgeVoiceController] Dropped lexical echo match: "${clean}" matched "${echo.slice(0, 20)}..."`);
         return true;
       }

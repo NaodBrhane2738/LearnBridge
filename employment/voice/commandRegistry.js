@@ -217,15 +217,41 @@ class CommandRegistry {
 
     this.registerCommand('EMPLOYMENT_PASS', {
       category: 'employment',
-      description: 'Pass or reject current job opening',
-      phrases: ['pass', 'reject', 'next job', 'skip', 'ውድቅ', 'ቀጣይ', 'እለፍ', 'ለፍ', 'ተው', 'didi', 'didii', 'darbi', 'ንጸግ', 'ሕለፍ'],
+      description: 'Pass current job opening',
+      phrases: ['pass', 'pass job', 'next job', 'skip', 'skip job', 'swipe left', 'ቀጣይ', 'እለፍ', 'ለፍ', 'ተው', 'didi', 'didii', 'darbi', 'ሕለፍ'],
       handler: (ctx) => {
         const bridge = window.lbVoiceBridge;
         if (bridge) {
           bridge.sendActionToFrame('JOB_PASS');
+        }
+        if (typeof window !== 'undefined' && window.app && typeof window.app.handleCardPass === 'function') {
+          window.app.handleCardPass();
           return { success: true, message: 'Job passed. Moving to next position.' };
         }
-        return { success: false, message: 'Job portal frame not active.' };
+        if (bridge) {
+          return { success: true, message: 'Job passed. Moving to next position.' };
+        }
+        return { success: true, message: 'Job passed.' };
+      }
+    });
+
+    this.registerCommand('EMPLOYMENT_REJECT', {
+      category: 'employment',
+      description: 'Reject current job opening',
+      phrases: ['reject', 'reject job', 'dislike', 'decline', 'not interested', 'ውድቅ', 'ውድቅ አድርግ', 'ንጸግ'],
+      handler: (ctx) => {
+        const bridge = window.lbVoiceBridge;
+        if (bridge) {
+          bridge.sendActionToFrame('JOB_REJECT');
+        }
+        if (typeof window !== 'undefined' && window.app && typeof window.app.handleCardPass === 'function') {
+          window.app.handleCardPass();
+          return { success: true, message: 'Job rejected. Moving to next position.' };
+        }
+        if (bridge) {
+          return { success: true, message: 'Job rejected. Moving to next position.' };
+        }
+        return { success: true, message: 'Job rejected.' };
       }
     });
 
@@ -301,9 +327,17 @@ class CommandRegistry {
     this.registerCommand('STOP_SPEECH', {
       category: 'system',
       description: 'Stop speech output immediately',
-      phrases: ['stop', 'shut up', 'quiet', 'silence', 'ዝም', 'ዝም በል', 'ቁም', 'dhaabi', 'ስቕ በል'],
+      phrases: ['stop', 'shut up', 'quiet', 'silence', 'pause speech', 'mute', 'ዝም', 'ዝም በል', 'ቁም', 'ደው', 'dhaabi', 'ስቕ በል', 'ስቕ'],
       handler: (ctx) => {
-        if (window.lbSpeechOutput) window.lbSpeechOutput.stop();
+        if (typeof window !== 'undefined') {
+          if (typeof window.stopAllSpeech === 'function') {
+            window.stopAllSpeech('voice_command');
+          } else {
+            if (window.lbSpeechOutput) window.lbSpeechOutput.stop();
+            if (window.a11y) window.a11y.stopSpeech();
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+          }
+        }
         return { success: true, message: 'Speech stopped.' };
       }
     });
