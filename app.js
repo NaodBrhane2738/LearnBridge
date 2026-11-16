@@ -3376,6 +3376,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.chatPanel = document.getElementById('assistantChatPanel');
       }
       if (!this.chatPanel) return;
+      this.chatPanel.style.display = 'flex';
       this.chatPanel.classList.remove('minimized');
       this.chatPanel.setAttribute('aria-hidden', 'false');
       if (this.dialogueFeed) {
@@ -3395,6 +3396,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       if (!this.chatPanel) return;
       this.chatPanel.classList.add('minimized');
       this.chatPanel.setAttribute('aria-hidden', 'true');
+      this.chatPanel.style.display = 'none';
     }
 
     toggleChat() {
@@ -3477,6 +3479,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     }
 
     init() {
+      this.minimizeChat();
       this.initRecognition();
       this.setupDomEvents();
       this.checkAndInstallDependencies();
@@ -3908,24 +3911,29 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
         this.recognition.onstart = () => {
           this.isListening = true;
+          this.isStarting = false;
           this.updateUiState(true, currentLang === 'am' ? 'እየሰማ ነው 🎙️' : 'Listening 🎙️ · Hands-Free Active');
         };
 
         this.recognition.onend = () => {
           this.isListening = false;
-          this.updateUiState(false, 'Idle');
+          this.isStarting = false;
           // Auto-restart continuous listening unless explicitly disabled or assistant is speaking
+          // Note: Do NOT set UI to inactive on normal silence pause; only set Idle if explicitly disabled.
           if (this.isEnabled && !this.isSpeaking) {
             clearTimeout(this.restartTimer);
             this.restartTimer = setTimeout(() => {
               if (this.isEnabled && !this.isSpeaking && !this.isListening) {
                 this.startSafe();
               }
-            }, 250);
+            }, 400);
+          } else if (!this.isEnabled) {
+            this.updateUiState(false, 'Idle');
           }
         };
 
         this.recognition.onerror = (e) => {
+          this.isStarting = false;
           console.warn('[ALX Voice Navigator] Speech recognition event:', e.error);
           if (e.error === 'no-speech' || e.error === 'network') {
             if (this.isEnabled && !this.isSpeaking) {
@@ -3934,7 +3942,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
                 if (this.isEnabled && !this.isSpeaking && !this.isListening) {
                   this.startSafe();
                 }
-              }, 300);
+              }, 400);
             }
             return;
           }
@@ -4030,10 +4038,12 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     }
 
     startSafe() {
-      if (!this.recognition || this.isListening) return;
+      if (!this.recognition || this.isListening || this.isStarting) return;
+      this.isStarting = true;
       try {
         this.recognition.start();
       } catch (err) {
+        this.isStarting = false;
         if (err.name !== 'InvalidStateError') {
           console.warn('Recognition start exception:', err);
         }
@@ -4048,6 +4058,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
     stop() {
       this.isEnabled = false;
+      this.isStarting = false;
       clearTimeout(this.restartTimer);
       if (this.recognition && this.isListening) {
         try { this.recognition.stop(); } catch (_) {}
@@ -4056,7 +4067,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     }
 
     async toggle() {
-      if (this.isListening) {
+      if (this.isEnabled) {
         this.stop();
         this.playChime('neutral');
         this.speak(currentLang === 'am' ? "ማይክሮፎኑ ለጊዜው ቆሟል።" : "Microphone paused. Click Mic to resume.");
@@ -4084,12 +4095,13 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     }
 
     updateUiState(active, label = null) {
+      const showActive = this.isEnabled && (active === true || this.isListening || this.isStarting);
       if (this.hudWidget) {
-        if (active) this.hudWidget.classList.remove('disabled');
+        if (showActive) this.hudWidget.classList.remove('disabled');
         else this.hudWidget.classList.add('disabled');
       }
       if (this.btnAssistantBot) {
-        if (active) {
+        if (showActive) {
           this.btnAssistantBot.classList.remove('muted');
           this.btnAssistantBot.classList.add('voice-active');
         } else {
@@ -4098,14 +4110,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         }
       }
       if (this.chatStatusSub) {
-        this.chatStatusSub.textContent = label || (active ? (currentLang === 'am' ? 'እየሰማ ነው 🎙️' : 'Listening 🎙️ · Hands-Free Active') : (currentLang === 'am' ? 'ማይክ ቆሟል 🔇' : 'Mic Paused 🔇 · Click to resume'));
+        this.chatStatusSub.textContent = label || (showActive ? (currentLang === 'am' ? 'እየሰማ ነው 🎙️' : 'Listening 🎙️ · Hands-Free Active') : (currentLang === 'am' ? 'ማይክ ቆሟል 🔇' : 'Mic Paused 🔇 · Click to resume'));
       }
       if (this.chatOnlineDot) {
-        this.chatOnlineDot.style.background = active ? '#10b981' : '#94a3b8';
-        this.chatOnlineDot.style.boxShadow = active ? '0 0 8px #10b981' : 'none';
+        this.chatOnlineDot.style.background = showActive ? '#10b981' : '#94a3b8';
+        this.chatOnlineDot.style.boxShadow = showActive ? '0 0 8px #10b981' : 'none';
       }
       if (this.btnChatMicToggle) {
-        if (active) {
+        if (showActive) {
           this.btnChatMicToggle.classList.remove('mic-off');
           if (this.chatMicLabel) this.chatMicLabel.textContent = 'Mic ON';
           if (this.chatMicIcon) this.chatMicIcon.textContent = '🎙️';
@@ -4116,14 +4128,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         }
       }
       if (this.hudState) {
-        this.hudState.textContent = label || (active ? (currentLang === 'am' ? 'እየሰማ ነው' : 'VOICE ACTIVE') : (currentLang === 'am' ? 'ተዘግቷል' : 'VOICE PAUSED'));
+        this.hudState.textContent = label || (showActive ? (currentLang === 'am' ? 'እየሰማ ነው' : 'VOICE ACTIVE') : (currentLang === 'am' ? 'ተዘግቷል' : 'VOICE PAUSED'));
       }
       if (this.botMicIndicator) {
-        this.botMicIndicator.textContent = active ? '🎙️' : '🔇';
+        this.botMicIndicator.textContent = showActive ? '🎙️' : '🔇';
       }
       const bubbleMicBtn = document.getElementById('btnBubbleMicToggle');
       if (bubbleMicBtn) {
-        if (active) {
+        if (showActive) {
           bubbleMicBtn.textContent = '🎙️ Mic ON';
           bubbleMicBtn.classList.remove('mic-off');
         } else {
@@ -5676,6 +5688,303 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     }
   }
 
+  /* ==========================================================================
+     UNIVERSAL ACCESS GATEWAY ONBOARDING CONTROLLER
+     Language Selection (EN, AM, OM, TI) & Disability Check (Blind 7s, Deaf, Neither)
+     ========================================================================== */
+  class UniversalAccessGateway {
+    constructor() {
+      this.dialog = document.getElementById('gateway-dialog');
+      this.stepLang = document.getElementById('gateway-step-lang');
+      this.stepA11y = document.getElementById('gateway-step-a11y');
+      this.btnBack = document.getElementById('btn-gateway-back');
+      this.countdownLabel = document.getElementById('gateway-countdown-label');
+      this.countdownSeconds = document.getElementById('gateway-countdown-seconds');
+      this.progressBar = document.getElementById('gateway-progress-bar');
+      this.btnPause = document.getElementById('btn-gateway-pause');
+      this.btnHeaderGateway = document.getElementById('btnHeaderGateway');
+      this.btnLoginGateway = document.getElementById('btnLoginGateway');
+
+      this.isOpen = false;
+      this.currentStep = 1;
+      this.countdownDuration = 7.0;
+      this.countdownRemaining = 7.0;
+      this.isPaused = false;
+      this.timerInterval = null;
+      this.selectedLang = (typeof currentLang !== 'undefined' ? currentLang : 'en');
+
+      this.init();
+    }
+
+    init() {
+      if (!this.dialog) return;
+
+      if (this.btnHeaderGateway) {
+        this.btnHeaderGateway.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.open(1);
+        });
+      }
+      if (this.btnLoginGateway) {
+        this.btnLoginGateway.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.open(1);
+        });
+      }
+
+      if (this.btnBack) {
+        this.btnBack.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.goToStep(1);
+        });
+      }
+
+      if (this.btnPause) {
+        this.btnPause.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.togglePauseTimer();
+        });
+      }
+
+      const langChoices = this.dialog.querySelectorAll('.gateway-lang-choice');
+      langChoices.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const lang = btn.getAttribute('data-lang');
+          if (lang) this.selectLanguage(lang);
+        });
+      });
+
+      const profileCards = this.dialog.querySelectorAll('.gateway-profile-card');
+      profileCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+          e.preventDefault();
+          const profile = card.getAttribute('data-profile');
+          if (profile) this.selectProfile(profile);
+        });
+      });
+
+      window.addEventListener('keydown', (e) => {
+        const inInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable;
+        if (inInput) return;
+
+        if ((e.key === 'g' || e.key === 'G') && !this.isOpen) {
+          e.preventDefault();
+          this.open(1);
+          return;
+        }
+
+        if (!this.isOpen) return;
+
+        if (this.currentStep === 1) {
+          const key = e.key.toLowerCase();
+          if (key === 'e') { e.preventDefault(); this.selectLanguage('en'); }
+          else if (key === 'a') { e.preventDefault(); this.selectLanguage('am'); }
+          else if (key === 'o') { e.preventDefault(); this.selectLanguage('om'); }
+          else if (key === 't') { e.preventDefault(); this.selectLanguage('ti'); }
+          else if (key === 'escape') { e.preventDefault(); this.close(); }
+        } else if (this.currentStep === 2) {
+          const key = e.key.toLowerCase();
+          if (e.key === ' ') {
+            e.preventDefault();
+            this.togglePauseTimer();
+          } else if (key === 'b') {
+            e.preventDefault();
+            this.selectProfile('blind');
+          } else if (key === 'd') {
+            e.preventDefault();
+            this.selectProfile('deaf');
+          } else if (key === 'n') {
+            e.preventDefault();
+            this.selectProfile('neither');
+          } else if (key === 'escape') {
+            e.preventDefault();
+            this.close();
+          }
+        }
+      });
+
+      // Auto-trigger on first landing visit if onboarding has not been completed
+      const gatewayDone = localStorage.getItem('learnbridge_gateway_done');
+      if (gatewayDone !== 'true') {
+        setTimeout(() => {
+          this.open(1);
+        }, 600);
+      }
+    }
+
+    open(step = 1) {
+      if (!this.dialog) return;
+      this.isOpen = true;
+      this.dialog.hidden = false;
+      if (typeof this.dialog.showModal === 'function') {
+        try { this.dialog.showModal(); } catch (_) {}
+      }
+      this.goToStep(step);
+    }
+
+    close() {
+      this.clearTimer();
+      this.isOpen = false;
+      if (this.dialog) {
+        this.dialog.hidden = true;
+        if (typeof this.dialog.close === 'function') {
+          try { this.dialog.close(); } catch (_) {}
+        }
+      }
+    }
+
+    goToStep(step) {
+      this.currentStep = step;
+      this.clearTimer();
+
+      if (step === 1) {
+        if (this.stepLang) this.stepLang.hidden = false;
+        if (this.stepA11y) this.stepA11y.hidden = true;
+        if (this.btnBack) this.btnBack.hidden = true;
+
+        if (window.voiceNav) {
+          const welcomePrompt = currentLang === 'am'
+            ? "እንኳን ወደ LearnBridge በደህና መጡ። ቋንቋዎን ይምረጡ፡ እንግሊዝኛ E፣ አማርኛ A፣ ኦሮምኛ O፣ ወይም ትግርኛ T ይጫኑ።"
+            : "Welcome to LearnBridge. Please select your language: press E for English, A for Amharic, O for Afaan Oromoo, or T for Tigrinya.";
+          window.voiceNav.speak(welcomePrompt);
+        }
+      } else if (step === 2) {
+        if (this.stepLang) this.stepLang.hidden = true;
+        if (this.stepA11y) this.stepA11y.hidden = false;
+        if (this.btnBack) this.btnBack.hidden = false;
+
+        this.startCountdown();
+
+        if (window.voiceNav) {
+          const a11yPrompts = {
+            en: "Please select your accessibility option: press B for Blind, D for Deaf, or N for Neither. Activating Blind mode in 7 seconds.",
+            am: "እባክዎ የተደራሽነት ምርጫዎን ይምረጡ፡ ዓይነ ስውር ከሆኑ B፣ መስማት የተሳናቸው ከሆኑ D፣ ወይም መደበኛ ከሆነ N ይጫኑ። በ 7 ሰከንድ ውስጥ የዓይነ ስውር ሁነታ በራስ-ሰር ይጀምራል።",
+            om: "Mee filannoo dandeettii keessanii filadhaa: Qaroo dhabeeyyii yoo taatan B, Gurra dhabeeyyii yoo taatan D, yookaan N cuqaasaa. Sekondii 7 keessatti haalli qaroo dhabeeyyii ni eegala.",
+            ti: "ናይ ተበጻሕነት ምርጫኹም ሕረዩ፡ ዓይነ ስውር እንተኾንኩም B፣ ጸማም እንተኾንኩም D፣ ወይ ድማ መደበኛ እንተኾንኩም N ጽቐጡ። ኣብ ውሽጢ 7 ሰከንድ ናይ ዓይነ ስውር ሞድ ብባዕሉ ክጅምር እዩ።"
+          };
+          window.voiceNav.speak(a11yPrompts[this.selectedLang] || a11yPrompts.en);
+        }
+      }
+    }
+
+    selectLanguage(lang) {
+      this.selectedLang = lang;
+      if (typeof applyLanguage === 'function') {
+        applyLanguage(lang, true);
+      }
+      this.goToStep(2);
+    }
+
+    startCountdown() {
+      this.clearTimer();
+      this.countdownRemaining = this.countdownDuration;
+      this.isPaused = false;
+      this.updateCountdownDisplay();
+
+      this.timerInterval = setInterval(() => {
+        if (this.isPaused) return;
+
+        this.countdownRemaining -= 0.1;
+        if (this.countdownRemaining <= 0) {
+          this.countdownRemaining = 0;
+          this.updateCountdownDisplay();
+          this.clearTimer();
+          this.selectProfile('blind', true);
+          return;
+        }
+
+        this.updateCountdownDisplay();
+      }, 100);
+    }
+
+    togglePauseTimer() {
+      this.isPaused = !this.isPaused;
+      if (this.btnPause) {
+        this.btnPause.textContent = this.isPaused ? 'Resume Timer (Space)' : 'Pause Timer (Space)';
+      }
+      if (this.countdownLabel) {
+        const sec = Math.ceil(this.countdownRemaining);
+        if (this.isPaused) {
+          this.countdownLabel.innerHTML = `<span>Timer paused. Select your option below (B, D, N).</span><button type="button" class="btn btn-sm btn-outline" id="btn-gateway-pause">Resume Timer (Space)</button>`;
+        } else {
+          this.countdownLabel.innerHTML = `<span>Activating Blind-Accessible Mode in <strong id="gateway-countdown-seconds">${sec}</strong>s</span><button type="button" class="btn btn-sm btn-outline" id="btn-gateway-pause">Pause Timer (Space)</button>`;
+        }
+        const newBtn = document.getElementById('btn-gateway-pause');
+        if (newBtn) newBtn.addEventListener('click', () => this.togglePauseTimer());
+      }
+      if (window.voiceNav) {
+        window.voiceNav.speak(this.isPaused ? "Timer paused." : "Timer resumed.");
+      }
+    }
+
+    clearTimer() {
+      if (this.timerInterval) {
+        clearInterval(this.timerInterval);
+        this.timerInterval = null;
+      }
+    }
+
+    updateCountdownDisplay() {
+      const sec = Math.max(0, Math.ceil(this.countdownRemaining));
+      const secEl = document.getElementById('gateway-countdown-seconds');
+      if (secEl) secEl.textContent = sec;
+
+      if (this.progressBar) {
+        const pct = Math.max(0, Math.min(100, (this.countdownRemaining / this.countdownDuration) * 100));
+        this.progressBar.style.width = `${pct}%`;
+      }
+    }
+
+    selectProfile(profile, isAutoFallback = false) {
+      this.clearTimer();
+      localStorage.setItem('learnbridge_user_profile', profile);
+      localStorage.setItem('learnbridge_gateway_done', 'true');
+
+      fetch('/api/v1/accessibility/preferences/me', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': 'lb_live_savanna_9842a1b7c'
+        },
+        body: JSON.stringify({
+          userId: 'savanna-student-1',
+          profile: profile,
+          highContrast: profile === 'blind',
+          captions: profile === 'deaf',
+          signLanguage: profile === 'deaf',
+          language: this.selectedLang
+        })
+      }).catch(() => {});
+
+      document.body.classList.remove('profile-blind', 'profile-deaf');
+
+      if (profile === 'blind') {
+        document.body.classList.add('profile-blind');
+        if (window.voiceNav) {
+          window.voiceNav.start();
+          const msg = isAutoFallback
+            ? (currentLang === 'am' ? "7 ሰከንድ አልቋል። የዓይነ ስውር ሁነታ በርቷል። ድምጽ እየሰማ ነው..." : "Timer expired. Blind mode activated automatically. Hands-free voice navigation active.")
+            : (currentLang === 'am' ? "የዓይነ ስውር ሁነታ በርቷል። የድምጽ መመሪያ ንቁ ነው።" : "Blind mode activated. Hands-free voice navigation active.");
+          window.voiceNav.speak(msg);
+        }
+      } else if (profile === 'deaf') {
+        document.body.classList.add('profile-deaf');
+        const slPip = document.getElementById('slPipWindow');
+        if (slPip) slPip.hidden = false;
+        const slVideo = document.getElementById('signLanguageVideo');
+        if (slVideo) try { slVideo.play(); } catch (_) {}
+      } else {
+        if (window.voiceNav) {
+          const msg = currentLang === 'am' ? "መደበኛ ሁነታ በርቷል።" : "Standard mode active.";
+          window.voiceNav.speak(msg);
+        }
+      }
+
+      this.close();
+    }
+  }
+
   // Initialize Global Unified LearnBridge Voice & Offline Subsystems
   try {
     if (typeof window !== 'undefined') {
@@ -5709,6 +6018,15 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     window.voiceNav = voiceNav;
   } catch (err) {
     console.warn('VoicePlatformNavigator init failed:', err);
+  }
+
+  // Instantiate Universal Access Gateway
+  let universalGateway = null;
+  try {
+    universalGateway = new UniversalAccessGateway();
+    window.universalGateway = universalGateway;
+  } catch (err) {
+    console.warn('UniversalAccessGateway init failed:', err);
   }
 
   console.log('ALX Learning LMS Engine initialized successfully.');

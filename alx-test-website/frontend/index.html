@@ -26,8 +26,12 @@
           <header class="login-header">
             <div class="login-header-top-row">
               <span class="login-badge-secure">ALX LEARNING PORTAL</span>
-              <!-- Login Page Language Switcher -->
-              <div class="lang-selector-box login-lang-box" id="loginLangSelectorBox">
+              <!-- Login Page Language & Gateway Switchers -->
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button type="button" class="btn-gateway-trigger-sm" id="btnLoginGateway" title="Language & Accessibility Gateway (Press G)" aria-label="Language & Accessibility Gateway">
+                  <span>♿ Accessibility</span>
+                </button>
+                <div class="lang-selector-box login-lang-box" id="loginLangSelectorBox">
                 <button type="button" class="btn-lang-toggle btn-lang-toggle-sm" id="btnLoginLangToggle" title="Change Language / ቋንቋ ቀይር / Afaan jijjiiri" aria-expanded="false" aria-label="Change Language">
                   <span class="lang-globe-icon" aria-hidden="true">🌐</span>
                   <span class="lang-current-code" id="loginLangCurrentLabel">English</span>
@@ -52,6 +56,7 @@
                   </button>
                 </div>
               </div>
+            </div>
             </div>
             <h1 id="loginWelcomeHeading">Welcome to LearnBridge</h1>
             <p id="loginWelcomeSub">Inclusive Learning Platform</p>
@@ -136,6 +141,11 @@
           <span class="job-portal-text">Job Portal</span>
           <span class="job-portal-badge">NEW</span>
         </a>
+
+        <!-- Accessibility & Language Gateway Trigger Button -->
+        <button type="button" class="btn-gateway-trigger" id="btnHeaderGateway" title="Language & Accessibility Gateway (Press G)" aria-label="Language & Accessibility Gateway">
+          <span>♿ Accessibility & Languages</span>
+        </button>
 
         <!-- Multi-Language Selector Dropdown -->
         <div class="lang-selector-box" id="lmsLangSelectorBox">
@@ -1265,7 +1275,7 @@
   <aside class="assistant-corner-widget" id="assistantCornerWidget" role="region" aria-live="polite" aria-label="ALX AI Voice Assistant">
     
     <!-- Modern Floating Mini Chat Panel (Minimized by default, keeps listening always) -->
-    <div class="assistant-chat-panel minimized" id="assistantChatPanel" role="dialog" aria-label="ALX AI Assistant Chat" aria-hidden="true">
+    <div class="assistant-chat-panel minimized" id="assistantChatPanel" role="dialog" aria-label="ALX AI Assistant Chat" aria-hidden="true" style="display: none !important;">
       <!-- Chat Header -->
       <div class="chat-header">
         <div class="chat-header-left">
@@ -1350,6 +1360,101 @@
       </svg>
     </button>
   </aside>
+
+  <!-- ========================================================= -->
+  <!-- UNIVERSAL ACCESS GATEWAY ONBOARDING MODAL                 -->
+  <!-- Original Language Picker & Disability Check               -->
+  <!-- ========================================================= -->
+  <dialog id="gateway-dialog" class="gateway-dialog" aria-labelledby="gateway-title" hidden>
+    <div class="gateway-shell">
+      <div class="gateway-header">
+        <div class="gateway-title-group">
+          <h2 id="gateway-title">Welcome to ALX Learning</h2>
+          <p id="gateway-subtitle">Choose your preferred language and accessibility experience.</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline btn-gateway-back" id="btn-gateway-back" hidden aria-label="Back to language selection">
+          ← Languages
+        </button>
+      </div>
+
+      <!-- Step 1: Language Selection -->
+      <div id="gateway-step-lang">
+        <p style="font-size: 0.875rem; color: #94a3b8; margin-bottom: 14px;">
+          Select your interface language (click or press keyboard shortcut):
+        </p>
+        <div class="gateway-lang-grid">
+          <button type="button" class="gateway-lang-choice" data-lang="en" aria-label="English. Press E">
+            <span class="gateway-lang-flag">🇬🇧</span>
+            <span>English</span>
+            <kbd class="key-kbd">E</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="am" aria-label="አማርኛ. Press A">
+            <span class="gateway-lang-flag">🇪🇹</span>
+            <span>አማርኛ</span>
+            <kbd class="key-kbd">A</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="om" aria-label="Afaan Oromoo. Press O">
+            <span class="gateway-lang-flag">🌳</span>
+            <span>Afaan Oromoo</span>
+            <kbd class="key-kbd">O</kbd>
+          </button>
+          <button type="button" class="gateway-lang-choice" data-lang="ti" aria-label="ትግርኛ. Press T">
+            <span class="gateway-lang-flag">🇪🇹</span>
+            <span>ትግርኛ</span>
+            <kbd class="key-kbd">T</kbd>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Disability / Accessibility Profile -->
+      <div id="gateway-step-a11y" hidden>
+        <div class="gateway-countdown-box">
+          <div class="gateway-countdown-label" id="gateway-countdown-label">
+            <span>Activating Blind-Accessible Mode in <strong id="gateway-countdown-seconds">7</strong>s</span>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-gateway-pause" aria-label="Pause or resume timer (Space)">
+              Pause Timer (Space)
+            </button>
+          </div>
+          <div class="gateway-progress-track">
+            <div class="gateway-progress-bar" id="gateway-progress-bar" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <p style="font-size: 0.875rem; color: #94a3b8; margin: 12px 0 10px;">
+          Select your accessibility experience (click or press shortcut key):
+        </p>
+
+        <div class="gateway-profiles-list">
+          <button type="button" class="gateway-profile-card" data-profile="blind" aria-label="Blind and Low Vision Profile. Press B">
+            <div class="profile-card-icon" aria-hidden="true">👁️</div>
+            <div class="profile-card-copy">
+              <strong>Blind / Low Vision (ዓይነ ስውር)</strong>
+              <small>Continuous voice narration, Tab-focus spoken readout, high-contrast markers, and audio descriptions.</small>
+            </div>
+            <kbd class="key-kbd">Press B · Auto in 7s</kbd>
+          </button>
+
+          <button type="button" class="gateway-profile-card" data-profile="deaf" aria-label="Deaf and Hard of Hearing Profile. Press D">
+            <div class="profile-card-icon" aria-hidden="true">🤟</div>
+            <div class="profile-card-copy">
+              <strong>Deaf / Hard of Hearing (መስማት የተሳናቸው)</strong>
+              <small>Synchronized video captions, Ethiopian Sign Language (ETSL) interpreter, and visual confirmations.</small>
+            </div>
+            <kbd class="key-kbd">Press D</kbd>
+          </button>
+
+          <button type="button" class="gateway-profile-card" data-profile="neither" aria-label="Neither / Standard Experience. Press N">
+            <div class="profile-card-icon" aria-hidden="true">💻</div>
+            <div class="profile-card-copy">
+              <strong>Neither / Standard Experience (መደበኛ)</strong>
+              <small>Standard high-performance responsive layout with hands-free voice assistance available on demand.</small>
+            </div>
+            <kbd class="key-kbd">Press N</kbd>
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
 
   <!-- LearnBridge Unified Voice Platform Architecture -->
   <script src="voice/stateMachine.js"></script>
