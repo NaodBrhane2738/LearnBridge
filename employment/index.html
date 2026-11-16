@@ -31,18 +31,23 @@
       <span class="brand-tagline">Ethiopian & Remote Career Hub</span>
     </div>
 
-    <!-- Top Right Language Switcher Dropdown -->
-    <div class="lang-dropdown-container">
-      <label for="lang-select-dropdown" class="visually-hidden">Interface Language</label>
-      <div class="lang-dropdown-wrapper">
-        <svg class="ui-icon" style="color: var(--primary-red); width: 15px; height: 15px; margin-right: 6px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        <select id="lang-select-dropdown" class="lang-select-dropdown" aria-label="Select Interface Language">
-          <option value="en">English (EN)</option>
-          <option value="am">አማርኛ (AM)</option>
-          <option value="om">Afaan Oromoo (OM)</option>
-          <option value="ti">ትግርኛ (TI)</option>
-          <option value="so">Af-Soomaali (SO)</option>
-        </select>
+    <!-- Top Right Nav: Return to Learning & Language Switcher -->
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a href="/" class="btn btn-sm btn-outline" id="btnBackToLearning" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 600;" aria-label="Return to Learning Platform">
+        <span aria-hidden="true">🎓</span> Back to Learning
+      </a>
+      <div class="lang-dropdown-container">
+        <label for="lang-select-dropdown" class="visually-hidden">Interface Language</label>
+        <div class="lang-dropdown-wrapper">
+          <svg class="ui-icon" style="color: var(--primary-red); width: 15px; height: 15px; margin-right: 6px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <select id="lang-select-dropdown" class="lang-select-dropdown" aria-label="Select Interface Language">
+            <option value="en">English (EN)</option>
+            <option value="am">አማርኛ (AM)</option>
+            <option value="om">Afaan Oromoo (OM)</option>
+            <option value="ti">ትግርኛ (TI)</option>
+            <option value="so">Af-Soomaali (SO)</option>
+          </select>
+        </div>
       </div>
     </div>
   </header>

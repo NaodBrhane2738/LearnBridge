@@ -131,7 +131,7 @@ class CommandRegistry {
         if (typeof window !== 'undefined' && typeof window.openJobPortalStandalone === 'function') {
           window.openJobPortalStandalone();
         } else if (typeof window !== 'undefined' && window.location) {
-          window.location.hash = '#jobs';
+          window.location.assign('/job-portal/');
         }
         return { success: true, message: 'Opened ALX Job Portal & Employment Platform' };
       }

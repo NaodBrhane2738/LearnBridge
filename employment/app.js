@@ -633,6 +633,15 @@ class EmploymentApp {
       return true;
     }
 
+    // 0A. Return to LMS / Learning Platform Command
+    if (words.includes('learning') || words.includes('lms') || words.includes('learnbridge') ||
+        clean.includes('back to learning') || clean.includes('go to learning') || clean.includes('return') ||
+        clean.includes('ተመለስ') || clean.includes('ወደ መማሪያ') || clean.includes('barumsa') || clean.includes('ትምህርቲ')) {
+      if (window.a11y) window.a11y.speak('Returning to LearnBridge learning platform.');
+      setTimeout(() => { window.location.assign('/'); }, 400);
+      return true;
+    }
+
     // 1. More / Details Command
     const isMore = words.includes('more') || words.includes('detail') || words.includes('details') ||
                    words.includes('info') || words.includes('information') || words.includes('expand') ||

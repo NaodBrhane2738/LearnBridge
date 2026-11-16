@@ -135,19 +135,9 @@
     }
   }
 
-  // Resilient Standalone Job Portal Opener (handles browser popup blockers seamlessly)
+  // Direct, popup-blocker-free redirection to Job Portal
   function openJobPortalStandalone() {
-    let opened = null;
-    try {
-      opened = window.open('/job-portal/', '_blank');
-    } catch (_) {
-      opened = null;
-    }
-    // If window.open was blocked by browser popup protection or returned null/closed
-    if (!opened || opened.closed || typeof opened.closed === 'undefined') {
-      window.location.assign('/job-portal/');
-    }
-    return opened;
+    window.location.assign('/job-portal/');
   }
   window.openJobPortalStandalone = openJobPortalStandalone;
 
@@ -4396,7 +4386,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         return true;
       }
 
-      // 00-JOB-PORTAL. OPEN STANDALONE ALX JOB PORTAL IMMEDIATELY
+      // 00-JOB-PORTAL. OPEN STANDALONE ALX JOB PORTAL IMMEDIATELY WITHOUT POPUP BLOCKING
       const isJobPortalCmd = /(?<![\p{L}\p{N}])(job portal|jobs portal|job-portal|the job portal|open job portal|open jobs portal|open jobs|open job|go to job portal|go to jobs|show jobs|view jobs|find jobs|career portal|employment portal|job|jobs|career|careers|employment|vacancies|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|የስራ እድል|ስራ መድረክ|hojii|waltajjii hojii|carraa hojii|ስራሕ|ዕድላት ስራሕ|መድረኽ ስራሕ|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||
         (text.includes('job') && (text.includes('portal') || text.includes('open') || text.includes('go to') || text.includes('show') || text.includes('find'))) ||
         text.includes('የስራ መድረክ') || text.includes('የስራ እድል') || text.includes('ስራሕ') || text.includes('hojii');
@@ -4409,27 +4399,19 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.playChime('success');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'የስራ መድረክ' : 'ALX Job Portal');
 
-        if (typeof openJobPortalStandalone === 'function') {
-          openJobPortalStandalone();
-        } else if (typeof window.openJobPortalStandalone === 'function') {
-          window.openJobPortalStandalone();
-        } else {
-          let opened = null;
-          try {
-            opened = window.open('/job-portal/', '_blank');
-          } catch (_) {
-            opened = null;
-          }
-          if (!opened || opened.closed || typeof opened.closed === 'undefined') {
-            window.location.assign('/job-portal/');
-          }
-        }
-
         const jobPortalMsg = currentLang === 'am' ? 'የስራ መድረክ እየተከፈተ ነው።' :
                              currentLang === 'om' ? 'Waltajjiin hojii banamaa jira.' :
                              currentLang === 'ti' ? 'መድረኽ ስራሕ ይኽፈት ኣሎ።' :
                              'Opening ALX Job Portal.';
         this.speakInstant(jobPortalMsg, currentLang);
+
+        if (typeof openJobPortalStandalone === 'function') {
+          openJobPortalStandalone();
+        } else if (typeof window.openJobPortalStandalone === 'function') {
+          window.openJobPortalStandalone();
+        } else {
+          window.location.assign('/job-portal/');
+        }
         return true;
       }
 
