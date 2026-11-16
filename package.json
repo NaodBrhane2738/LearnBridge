@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node server/server.js",
+    "build": "echo \"LearnBridge Vercel build ready\"",
     "test": "node qa/api-verification.js",
     "test:api": "node qa/api-verification.js",
     "test:e2e": "node qa/e2e-verification.js"
