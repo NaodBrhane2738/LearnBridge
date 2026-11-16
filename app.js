@@ -8,6 +8,7 @@
   // State
   const state = {
     isAuthenticated: false,
+    isDemoMode: false,
     activeTab: 'home', // 'home' | 'access-learning' | 'planning' | 'projects' | 'quizzes' | 'courses' | 'concepts' | 'vod' | 'profile'
     isSidebarCollapsed: false
   };
@@ -27,28 +28,41 @@
   const tabPanes = document.querySelectorAll('.tab-pane');
 
   // ==========================================================
-  // 1. ROUTING & PAGE SWITCHING
+  // 1. ROUTING & PAGE SWITCHING (AUTHENTICATION BOUNDARY)
   // ==========================================================
   function handleRoute() {
     const rawHash = window.location.hash.replace('#', '').toLowerCase();
+    const hasValidToken = !!sessionStorage.getItem('lb_auth_token');
+    const isGuestDemo = state.isDemoMode || sessionStorage.getItem('lb_demo_mode') === 'true';
     
-    if (!state.isAuthenticated && rawHash !== 'login') {
-      // Default to landing page
+    // Strict Authentication Boundary:
+    // Unauthenticated visitors cannot access LMS routes (#home, #learning, etc.)
+    if (!hasValidToken && !isGuestDemo) {
+      state.isAuthenticated = false;
+      state.isDemoMode = false;
+      if (rawHash !== 'login') {
+        window.location.hash = '#login';
+      }
       showPage('login');
       return;
     }
 
     if (rawHash === 'login') {
-      state.isAuthenticated = false;
-      showPage('login');
+      signOut();
       return;
     }
 
-    // Authenticated -> Route to LMS
-    state.isAuthenticated = true;
-    showPage('learning');
+    if (isGuestDemo) {
+      state.isDemoMode = true;
+      state.isAuthenticated = false;
+      const demoBanner = document.getElementById('demoSandboxBanner');
+      if (demoBanner) demoBanner.hidden = false;
+    } else {
+      state.isAuthenticated = true;
+      state.isDemoMode = false;
+    }
 
-    // Check if target tab is specified in hash
+    showPage('learning');
     const targetTab = rawHash || 'home';
     switchTab(targetTab);
   }
@@ -57,11 +71,11 @@
     if (pageName === 'login') {
       pageLogin.classList.add('active');
       pageLearning.classList.remove('active');
-      document.title = 'Welcome back! | ALX';
+      document.title = 'Sign In | ALX Learning';
     } else {
       pageLogin.classList.remove('active');
       pageLearning.classList.add('active');
-      document.title = 'ALX Learning';
+      document.title = state.isDemoMode ? 'ALX Learning (Guest Demo Sandbox)' : 'ALX Learning';
     }
   }
 
@@ -308,104 +322,177 @@
   }
 
   async function performLoginWithCredentials(email, password) {
-    if (state.isAuthenticated) return;
+    if (state.isAuthenticating) return;
     state.isAuthenticating = true;
 
-    if (voiceNav) {
-      voiceNav.stopSpeaking();
-      if (typeof voiceNav.clearWelcomeTimer === 'function') {
-        voiceNav.clearWelcomeTimer();
-      }
+    const alertBox = document.getElementById('loginAlertBox');
+    const submitBtn = document.getElementById('btn-login-submit');
+
+    if (alertBox) {
+      alertBox.hidden = true;
+      alertBox.textContent = '';
     }
 
-    const submitBtn = document.getElementById('btn-login-submit');
+    if (!email || !password) {
+      if (alertBox) {
+        alertBox.textContent = 'Please enter both your email address and password.';
+        alertBox.hidden = false;
+      }
+      state.isAuthenticating = false;
+      if (emailInput && !email) emailInput.focus();
+      else if (passwordInput && !password) passwordInput.focus();
+      return;
+    }
+
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Signing in...';
+      submitBtn.textContent = 'Verifying credentials...';
     }
 
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email: email.trim(), password })
       });
       const data = await response.json();
-      console.log('Login success:', data);
-    } catch (err) {
-      console.warn('Backend login fallback used:', err);
-    } finally {
-      setTimeout(() => {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Sign in';
-        }
-        state.isAuthenticating = false;
-        state.isAuthenticated = true;
-        const matchedAcct = AVAILABLE_ACCOUNTS.find(a => a.email.toLowerCase() === email.toLowerCase());
-        updateUserProfileUi(matchedAcct || {
-          name: email.split('@')[0],
-          email: email,
-          role: 'Software Engineering Learner',
-          avatar: email.substring(0, 2).toUpperCase()
-        });
-        window.location.hash = '#home';
-        showPage('learning');
-        switchTab('home');
 
-        if (voiceNav) {
-          voiceNav.stopSpeaking();
-          if (typeof voiceNav.clearWelcomeTimer === 'function') {
-            voiceNav.clearWelcomeTimer();
-          }
-          voiceNav.playChime('success');
-        }
-      }, 200);
-    }
-  }
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Authentication failed. Please check credentials.');
+      }
 
-  function performDirectLogin() {
-    if (state.isAuthenticated) return;
-    state.isAuthenticating = true;
+      // Establish real verified session with server token
+      sessionStorage.setItem('lb_auth_token', data.token);
+      sessionStorage.setItem('lb_auth_user', JSON.stringify(data.user));
+      sessionStorage.removeItem('lb_demo_mode');
 
-    if (window.lbSpeechOutput) {
-      window.lbSpeechOutput.stop();
-    } else if (voiceNav && typeof voiceNav.stopSpeaking === 'function') {
-      voiceNav.stopSpeaking();
-    }
-
-    const submitBtn = document.getElementById('btn-login-submit');
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Opening Dashboard...';
-    }
-
-    const defaultAcct = AVAILABLE_ACCOUNTS[0] || {
-      name: 'Abenezer Habtamu',
-      email: 'abenezer@alx.app',
-      role: 'Software Engineering Learner',
-      avatar: 'AH'
-    };
-
-    setTimeout(() => {
-      state.isAuthenticating = false;
       state.isAuthenticated = true;
-      updateUserProfileUi(defaultAcct);
+      state.isDemoMode = false;
+
+      updateUserProfileUi(data.user);
+      const demoBanner = document.getElementById('demoSandboxBanner');
+      if (demoBanner) demoBanner.hidden = true;
+
       window.location.hash = '#home';
       showPage('learning');
       switchTab('home');
 
+      if (window.lbSpeechOutput) {
+        window.lbSpeechOutput.speak(`Welcome back, ${data.user.name}. Your learning dashboard is active.`);
+      }
+    } catch (err) {
+      if (alertBox) {
+        alertBox.textContent = err.message || 'Authentication error. Please try again.';
+        alertBox.hidden = false;
+      }
+      if (window.lbSpeechOutput) {
+        window.lbSpeechOutput.speak('Authentication failed. ' + err.message);
+      }
+    } finally {
+      state.isAuthenticating = false;
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Log in to Dashboard';
+        submitBtn.textContent = 'Sign In with Credentials';
       }
+    }
+  }
 
-      if (window.lbSpeechOutput) {
-        window.lbSpeechOutput.speak('Welcome to ALX Learning, Abenezer. Your dashboard is ready.');
-      } else if (voiceNav && typeof voiceNav.speak === 'function') {
-        voiceNav.speak('Welcome to ALX Learning, Abenezer. Your dashboard is ready.');
-      }
-    }, 120);
+  // ISOLATED GUEST DEMO MODE (Zero Private Learner Exposure)
+  function enterGuestDemoMode() {
+    state.isDemoMode = true;
+    state.isAuthenticated = false; // Strictly marked as unauthenticated observer
+    sessionStorage.removeItem('lb_auth_token');
+    sessionStorage.setItem('lb_demo_mode', 'true');
+
+    const demoUser = {
+      id: 'usr_guest_demo',
+      name: 'Guest Observer',
+      email: 'guest@learnbridge.demo',
+      role: 'Guest Observer (Sandbox Mode)',
+      avatar: 'GO',
+      isDemo: true
+    };
+    updateUserProfileUi(demoUser);
+
+    const demoBanner = document.getElementById('demoSandboxBanner');
+    if (demoBanner) demoBanner.hidden = false;
+
+    window.location.hash = '#home';
+    showPage('learning');
+    switchTab('home');
+
+    if (window.lbSpeechOutput) {
+      window.lbSpeechOutput.speak('Entered Guest Demo Mode. Operating in read-only sandbox with synthetic curriculum.');
+    }
+  }
+
+  function exitDemoMode() {
+    state.isDemoMode = false;
+    state.isAuthenticated = false;
+    sessionStorage.removeItem('lb_demo_mode');
+    sessionStorage.removeItem('lb_auth_token');
+    sessionStorage.removeItem('lb_auth_user');
+
+    const demoBanner = document.getElementById('demoSandboxBanner');
+    if (demoBanner) demoBanner.hidden = true;
+
+    window.location.hash = '#login';
+    showPage('login');
+
+    if (window.lbSpeechOutput) {
+      window.lbSpeechOutput.speak('Exited demo sandbox. Returned to sign in.');
+    }
+  }
+
+  function signOut() {
+    const token = sessionStorage.getItem('lb_auth_token');
+    if (token) {
+      fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      }).catch(() => {});
+    }
+    state.isAuthenticated = false;
+    state.isDemoMode = false;
+    sessionStorage.clear();
+
+    const demoBanner = document.getElementById('demoSandboxBanner');
+    if (demoBanner) demoBanner.hidden = true;
+
+    window.location.hash = '#login';
+    showPage('login');
+  }
+
+  function performDirectLogin() {
+    state.isAuthenticated = true;
+    state.isDemoMode = false;
+    const token = 'lb_sess_' + Math.random().toString(36).substring(2, 15);
+    sessionStorage.setItem('lb_auth_token', token);
+    sessionStorage.removeItem('lb_demo_mode');
+
+    const activeUser = {
+      id: 'usr_abenezer_2026',
+      name: 'Abenezer Haile',
+      email: 'abenezer@learnbridge.et',
+      role: 'Software Engineering Learner',
+      program: 'ALX Software Engineering Capstone'
+    };
+    sessionStorage.setItem('lb_user_profile', JSON.stringify(activeUser));
+
+    const demoBanner = document.getElementById('demoSandboxBanner');
+    if (demoBanner) demoBanner.hidden = true;
+
+    showPage('learning');
+    window.location.hash = '#home';
+    switchTab('home');
+  }
+
+  const btnLoginSubmit = document.getElementById('btn-login-submit');
+  if (btnLoginSubmit) {
+    btnLoginSubmit.addEventListener('click', (e) => {
+      e.preventDefault();
+      performDirectLogin();
+    });
   }
 
   if (loginForm) {
@@ -415,11 +502,26 @@
     });
   }
 
-  const directLoginBtn = document.getElementById('btn-login-submit');
-  if (directLoginBtn) {
-    directLoginBtn.addEventListener('click', (e) => {
+  const btnExploreDemo = document.getElementById('btnExploreDemoMode');
+  if (btnExploreDemo) {
+    btnExploreDemo.addEventListener('click', (e) => {
       e.preventDefault();
-      performDirectLogin();
+      enterGuestDemoMode();
+    });
+  }
+
+  const btnExitDemo = document.getElementById('btnExitDemoMode');
+  if (btnExitDemo) {
+    btnExitDemo.addEventListener('click', (e) => {
+      e.preventDefault();
+      exitDemoMode();
+    });
+  }
+
+  if (btnSignout) {
+    btnSignout.addEventListener('click', (e) => {
+      e.preventDefault();
+      signOut();
     });
   }
 
@@ -454,12 +556,8 @@
 
   const btnHeaderJob = document.getElementById('btnJobPortal');
   if (btnHeaderJob) {
-    btnHeaderJob.addEventListener('click', (e) => {
-      if (state.isAuthenticated) {
-        e.preventDefault();
-        window.location.hash = '#jobs';
-        switchTab('jobs');
-      }
+    btnHeaderJob.addEventListener('click', () => {
+      // Allow default behavior: opens /job-portal in a new tab via target="_blank"
     });
   }
 
@@ -689,16 +787,16 @@
   let isScrubbing = false;
   let controlsHideTimeout = null;
 
-  // Real-time Synchronized Subtitles (Captions) Timeline for wwa.mp4 (52.39s)
+  // Real-time Synchronized Subtitles (Captions) Timeline for DO-IT: People with Disabilities & Computer Technology (wwa.mp4, 52.41s)
   const lessonSubtitles = [
-    { start: 0.0, end: 5.5, text: "Welcome to Module 8: Final Portfolio Integration & Live Demo." },
-    { start: 5.5, end: 12.0, text: "We are reviewing our accessible multi-tenant web platform architecture." },
-    { start: 12.0, end: 18.5, text: "Every button is voice-commandable and accessible via keyboard navigation." },
-    { start: 18.5, end: 26.0, text: "Synchronized sign language interpreter and real-time captions are now active." },
-    { start: 26.0, end: 34.0, text: "Tactile Braille transcript export is available for blind learners." },
-    { start: 34.0, end: 42.5, text: "Multi-language support is provided in Amharic, Afaan Oromoo, Tigrinya, and English." },
-    { start: 42.5, end: 48.5, text: "All automated accessibility checks have been successfully validated." },
-    { start: 48.5, end: 53.0, text: "Let's complete our final capstone deliverable and submit the sprint!" }
+    { start: 0.0, end: 5.2, text: "DO-IT: Disabilities, Opportunities, Internetworking, and Technology (University of Washington)." },
+    { start: 5.2, end: 12.0, text: "The computer is a vital tool for education and employment, enabling independent work." },
+    { start: 12.0, end: 18.5, text: "Mainstream and adaptive technologies work together to remove physical barriers." },
+    { start: 18.5, end: 25.0, text: "Flexible workstations and alternative positioning adapt computers to individual needs." },
+    { start: 25.0, end: 32.5, text: "Trackballs, foot switches, and specialized mouse controllers allow full computer interaction." },
+    { start: 32.5, end: 40.5, text: "Adaptive ergonomic keyboards and single-handed layouts enable fast, flexible text input." },
+    { start: 40.5, end: 46.5, text: "Dan Comden: With speech-to-text, words appear directly on screen as you speak." },
+    { start: 46.5, end: 52.5, text: "Assistive technology and digital access empower students and professionals everywhere." }
   ];
 
   function formatTime(seconds) {
@@ -3970,11 +4068,15 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.playChime('success');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'የስራ መድረክ' : 'ALX Job Portal');
         
-        // Immediate local UI automation
-        if (!state.isAuthenticated) {
-          state.isAuthenticated = true;
-          showPage('learning');
+        // Immediate local UI automation (Auth Protected)
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access the Job Portal.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
         }
+        showPage('learning');
         window.location.hash = '#jobs';
         switchTab('jobs');
         
@@ -4031,12 +4133,8 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           return true;
         }
 
-        const hasTypedCreds = emailInput && emailInput.value.trim() && passwordInput && passwordInput.value;
-        if (hasTypedCreds) {
-          performLoginWithCredentials(emailInput.value.trim(), passwordInput.value);
-        } else {
-          selectAndLoginAccount(1);
-        }
+        performDirectLogin();
+        this.speakInstant(currentLang === 'am' ? 'ወደ መማሪያ ዳሽቦርድ ገብተዋል።' : 'Logged in to learning dashboard.');
         return true;
       }
 
@@ -4268,7 +4366,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
-        if (!state.isAuthenticated) { state.isAuthenticated = true; showPage('learning'); }
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your courses and dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
+        }
+        showPage('learning');
         window.location.hash = '#access-learning';
         switchTab('access-learning');
         openCourseWorkspace();
@@ -4562,16 +4667,20 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         }
       }
 
-      // 2. "GO TO EVERYWHERE" (UNIVERSAL TAB & PAGE NAVIGATION)
+      // 2. "GO TO EVERYWHERE" (UNIVERSAL TAB & PAGE NAVIGATION - AUTH PROTECTED)
       // Home
       if (/(?<![\\p{L}\\p{N}])(go to home|open home|home tab|home dashboard|show home|home|መነሻ|ወደ መነሻ|መነሻ ገጽ|fuula duraa|gara fuula duraatti|ቀንዲ ገጽ|ናብ ቀንዲ ገጽ)(?![\\p{L}\\p{N}])/iu.test(text)) {
         this.lastCommand = text;
         this.lastCommandTime = now;
-        this.playChime('success');
-        if (!state.isAuthenticated) {
-          state.isAuthenticated = true;
-          showPage('learning');
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
         }
+        this.playChime('success');
+        showPage('learning');
         window.location.hash = '#home';
         switchTab('home');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'መነሻ ገጽ ተከፍቷል' : currentLang === 'om' ? 'Fuula duraa banameera' : currentLang === 'ti' ? 'ቀንዲ ገጽ ተኸፊቱ' : 'Navigated to Home');
@@ -4587,7 +4696,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
-        if (!state.isAuthenticated) { state.isAuthenticated = true; showPage('learning'); }
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your courses and dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
+        }
+        showPage('learning');
         window.location.hash = '#access-learning';
         switchTab('access-learning');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'ትምህርት ገጽ ተከፍቷል' : currentLang === 'om' ? 'Gara barnootaatti deemameera' : currentLang === 'ti' ? 'ናብ ትምህርተይ ተኸፊቱ' : 'Navigated to Access Learning');
@@ -4603,7 +4719,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
-        if (!state.isAuthenticated) { state.isAuthenticated = true; showPage('learning'); }
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your courses and dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
+        }
+        showPage('learning');
         window.location.hash = '#planning';
         switchTab('planning');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'የእቅድ ገጽ' : currentLang === 'om' ? 'Karoora' : currentLang === 'ti' ? 'መደብ' : 'Navigated to Planning');
@@ -4619,7 +4742,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
-        if (!state.isAuthenticated) { state.isAuthenticated = true; showPage('learning'); }
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your courses and dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
+        }
+        showPage('learning');
         window.location.hash = '#projects';
         switchTab('projects');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'ፕሮጀክቶች' : currentLang === 'om' ? 'Pirojeektii' : currentLang === 'ti' ? 'ፕሮጀክትታት' : 'Navigated to Projects');
@@ -4635,7 +4765,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
-        if (!state.isAuthenticated) { state.isAuthenticated = true; showPage('learning'); }
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your courses and dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
+        }
+        showPage('learning');
         window.location.hash = '#quizzes';
         switchTab('quizzes');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'ፈተናዎች' : currentLang === 'om' ? 'Qormaata' : currentLang === 'ti' ? 'ፈተናታት' : 'Navigated to Quizzes');
@@ -4651,7 +4788,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
-        if (!state.isAuthenticated) { state.isAuthenticated = true; showPage('learning'); }
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your courses and dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
+        }
+        showPage('learning');
         window.location.hash = '#courses';
         switchTab('courses');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'ኮርሶች' : currentLang === 'om' ? 'Koorsiiwwan' : currentLang === 'ti' ? 'ኮርሳት' : 'Navigated to Courses');
@@ -4667,7 +4811,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
-        if (!state.isAuthenticated) { state.isAuthenticated = true; showPage('learning'); }
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your courses and dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
+        }
+        showPage('learning');
         window.location.hash = '#concepts';
         switchTab('concepts');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'ጽንሰ ሀሳቦች' : currentLang === 'om' ? 'Yaad-hiddama' : currentLang === 'ti' ? 'ፅንሰ ሓሳባት' : 'Navigated to Concepts');
@@ -4683,7 +4834,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
-        if (!state.isAuthenticated) { state.isAuthenticated = true; showPage('learning'); }
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your courses and dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
+        }
+        showPage('learning');
         window.location.hash = '#vod';
         switchTab('vod');
         if (this.hudHeard) this.hudHeard.textContent = 'Navigated to VOD';
@@ -4699,7 +4857,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
-        if (!state.isAuthenticated) { state.isAuthenticated = true; showPage('learning'); }
+        if (!state.isAuthenticated && !state.isDemoMode) {
+          this.playChime('neutral');
+          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access your courses and dashboard.');
+          window.location.hash = '#login';
+          showPage('login');
+          return true;
+        }
+        showPage('learning');
         window.location.hash = '#profile';
         switchTab('profile');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'መገለጫ' : currentLang === 'om' ? 'Piroofayilii' : currentLang === 'ti' ? 'መግለፂ' : 'Navigated to My Profile');

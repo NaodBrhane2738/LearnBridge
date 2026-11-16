@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  learnbridge-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: learnbridge-platform
+    restart: unless-stopped
+    ports:
+      - "4173:4173"
+    environment:
+      - PORT=4173
+      - HOST=0.0.0.0
+      - NODE_ENV=production
+      - SESSION_SECRET=learnbridge-super-secret-key-production-2026
+      - CORS_ORIGINS=http://localhost:4173,http://127.0.0.1:4173
+      - DEMO_MODE_ENABLED=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4173/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

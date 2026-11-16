@@ -1,0 +1,678 @@
+openapi: 3.0.3
+info:
+  title: LearnBridge Universal Accessibility REST API
+  version: 1.0.0
+  description: Universal REST API providing reusable accessibility infrastructure,
+    multilingual translation services, and user accessibility profiles for Learning
+    Management Systems, Job Portals, and digital platforms.
+  contact:
+    name: LearnBridge Engineering Team
+    url: http://127.0.0.1:4173
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+- url: http://127.0.0.1:4173/api/v1
+  description: Local Development & Demonstration Server
+tags:
+- name: System
+  description: Uptime and system health checks
+- name: Localization
+  description: Supported languages and localized translation dictionaries
+- name: Accessibility
+  description: Pre-configured accessibility profiles and user preference storage
+- name: Integrations
+  description: Tenant registration, API key provisioning, and platform isolation
+- name: Authentication
+  description: Bearer token session lifecycle and authentication verification
+- name: Synchronization
+  description: Offline-first delta synchronization with idempotency guarantees
+paths:
+  /health:
+    get:
+      tags:
+      - System
+      summary: Health check
+      description: Returns operational status and uptime of the LearnBridge API server.
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /status:
+    get:
+      tags:
+      - System
+      summary: System capabilities & status
+      description: Detailed overview of active subsystems, compliance levels, and
+        capabilities.
+      responses:
+        '200':
+          description: Status details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+  /localization/languages:
+    get:
+      tags:
+      - Localization
+      summary: List supported languages
+      description: Returns all 5 priority languages (English, Amharic, Afaan Oromo,
+        Tigrinya, Somali) with script directions.
+      responses:
+        '200':
+          description: List of languages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguagesResponse'
+  /localization/translations/{language}:
+    get:
+      tags:
+      - Localization
+      summary: Fetch translation dictionary
+      description: Returns comprehensive localized UI and instructional strings for
+        the specified language code.
+      parameters:
+      - name: language
+        in: path
+        required: true
+        description: Language code (en, am, om, ti, so)
+        schema:
+          type: string
+          example: am
+      responses:
+        '200':
+          description: Translation dictionary object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationResponse'
+        '404':
+          description: Language not supported
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /accessibility/profiles:
+    get:
+      tags:
+      - Accessibility
+      summary: List standard accessibility profiles
+      description: Returns pre-configured functional accessibility profiles (screen_reader,
+        low_vision, deaf_hard_of_hearing, motor_accessible, cognitive_accessible,
+        default).
+      responses:
+        '200':
+          description: List of functional profiles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfilesResponse'
+  /accessibility/profiles/{profileId}:
+    get:
+      tags:
+      - Accessibility
+      summary: Get specific accessibility profile
+      parameters:
+      - name: profileId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: low_vision
+      responses:
+        '200':
+          description: Profile details and recommended settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileDetailResponse'
+        '404':
+          description: Profile ID not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /accessibility/preferences:
+    get:
+      tags:
+      - Accessibility
+      summary: Retrieve user accessibility preferences
+      description: Returns current preferences for a user or session, scoped to the
+        calling tenant.
+      parameters:
+      - name: userId
+        in: query
+        required: false
+        schema:
+          type: string
+          example: learner-104
+      responses:
+        '200':
+          description: User preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreferencesResponse'
+    post:
+      tags:
+      - Accessibility
+      summary: Set user accessibility preferences
+      description: Updates or sets the full preferences object for the user or active
+        session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreferencesInput'
+      responses:
+        '200':
+          description: Updated preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreferencesResponse'
+        '400':
+          description: Invalid parameter values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /accessibility/preferences/me:
+    get:
+      tags:
+      - Accessibility
+      summary: Get current caller preferences
+      responses:
+        '200':
+          description: Current caller preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreferencesResponse'
+    patch:
+      tags:
+      - Accessibility
+      summary: Partially update current preferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreferencesInput'
+      responses:
+        '200':
+          description: Updated preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreferencesResponse'
+  /integrations:
+    get:
+      tags:
+      - Integrations
+      summary: List registered tenant integrations
+      description: Lists all authorized platforms (LMS, Job Portals). Secret keys
+        are masked unless caller is the authenticated tenant.
+      responses:
+        '200':
+          description: List of integrations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationsListResponse'
+    post:
+      tags:
+      - Integrations
+      summary: Register a new third-party integration
+      description: Registers a new organization (e.g. an LMS or recruitment platform)
+        and returns a unique x-api-key.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Addis Ababa University LMS
+                id:
+                  type: string
+                  example: aau-lms
+                allowedOrigins:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                  - https://lms.aau.edu.et
+                supportedFeatures:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                  - captions
+                  - high_contrast
+      responses:
+        '201':
+          description: Tenant registered and API key issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationCreateResponse'
+        '409':
+          description: Tenant identifier already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /integrations/{integrationId}:
+    get:
+      tags:
+      - Integrations
+      summary: Get integration details
+      parameters:
+      - name: integrationId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: savanna-lms
+      responses:
+        '200':
+          description: Integration details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationDetailResponse'
+        '404':
+          description: Integration not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/login:
+    post:
+      tags:
+      - Authentication
+      summary: Authenticate user credentials
+      description: Validates email and password, returning a cryptographically secure
+        bearer session token and sanitized profile.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: abenezer@learnbridge.et
+                password:
+                  type: string
+                  minLength: 6
+                  example: Abenezer@2026
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    example: lb_sess_a8f9c...
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+        '400':
+          description: Missing credentials or invalid format
+        '401':
+          description: Invalid email or password
+  /auth/verify:
+    get:
+      tags:
+      - Authentication
+      summary: Verify active session
+      description: Checks validity of Bearer authorization token.
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Session valid
+        '401':
+          description: Invalid or expired token
+  /auth/logout:
+    post:
+      tags:
+      - Authentication
+      summary: Revoke active session token
+      description: Invalidates server-side cryptographic session.
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Logged out successfully
+  /sync:
+    post:
+      tags:
+      - Synchronization
+      summary: Synchronize queued offline actions with idempotency
+      description: Receives batched learning progress, quiz submissions, and application
+        updates. Deduplicates via X-Idempotency-Key header.
+      parameters:
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        description: Unique UUID to prevent duplicate processing during network retries
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      type:
+                        type: string
+                        example: quiz_submit
+                      payload:
+                        type: object
+      responses:
+        '200':
+          description: Sync processed or idempotent replay acknowledged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  processed:
+                    type: integer
+                  idempotentReplay:
+                    type: boolean
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: LB-Token
+      description: Session token issued upon successful /auth/login
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              example: healthy
+            uptimeSeconds:
+              type: integer
+              example: 142
+            timestamp:
+              type: string
+              example: '2026-11-14T11:00:00.000Z'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    StatusResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            service:
+              type: string
+            version:
+              type: string
+            capabilities:
+              type: object
+        meta:
+          $ref: '#/components/schemas/Meta'
+    LanguagesResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            defaultLanguage:
+              type: string
+              example: en
+            languages:
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: am
+                  name:
+                    type: string
+                    example: Amharic
+                  nativeName:
+                    type: string
+                    example: አማርኛ
+                  direction:
+                    type: string
+                    example: ltr
+        meta:
+          $ref: '#/components/schemas/Meta'
+    TranslationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            language:
+              type: string
+              example: am
+            translations:
+              type: object
+            fallbackLanguage:
+              type: string
+              example: en
+        meta:
+          $ref: '#/components/schemas/Meta'
+    ProfilesResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            count:
+              type: integer
+              example: 6
+            profiles:
+              type: array
+              items:
+                type: object
+        meta:
+          $ref: '#/components/schemas/Meta'
+    ProfileDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        meta:
+          $ref: '#/components/schemas/Meta'
+    PreferencesInput:
+      type: object
+      properties:
+        language:
+          type: string
+          enum:
+          - en
+          - am
+          - om
+          - ti
+          - so
+          example: am
+        profileId:
+          type: string
+          example: low_vision
+        high_contrast:
+          type: boolean
+          example: true
+        reduce_transparency:
+          type: boolean
+          example: true
+        captions:
+          type: boolean
+          example: true
+        audio_descriptions:
+          type: boolean
+          example: false
+        sign_language:
+          type: boolean
+          example: false
+        font_scale:
+          type: number
+          example: 1.25
+        speech_synthesis:
+          type: boolean
+          example: true
+    PreferencesResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            userId:
+              type: string
+            tenantId:
+              type: string
+            preferences:
+              $ref: '#/components/schemas/PreferencesInput'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    IntegrationsListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            count:
+              type: integer
+            integrations:
+              type: array
+              items:
+                type: object
+        meta:
+          $ref: '#/components/schemas/Meta'
+    IntegrationCreateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            apiKey:
+              type: string
+        meta:
+          $ref: '#/components/schemas/Meta'
+    IntegrationDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        meta:
+          $ref: '#/components/schemas/Meta'
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: INVALID_PARAMETERS
+            message:
+              type: string
+              example: Detailed human readable error message.
+            details:
+              type: object
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Meta:
+      type: object
+      properties:
+        version:
+          type: string
+          example: v1
+        requestId:
+          type: string
+          example: lb-req-1731580000000-1001

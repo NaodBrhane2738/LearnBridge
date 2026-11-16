@@ -12,9 +12,11 @@
     "dev": "node server/server.js",
     "serve": "node server/server.js",
     "build": "echo \"LearnBridge build ready\"",
-    "test": "node qa/voice-verification.js && node qa/offline-verification.js",
+    "test": "node qa/voice-verification.js && node qa/offline-verification.js && node qa/auth-idempotency-verification.js && node qa/a11y-audit.js",
     "test:voice": "node qa/voice-verification.js",
     "test:offline": "node qa/offline-verification.js",
+    "test:auth": "node qa/auth-idempotency-verification.js",
+    "test:a11y": "node qa/a11y-audit.js",
     "test:api": "node qa/api-verification.js",
     "test:e2e": "node qa/e2e-verification.js"
   },

@@ -66,7 +66,6 @@ class EmploymentApp {
       if (candJson.success) {
         this.currentCandidate = candJson.data;
         this.savedJobIds = new Set(this.currentCandidate.savedJobIds || []);
-        this.activeCandidateProfile = this.getAlxProfileData();
       }
 
       // Initial Jobs Load
@@ -254,227 +253,57 @@ class EmploymentApp {
     this.bindJobCardActions(container);
   }
 
-  // 2. ALX Talent Profile Matching & Swipeable Card Deck View
+  // 2. CV Matching & Swipeable Card Deck View
   renderSearchView() {
     const view = document.getElementById('view-search');
     if (!view) return;
     view.style.display = 'block';
 
-    // Direct ALX Profile Integration (no CV upload needed)
-    this.activeCandidateProfile = this.getAlxProfileData();
-    this.displayActiveAlxBanner(this.activeCandidateProfile);
-    this.updateArchiveBadges();
+    const savedCv = localStorage.getItem('lb_active_cv');
+    if (savedCv && !this.activeCandidateProfile) {
+      try {
+        this.activeCandidateProfile = JSON.parse(savedCv);
+      } catch (_) {}
+    }
 
-    const deckStage = document.getElementById('swipe-deck-stage');
-    if (deckStage) deckStage.style.display = 'block';
-
-    if (this.cardDeck.length === 0) {
-      this.loadRecommendationsForCandidate(this.activeCandidateProfile);
+    if (this.activeCandidateProfile) {
+      this.displayActiveCvBanner(this.activeCandidateProfile);
+      if (this.cardDeck.length === 0) {
+        this.loadRecommendationsForCandidate(this.activeCandidateProfile);
+      } else {
+        this.renderActiveCard();
+      }
     } else {
-      this.renderActiveCard();
+      this.showCvUploadStage();
     }
-  }
-
-  getAlxProfileData() {
-    return {
-      id: 'alx-learner-abenezer',
-      fullName: 'Abenezer Habtamu',
-      title: 'Full-Stack Software Engineer & ALX Fellow',
-      track: 'ALX Software Engineering Track',
-      xp: 1140,
-      skills: [
-        'JavaScript (ES6+)',
-        'Node.js',
-        'Express',
-        'React',
-        'Python',
-        'Web Accessibility (a11y)',
-        'REST APIs',
-        'Git & GitHub'
-      ],
-      badges: ['Professional Foundations', 'SWE Portfolio Validated', 'Top Contributor'],
-      summary: 'ALX Software Engineering graduate with strong foundations in full-stack architecture, accessible user experiences, modern APIs, and clean engineering practices.'
-    };
-  }
-
-  displayActiveAlxBanner(profile) {
-    const banner = document.getElementById('active-alx-profile-banner');
-    if (!banner) return;
-    banner.style.display = 'flex';
-    const nameEl = document.getElementById('alx-learner-name');
-    if (nameEl && profile && profile.fullName) {
-      nameEl.textContent = profile.fullName;
-    }
-    this.updateArchiveBadges();
   }
 
   showCvUploadStage() {
-    // Legacy fallback bypassed — display search deck directly with ALX profile
-    this.renderSearchView();
+    const uploadStage = document.getElementById('cv-upload-stage');
+    const deckStage = document.getElementById('swipe-deck-stage');
+    const activeBanner = document.getElementById('active-cv-banner');
+
+    if (uploadStage) uploadStage.style.display = 'block';
+    if (deckStage) deckStage.style.display = 'none';
+    if (activeBanner) activeBanner.style.display = 'none';
+
+    if (window.a11y) {
+      window.a11y.announceLive("Upload your CV or choose a demo CV to unlock tailored job cards.", false);
+    }
   }
 
   displayActiveCvBanner(profile) {
-    this.displayActiveAlxBanner(profile);
-  }
+    const banner = document.getElementById('active-cv-banner');
+    const nameEl = document.getElementById('active-cv-candidate-name');
+    const skillsPreview = document.getElementById('active-cv-skills-preview');
 
-  // -------------------------------------------------------------
-  // APPLIED JOBS PERSISTENT ARCHIVE
-  // -------------------------------------------------------------
-  getArchive() {
-    try {
-      const raw = localStorage.getItem('lb_applied_archive');
-      return raw ? JSON.parse(raw) : [];
-    } catch (_) {
-      return [];
-    }
-  }
+    if (!banner) return;
+    banner.style.display = 'flex';
+    if (nameEl) nameEl.textContent = profile.fullName || 'Verified Candidate Profile';
 
-  saveToArchive(record) {
-    try {
-      const archive = this.getArchive();
-      const jId = record.jobId || record.id;
-      const existingIdx = archive.findIndex(item => item.jobId === jId);
-      const appRecord = {
-        jobId: jId,
-        title: record.jobTitle || record.title || 'Software Engineering Role',
-        employerName: record.employerName || 'Partner Organization',
-        location: (typeof record.location === 'object' && record.location ? `${record.location.city || ''}, ${record.location.country || ''}` : record.location) || 'Addis Ababa / Remote',
-        employmentType: record.employmentType || 'Full-time',
-        compensation: (typeof record.compensation === 'object' && record.compensation ? record.compensation.display : record.compensation) || record.compensationText || 'Competitive Market Rate',
-        matchScore: record.matchScore || 95,
-        appliedAt: record.appliedAt || new Date().toISOString(),
-        status: record.status || 'Submitted · Under Review',
-        coverNote: record.coverNote || 'Application submitted with verified ALX talent credentials.'
-      };
-
-      if (existingIdx >= 0) {
-        archive[existingIdx] = { ...archive[existingIdx], ...appRecord };
-      } else {
-        archive.unshift(appRecord);
-      }
-      localStorage.setItem('lb_applied_archive', JSON.stringify(archive));
-      this.updateArchiveBadges();
-      return appRecord;
-    } catch (err) {
-      console.warn('[EmploymentApp] Error saving to archive:', err);
-    }
-  }
-
-  updateArchiveBadges() {
-    const archive = this.getArchive();
-    const count = archive.length;
-    const topBadge = document.getElementById('top-archive-count-badge');
-    const bannerBadge = document.getElementById('archive-count-badge');
-    const modalBadge = document.getElementById('archive-total-badge');
-    if (topBadge) topBadge.textContent = count;
-    if (bannerBadge) bannerBadge.textContent = count;
-    if (modalBadge) modalBadge.textContent = `${count} Applied`;
-  }
-
-  openArchiveModal() {
-    const modal = document.getElementById('modal-archive');
-    const body = document.getElementById('archive-modal-body');
-    if (!modal || !body) return;
-
-    const archive = this.getArchive();
-    this.updateArchiveBadges();
-
-    if (archive.length === 0) {
-      body.innerHTML = `
-        <div class="archive-empty-box" style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-          <div style="font-size: 42px; margin-bottom: 12px;">📭</div>
-          <h4 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">No Applications Yet</h4>
-          <p style="font-size: 0.90rem; max-width: 380px; margin: 0 auto; color: var(--text-muted);">
-            When you swipe right on a job card or submit an application, it will be automatically recorded here for tracking.
-          </p>
-        </div>
-      `;
-    } else {
-      body.innerHTML = `
-        <div class="archive-list" style="display: flex; flex-direction: column; gap: 12px;">
-          ${archive.map(item => {
-            const formattedDate = new Date(item.appliedAt).toLocaleDateString(undefined, {
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            });
-            return `
-              <div class="archive-card" style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-line); border-radius: var(--radius-subcard); padding: 14px 16px;">
-                <div>
-                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                    <strong style="font-size: 1.05rem; color: var(--text-main);">${item.title}</strong>
-                    <span class="badge badge-verified" style="font-size: 0.72rem;">${item.matchScore}% Match</span>
-                  </div>
-                  <div style="font-size: 0.875rem; color: var(--text-secondary);">
-                    <span>${item.employerName}</span> · <span>${item.location}</span> · <span>${item.compensation}</span>
-                  </div>
-                  <div style="font-size: 0.775rem; color: var(--text-muted); margin-top: 4px;">
-                    Applied: ${formattedDate} via Verified ALX Profile
-                  </div>
-                </div>
-                <div style="text-align: right;">
-                  <span class="badge" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.78rem; font-weight: 700; display: inline-block; padding: 4px 10px; border-radius: 9999px;">
-                    ✓ ${item.status || 'Submitted'}
-                  </span>
-                  <div style="margin-top: 6px;">
-                    <a href="#job/${item.jobId}" class="btn btn-sm btn-outline" onclick="document.getElementById('modal-archive').close()" style="font-size: 0.75rem; padding: 3px 8px;">
-                      View Details
-                    </a>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
-    }
-
-    if (typeof modal.showModal === 'function') {
-      modal.showModal();
-    } else {
-      modal.setAttribute('open', '');
-    }
-  }
-
-  closeArchiveModal() {
-    const modal = document.getElementById('modal-archive');
-    if (!modal) return;
-    if (typeof modal.close === 'function') {
-      modal.close();
-    } else {
-      modal.removeAttribute('open');
-    }
-  }
-
-  // -------------------------------------------------------------
-  // ALX PROFILE & SETTINGS MODAL
-  // -------------------------------------------------------------
-  openProfileSettingsModal() {
-    const modal = document.getElementById('modal-profile-settings');
-    if (!modal) return;
-    if (window.a11y) {
-      window.a11y.playChime('neutral');
-      const msg = this.currentLang === 'am' ? 'የALX ፕሮፋይል እና ቅንብሮች ተከፍቷል' :
-                  this.currentLang === 'om' ? 'Qindaa\'ina piroofaayilii ALX banameera' :
-                  this.currentLang === 'ti' ? 'ቅጥዕታት ፕሮፋይል ALX ተኸፊቱ ኣሎ' : 'Opened ALX Profile & Settings';
-      window.a11y.showVisualToast(msg);
-      window.a11y.speak(msg);
-    }
-    if (typeof modal.showModal === 'function') {
-      modal.showModal();
-    } else {
-      modal.setAttribute('open', '');
-    }
-  }
-
-  closeProfileSettingsModal() {
-    const modal = document.getElementById('modal-profile-settings');
-    if (!modal) return;
-    if (typeof modal.close === 'function') {
-      modal.close();
-    } else {
-      modal.removeAttribute('open');
+    if (skillsPreview) {
+      const skills = (profile.skills || []).slice(0, 8);
+      skillsPreview.innerHTML = skills.map(s => `<span class="meta-pill">${s}</span>`).join(' ');
     }
   }
 
@@ -509,7 +338,7 @@ class EmploymentApp {
     }
   }
 
-  renderActiveCard(swapClass = null) {
+  renderActiveCard() {
     const deckStage = document.getElementById('swipe-deck-stage');
     const uploadStage = document.getElementById('cv-upload-stage');
     const wrapper = document.getElementById('active-card-wrapper');
@@ -532,18 +361,11 @@ class EmploymentApp {
     if (emptyState) emptyState.style.display = 'none';
 
     const currentItem = this.cardDeck[this.currentCardIndex];
-    wrapper.innerHTML = window.JobCardComponent.renderSwipeDeck(
-      this.cardDeck,
-      this.currentCardIndex
+    wrapper.innerHTML = window.JobCardComponent.renderSwipeCard(
+      currentItem,
+      this.currentCardIndex,
+      this.cardDeck.length
     );
-
-    if (swapClass) {
-      const stageEl = wrapper.querySelector('#deck-carousel-stage');
-      if (stageEl) {
-        stageEl.classList.add(swapClass);
-        setTimeout(() => stageEl.classList.remove(swapClass), 400);
-      }
-    }
 
     // Bind card action buttons
     const passBtn = wrapper.querySelector('#btn-card-pass');
@@ -562,74 +384,6 @@ class EmploymentApp {
         this.handleCardApply();
       };
     }
-
-    // Bind Carousel Navigation Controls (Circular Arrows + Pagination Dots from Image 2)
-    const carouselPrev = wrapper.querySelector('#btn-carousel-prev');
-    if (carouselPrev) {
-      carouselPrev.onclick = (e) => {
-        e.preventDefault();
-        this.handleCardPrevious();
-      };
-    }
-
-    const carouselNext = wrapper.querySelector('#btn-carousel-next');
-    if (carouselNext) {
-      carouselNext.onclick = (e) => {
-        e.preventDefault();
-        this.handleCardNext();
-      };
-    }
-
-    // Bind Side Background Cards Click to Navigate
-    const sidePrev = wrapper.querySelector('#deck-slide-prev');
-    if (sidePrev) {
-      sidePrev.onclick = (e) => {
-        e.preventDefault();
-        const target = sidePrev.getAttribute('data-target-index');
-        const targetIdx = parseInt(target, 10);
-        if (!isNaN(targetIdx) && targetIdx >= 0) {
-          if (targetIdx < this.currentCardIndex) {
-            this.handleCardPrevious();
-          } else {
-            this.handleCardNext();
-          }
-        } else {
-          this.handleCardPrevious();
-        }
-      };
-      sidePrev.onkeydown = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          sidePrev.click();
-        }
-      };
-    }
-
-    const sideNext = wrapper.querySelector('#deck-slide-next');
-    if (sideNext) {
-      sideNext.onclick = (e) => {
-        e.preventDefault();
-        this.handleCardNext();
-      };
-      sideNext.onkeydown = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this.handleCardNext();
-        }
-      };
-    }
-
-    // Bind Pagination Dots
-    const pageDots = wrapper.querySelectorAll('.deck-page-dot');
-    pageDots.forEach(dot => {
-      dot.onclick = (e) => {
-        e.preventDefault();
-        const targetIdx = parseInt(dot.getAttribute('data-jump-index'), 10);
-        if (!isNaN(targetIdx)) {
-          this.jumpToCard(targetIdx);
-        }
-      };
-    });
 
     // Bind More Details toggle button
     const toggleBtn = wrapper.querySelector('#btn-card-toggle-details');
@@ -656,7 +410,7 @@ class EmploymentApp {
 
     // Accessible announcements for screen readers & TTS
     const job = currentItem.job;
-    const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply, Left Arrow to pass, or M for full details.`;
+    const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply with CV, Left Arrow to pass, or M for full details.`;
     if (window.a11y) {
       window.a11y.announceLive(spokenSummary, false);
       if (window.a11y.currentMode === 'blind') {
@@ -729,7 +483,7 @@ class EmploymentApp {
     }
 
     // Next actions
-    parts.push(`To apply with your verified ALX profile, press Right Arrow or say Apply. To skip to the next opportunity, press Left Arrow or say Pass. To collapse details, press M or say Less.`);
+    parts.push(`To apply with your uploaded CV, press Right Arrow or say Apply. To skip to the next opportunity, press Left Arrow or say Pass. To collapse details, press M or say Less.`);
 
     return parts.join(' ');
   }
@@ -799,163 +553,47 @@ class EmploymentApp {
 
   handleVoiceCommand(transcript) {
     if (!transcript) return false;
-    const raw = transcript.trim();
-    const clean = raw.toLowerCase().replace(/[^\w\s\u1200-\u137F\u00C0-\u024F]/g, ' ').trim();
+    const clean = transcript.toLowerCase().replace(/[^\w\s]/g, ' ').trim();
     const words = clean.split(/\s+/);
-    console.log("[EmploymentApp] Voice command heard:", raw, "clean:", clean);
+    console.log("[EmploymentApp] Voice command heard:", transcript, "clean:", clean);
 
-    // Multilingual command keywords for Apply (English, Amharic, Afaan Oromoo, Tigrinya)
-    const isApply = words.includes('apply') || words.includes('right') || words.includes('yes') ||
-                    words.includes('submit') || words.includes('accept') || words.includes('send') ||
-                    words.includes('approve') || clean.includes('apply') || clean.includes('submit') ||
-                    clean.includes('accept') ||
-                    // Amharic (አማርኛ)
-                    clean.includes('አመልክት') || clean.includes('አመልክቺ') || clean.includes('አመልክትልኝ') ||
-                    clean.includes('አቅርብ') || clean.includes('ተግብር') || clean.includes('ማመልከቻ') ||
-                    clean.includes('መዝግብ') || clean.includes('አስገባ') || clean.includes('አዎ') ||
-                    clean.includes('amelkit') || clean.includes('mamelkecha') || clean.includes('tegibir') || clean.includes('asgeba') ||
-                    // Afaan Oromoo
-                    clean.includes('iyyadhu') || clean.includes('iyyannoo') || clean.includes('galchi') ||
-                    clean.includes('fudhadhu') || clean.includes('eeyyee') || clean.includes('mirga') ||
-                    clean.includes('ergi') || clean.includes('milkeessi') ||
-                    // Tigrinya (ትግርኛ)
-                    clean.includes('ኣመልክት') || clean.includes('ተወከስ') || clean.includes('እወ') ||
-                    clean.includes('የማን') || clean.includes('ኣቕርብ');
-
-    if (isApply) {
-      if (window.a11y) {
-        window.a11y.stopSpeech();
-        window.a11y.playChime('success');
-      }
-      this.handleCardApply();
-      const ack = this.currentLang === 'am' ? 'በALX ፕሮፋይልዎ አመልክተዋል' :
-                  this.currentLang === 'om' ? 'Piroofaayilii ALX keessaniin milkiin iyyattaniittu' :
-                  this.currentLang === 'ti' ? 'ብALX ፕሮፋይልኩም ብዓወት ኣመልክትኩም ኣለኹም' : 'Applied with your verified ALX profile';
-      if (window.a11y) {
-        window.a11y.showVisualToast(`Voice: ${ack}`);
-        window.a11y.speak(ack);
-      }
-      return true;
-    }
-
-    // Multilingual command keywords for Reject / Pass (English, Amharic, Afaan Oromoo, Tigrinya)
-    const isPass = words.includes('pass') || words.includes('skip') || words.includes('left') ||
-                   words.includes('no') || words.includes('next') || words.includes('reject') ||
-                   words.includes('decline') || words.includes('dismiss') || words.includes('drop') ||
-                   clean.includes('reject') || clean.includes('pass') || clean.includes('skip') ||
-                   clean.includes('decline') || clean.includes('dismiss') ||
-                   // Amharic (አማርኛ)
-                   clean.includes('ውድቅ') || clean.includes('እለፍ') || clean.includes('ለፍ') ||
-                   clean.includes('አትቀበል') || clean.includes('አትፈልግም') || clean.includes('ተው') ||
-                   clean.includes('ተወው') || clean.includes('አይሆንም') || clean.includes('ዝለል') ||
-                   clean.includes('ግራ') || clean.includes('አልፈልግም') || clean.includes('ቀጣይ') ||
-                   clean.includes('widik') || clean.includes('ilef') || clean.includes('tew') || clean.includes('atikebel') ||
-                   // Afaan Oromoo
-                   clean.includes('didi') || clean.includes('didii') || clean.includes('diduu') ||
-                   clean.includes('dhiisi') || clean.includes('darbi') || clean.includes('hin barbaadu') ||
-                   clean.includes('lakki') || clean.includes('bitaa') || clean.includes('kufisi') ||
-                   // Tigrinya (ትግርኛ)
-                   clean.includes('ንጸግ') || clean.includes('ሕለፍ') || clean.includes('ሕደግ') ||
-                   clean.includes('ኣይደልን') || clean.includes('ኣይፋልን') || clean.includes('ጸጋም') ||
-                   clean.includes('ንዓቕ') || clean.includes('nitseg') || clean.includes('hilef') || clean.includes('hideg');
-
-    if (isPass) {
-      if (window.a11y) {
-        window.a11y.stopSpeech();
-        window.a11y.playChime('neutral');
-      }
-      this.handleCardPass();
-      const ack = this.currentLang === 'am' ? 'ይህ የስራ እድል ታክቷል፡ ወደ ቀጣይ አልፈናል' :
-                  this.currentLang === 'om' ? 'Carraan kun dhiifameera, gara isa itti aanutti darbine' :
-                  this.currentLang === 'ti' ? 'እዚ ዕድል ስራሕ ሓሊፉ፡ ናብ ዝቕጽል ሓሊፍና' : 'Passed to next opportunity';
-      if (window.a11y) {
-        window.a11y.showVisualToast(`Voice: ${ack}`);
-        window.a11y.speak(ack);
-      }
-      return true;
-    }
-
-    // Profile Settings modal command (English, Amharic, Oromiffa, Tigrinya)
-    const isProfile = words.includes('profile') || words.includes('settings') || words.includes('account') ||
-                      clean.includes('profile') || clean.includes('settings') || clean.includes('account') ||
-                      // Amharic (አማርኛ)
-                      clean.includes('ፕሮፋይል') || clean.includes('መገለጫ') || clean.includes('ቅንብሮች') ||
-                      clean.includes('የኔ ፕሮፋይል') || clean.includes('አካውንት') ||
-                      // Afaan Oromoo
-                      clean.includes('piroofaayilii') || clean.includes('qindaa') || clean.includes('piroofaayilii koo') ||
-                      // Tigrinya (ትግርኛ)
-                      clean.includes('መለለዪ') || clean.includes('ቅጥዕታት') || clean.includes('ፕሮፋይለይ');
-    if (isProfile) {
-      if (window.a11y) window.a11y.stopSpeech();
-      this.openProfileSettingsModal();
-      return true;
-    }
-
-    // Dashboard return command
-    const isDashboard = words.includes('dashboard') || clean.includes('dashboard') || clean.includes('alx') ||
-                        clean.includes('home') || clean.includes('ተመለስ') || clean.includes('ወደ ዳሽቦርድ');
-    if (isDashboard) {
-      if (window.a11y) {
-        window.a11y.stopSpeech();
-        window.a11y.playChime('success');
-      }
-      window.location.href = '/';
-      return true;
-    }
-
-    // Archive modal command
-    const isArchive = words.includes('archive') || clean.includes('archive') || clean.includes('applied') ||
-                      clean.includes('የተመለከቱ') || clean.includes('አርካይቭ');
-    if (isArchive) {
-      if (window.a11y) {
-        window.a11y.stopSpeech();
-        window.a11y.playChime('success');
-      }
-      this.openArchiveModal();
-      return true;
-    }
-
-    // Immediate silence / stop command
-    const isStop = words.includes('stop') || words.includes('quiet') || words.includes('shut') ||
-                   clean.includes('stop') || clean.includes('ዝም') || clean.includes('dhaabi');
-    if (isStop) {
-      if (window.a11y) window.a11y.stopSpeech();
-      return true;
-    }
-
+    // 1. More / Details Command
     const isMore = words.includes('more') || words.includes('detail') || words.includes('details') ||
                    words.includes('info') || words.includes('information') || words.includes('expand') ||
-                   words.includes('full') || words.includes('read') || clean.includes('more') ||
-                   clean.includes('ተጨማሪ') || clean.includes('ዝርዝር') || clean.includes('bal ina');
+                   words.includes('full') || words.includes('read') || clean.includes('more');
 
     if (isMore) {
-      if (window.a11y) window.a11y.playChime('success');
       this.showCardDetailsAndRead();
       if (window.a11y) window.a11y.showVisualToast('Voice: Reading full job details aloud');
       return true;
     }
 
+    // 2. Collapse / Less Command
     const isLess = words.includes('less') || words.includes('collapse') || words.includes('close') ||
-                   words.includes('hide') || words.includes('stop') ||
-                   clean.includes('ዝጋ') || clean.includes('dhaabi') || clean.includes('ዕጸው');
-
+                   words.includes('hide') || words.includes('stop');
     if (isLess) {
-      if (window.a11y) window.a11y.playChime('neutral');
       this.collapseCardDetails();
       if (window.a11y) window.a11y.showVisualToast('Voice: Collapsed details');
       return true;
     }
 
-    const isBack = words.includes('back') || words.includes('previous') ||
-                   clean.includes('ተመለስ') || clean.includes('dudduuba');
+    // 3. Apply / Right Command
+    const isApply = words.includes('apply') || words.includes('right') || words.includes('yes') ||
+                    words.includes('submit') || clean.includes('apply');
+    if (isApply) {
+      if (window.a11y) window.a11y.stopSpeech();
+      this.handleCardApply();
+      if (window.a11y) window.a11y.showVisualToast('Voice: Applied with CV');
+      return true;
+    }
 
-    if (isBack) {
-      if (window.a11y) {
-        window.a11y.stopSpeech();
-        window.a11y.playChime('neutral');
-      }
-      this.handleCardPrevious();
-      if (window.a11y) window.a11y.showVisualToast('Voice: Previous opportunity');
+    // 4. Pass / Left Command
+    const isPass = words.includes('pass') || words.includes('skip') || words.includes('left') ||
+                   words.includes('no') || words.includes('next') || clean.includes('pass') || clean.includes('skip');
+    if (isPass) {
+      if (window.a11y) window.a11y.stopSpeech();
+      this.handleCardPass();
+      if (window.a11y) window.a11y.showVisualToast('Voice: Passed Opportunity');
       return true;
     }
 
@@ -1017,11 +655,9 @@ class EmploymentApp {
 
       if (deltaX > threshold) {
         // Swiped Right -> Apply
-        cardEl.style.transform = '';
         this.handleCardApply();
       } else if (deltaX < -threshold) {
         // Swiped Left -> Pass
-        cardEl.style.transform = '';
         this.handleCardPass();
       } else {
         // Snap back to neutral stacked position
@@ -1062,12 +698,12 @@ class EmploymentApp {
       stackEl.classList.add('deck-animating');
     }
 
-    // Submit Application automatically using verified ALX Learner Profile
+    // Submit Application automatically using the uploaded CV
     try {
       const applyPayload = {
         jobId: job.id,
-        resumeId: 'alx-verified-profile',
-        coverNote: `Direct application submitted via verified ALX Talent Profile (${currentItem.matchScore}% match).`,
+        resumeId: 'uploaded-cv',
+        coverNote: `Direct application submitted via LearnBridge CV Smart Match (${currentItem.matchScore}% match).`,
         shareAccommodations: true
       };
 
@@ -1083,40 +719,19 @@ class EmploymentApp {
       console.warn("[EmploymentApp] Direct apply error:", err);
     }
 
-    // Save to Persistent Archive
-    this.saveToArchive({
-      jobId: job.id,
-      title: job.title,
-      employerName: job.employerName,
-      location: job.location?.city ? `${job.location.city}, ${job.location.country}` : 'Addis Ababa / Remote',
-      employmentType: job.employmentType,
-      compensationText: job.compensation?.display || 'Competitive',
-      matchScore: currentItem.matchScore || 95,
-      appliedAt: new Date().toISOString(),
-      status: 'Submitted · Under Review',
-      coverNote: `Direct application submitted with verified ALX talent credentials (${currentItem.matchScore}% match).`
-    });
-
     // Audio & Toast Feedback
-    const successMsg = `Applied for ${job.title} at ${job.employerName}! Saved to Archive.`;
+    const successMsg = `Applied for ${job.title} at ${job.employerName}!`;
     if (window.a11y) {
       window.a11y.playEarcon('chime');
       window.a11y.showVisualToast(successMsg, 2500);
       window.a11y.announceLive(successMsg, true);
     }
 
-    // Trigger visual 3D swap: front card flies right, background right comes forward
-    const stageEl = document.getElementById('deck-carousel-stage');
-    if (stageEl) {
-      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
-      stageEl.classList.add('is-swapping-apply');
-    }
-
     setTimeout(() => {
       this.currentCardIndex++;
       this.isCardAnimating = false;
-      this.renderActiveCard('has-just-swapped');
-    }, 360);
+      this.renderActiveCard();
+    }, 240);
   }
 
   handleCardPass() {
@@ -1127,11 +742,16 @@ class EmploymentApp {
     const currentItem = this.cardDeck[this.currentCardIndex];
     const job = currentItem.job;
 
-    // Trigger visual 3D swap: front card flies left, background right comes forward
-    const stageEl = document.getElementById('deck-carousel-stage');
-    if (stageEl) {
-      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
-      stageEl.classList.add('is-swapping-pass');
+    // Trigger visual swipe left animation & 3D stack lift
+    const cardEl = document.querySelector('.swipe-card');
+    const stackEl = document.getElementById('deck-3d-stack');
+    if (cardEl) {
+      cardEl.style.transform = '';
+      cardEl.style.transition = '';
+      cardEl.classList.add('anim-swipe-left');
+    }
+    if (stackEl) {
+      stackEl.classList.add('deck-animating');
     }
 
     const passMsg = `Passed on ${job.title}`;
@@ -1143,76 +763,8 @@ class EmploymentApp {
     setTimeout(() => {
       this.currentCardIndex++;
       this.isCardAnimating = false;
-      this.renderActiveCard('has-just-swapped');
-    }, 360);
-  }
-
-  handleCardPrevious() {
-    if (this.isCardAnimating || this.currentCardIndex <= 0) return;
-    this.isCardAnimating = true;
-    if (window.a11y) window.a11y.stopSpeech();
-
-    const stageEl = document.getElementById('deck-carousel-stage');
-    if (stageEl) {
-      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
-      stageEl.classList.add('is-swapping-prev');
-    }
-
-    const prevJob = this.cardDeck[this.currentCardIndex - 1]?.job;
-    const msg = prevJob ? `Previous: ${prevJob.title}` : 'Previous opportunity';
-    if (window.a11y) {
-      window.a11y.showVisualToast(msg, 1400);
-    }
-
-    setTimeout(() => {
-      this.currentCardIndex--;
-      this.isCardAnimating = false;
-      this.renderActiveCard('has-just-swapped-prev');
-    }, 360);
-  }
-
-  handleCardNext() {
-    if (this.isCardAnimating || this.currentCardIndex >= this.cardDeck.length - 1) return;
-    this.isCardAnimating = true;
-    if (window.a11y) window.a11y.stopSpeech();
-
-    const stageEl = document.getElementById('deck-carousel-stage');
-    if (stageEl) {
-      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
-      stageEl.classList.add('is-swapping-pass');
-    }
-
-    const nextJob = this.cardDeck[this.currentCardIndex + 1]?.job;
-    const msg = nextJob ? `Next: ${nextJob.title}` : 'Next opportunity';
-    if (window.a11y) {
-      window.a11y.showVisualToast(msg, 1200);
-    }
-
-    setTimeout(() => {
-      this.currentCardIndex++;
-      this.isCardAnimating = false;
-      this.renderActiveCard('has-just-swapped');
-    }, 340);
-  }
-
-  jumpToCard(targetIndex) {
-    if (this.isCardAnimating || targetIndex === this.currentCardIndex) return;
-    if (targetIndex < 0 || targetIndex >= this.cardDeck.length) return;
-    this.isCardAnimating = true;
-    if (window.a11y) window.a11y.stopSpeech();
-
-    const isFwd = targetIndex > this.currentCardIndex;
-    const stageEl = document.getElementById('deck-carousel-stage');
-    if (stageEl) {
-      stageEl.classList.remove('has-just-swapped', 'has-just-swapped-prev');
-      stageEl.classList.add(isFwd ? 'is-swapping-pass' : 'is-swapping-prev');
-    }
-
-    setTimeout(() => {
-      this.currentCardIndex = targetIndex;
-      this.isCardAnimating = false;
-      this.renderActiveCard(isFwd ? 'has-just-swapped' : 'has-just-swapped-prev');
-    }, 340);
+      this.renderActiveCard();
+    }, 240);
   }
 
   async processCvText(cvText, fileName = 'uploaded-cv.txt') {
@@ -1572,88 +1124,72 @@ class EmploymentApp {
       });
     });
 
-    // Archive Modal Triggers & Actions
-    const btnOpenArchive = document.getElementById('btn-open-archive');
-    if (btnOpenArchive) {
-      btnOpenArchive.addEventListener('click', () => this.openArchiveModal());
-    }
-
-    const btnOpenArchiveBanner = document.getElementById('btn-open-archive-banner');
-    if (btnOpenArchiveBanner) {
-      btnOpenArchiveBanner.addEventListener('click', () => this.openArchiveModal());
-    }
-
-    const btnViewArchiveEmpty = document.getElementById('btn-view-archive-empty');
-    if (btnViewArchiveEmpty) {
-      btnViewArchiveEmpty.addEventListener('click', () => this.openArchiveModal());
-    }
-
-    const btnCloseArchive = document.getElementById('btn-close-archive');
-    if (btnCloseArchive) {
-      btnCloseArchive.addEventListener('click', () => this.closeArchiveModal());
-    }
-
-    const btnCloseArchiveFooter = document.getElementById('btn-close-archive-footer');
-    if (btnCloseArchiveFooter) {
-      btnCloseArchiveFooter.addEventListener('click', () => this.closeArchiveModal());
-    }
-
-    // Modal background click close for Archive
-    const modalArchive = document.getElementById('modal-archive');
-    if (modalArchive) {
-      modalArchive.addEventListener('click', (e) => {
-        if (e.target === modalArchive) this.closeArchiveModal();
+    // Demo CV quick-select buttons
+    const btnDemoSwe = document.getElementById('btn-demo-swe');
+    if (btnDemoSwe) {
+      btnDemoSwe.addEventListener('click', () => {
+        this.loadDemoCv('demo/demo-cv-software-engineer.txt');
       });
     }
 
-    // Profile Settings Modal Triggers & Actions
-    const bannerProfile = document.getElementById('active-alx-profile-banner');
-    if (bannerProfile) {
-      bannerProfile.addEventListener('click', (e) => {
-        if (e.target && e.target.closest && e.target.closest('#btn-open-archive-banner')) return;
-        this.openProfileSettingsModal();
+    const btnDemoQa = document.getElementById('btn-demo-qa');
+    if (btnDemoQa) {
+      btnDemoQa.addEventListener('click', () => {
+        this.loadDemoCv('demo/demo-cv-accessibility-qa.txt');
       });
-      bannerProfile.addEventListener('keydown', (e) => {
+    }
+
+    // CV Dropzone & File Input
+    const dropzone = document.getElementById('cv-dropzone');
+    const fileInput = document.getElementById('cv-file-input');
+
+    if (dropzone && fileInput) {
+      dropzone.addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          this.openProfileSettingsModal();
+          fileInput.click();
+        }
+      });
+
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          this.handleFileUploaded(e.dataTransfer.files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files[0]) {
+          this.handleFileUploaded(fileInput.files[0]);
         }
       });
     }
 
-    const btnOpenProfileBanner = document.getElementById('btn-open-profile-banner');
-    if (btnOpenProfileBanner) {
-      btnOpenProfileBanner.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.openProfileSettingsModal();
+    // Re-upload CV and Restart Deck buttons
+    const btnReupload = document.getElementById('btn-reupload-cv');
+    if (btnReupload) {
+      btnReupload.addEventListener('click', () => {
+        localStorage.removeItem('lb_active_cv');
+        this.activeCandidateProfile = null;
+        this.cardDeck = [];
+        this.showCvUploadStage();
       });
     }
 
-    const btnOpenProfileTop = document.getElementById('btn-open-profile-top');
-    if (btnOpenProfileTop) {
-      btnOpenProfileTop.addEventListener('click', () => this.openProfileSettingsModal());
-    }
-
-    const btnCloseProfileModal = document.getElementById('btn-close-profile-modal');
-    if (btnCloseProfileModal) {
-      btnCloseProfileModal.addEventListener('click', () => this.closeProfileSettingsModal());
-    }
-
-    const btnSaveProfileSettings = document.getElementById('btn-save-profile-settings');
-    if (btnSaveProfileSettings) {
-      btnSaveProfileSettings.addEventListener('click', () => {
-        this.closeProfileSettingsModal();
-        if (window.a11y) {
-          window.a11y.playChime('success');
-          window.a11y.showVisualToast('Profile settings saved');
-        }
-      });
-    }
-
-    const modalProfileSettings = document.getElementById('modal-profile-settings');
-    if (modalProfileSettings) {
-      modalProfileSettings.addEventListener('click', (e) => {
-        if (e.target === modalProfileSettings) this.closeProfileSettingsModal();
+    const btnEmptyChange = document.getElementById('btn-empty-change-cv');
+    if (btnEmptyChange) {
+      btnEmptyChange.addEventListener('click', () => {
+        localStorage.removeItem('lb_active_cv');
+        this.activeCandidateProfile = null;
+        this.cardDeck = [];
+        this.showCvUploadStage();
       });
     }
 

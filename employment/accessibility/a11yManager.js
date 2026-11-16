@@ -27,17 +27,9 @@ class AccessibilityManager {
     this.gatewayInterval = null;
     this.gatewayActive = false;
 
-    // High-definition neural audio & anti-echo state (adopted from ALX Website)
-    this.isSpeaking = false;
-    this.lastSpeakingEndedTime = 0;
+    // Speech deduplication tracker
     this.lastSpokenText = '';
-    this.speakingWatchdog = null;
-    this.fetchAbortController = null;
-    this.currentAudio = null;
-    this.speakSeq = 0;
-    this.lastCommand = '';
-    this.lastCommandTime = 0;
-    this.lastSuccessfulCommandTime = 0;
+    this.lastSpokenTime = 0;
   }
 
   init() {
@@ -568,18 +560,49 @@ class AccessibilityManager {
   }
 
   getSpeechLang() {
-    if (this.currentLanguage === 'am') return 'am';
-    if (this.currentLanguage === 'om') return 'om';
-    if (this.currentLanguage === 'ti') return 'ti';
-    return 'en';
+    if (this.currentLanguage === 'am') return 'am-ET';
+    return 'en-US';
   }
 
-  playChime(type = 'success') {
+  speak(text, lang = null) {
+    if (!this.synth) return;
     try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      if (!this.audioCtx) this.audioCtx = new AudioCtx();
-      if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+      this.synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+      utterance.lang = lang || this.getSpeechLang();
+
+      const voices = this.synth.getVoices();
+      const targetLang = utterance.lang.slice(0, 2);
+      const matchedVoice = voices.find(v => v.lang.startsWith(targetLang));
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+      }
+
+      this.synth.speak(utterance);
+    } catch (err) {
+      console.warn("[A11yManager] Speech synthesis unavailable:", err.message);
+    }
+  }
+
+  stopSpeech() {
+    if (this.synth) {
+      this.synth.cancel();
+    }
+  }
+
+  playEarcon(type = 'chime') {
+    try {
+      if (!this.audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        this.audioCtx = new AudioContext();
+      }
+
+      if (this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
 
       const now = this.audioCtx.currentTime;
       const osc = this.audioCtx.createOscillator();
@@ -587,181 +610,32 @@ class AccessibilityManager {
       osc.connect(gain);
       gain.connect(this.audioCtx.destination);
 
-      if (type === 'success' || type === 'rising') {
-        osc.type = 'sine';
+      if (type === 'rising') {
         osc.frequency.setValueAtTime(523.25, now);
-        osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.12);
-        gain.gain.setValueAtTime(0.18, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
         osc.start(now);
-        osc.stop(now + 0.35);
+        osc.stop(now + 0.25);
       } else if (type === 'falling') {
-        osc.type = 'sine';
         osc.frequency.setValueAtTime(783.99, now);
         osc.frequency.exponentialRampToValueAtTime(523.25, now + 0.15);
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
         osc.start(now);
-        osc.stop(now + 0.28);
+        osc.stop(now + 0.25);
       } else {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(440, now);
-        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(659.25, now);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
         osc.start(now);
-        osc.stop(now + 0.28);
+        osc.stop(now + 0.3);
       }
     } catch (_) {}
   }
 
-  playEarcon(type = 'chime') {
-    this.playChime(type);
-  }
-
-  stopSpeech() {
-    this.speakSeq++;
-    if (this.speakingWatchdog) {
-      clearTimeout(this.speakingWatchdog);
-      this.speakingWatchdog = null;
-    }
-    if (this.fetchAbortController) {
-      try { this.fetchAbortController.abort(); } catch (_) {}
-      this.fetchAbortController = null;
-    }
-    if (this.currentAudio) {
-      try {
-        this.currentAudio.pause();
-        this.currentAudio.currentTime = 0;
-        this.currentAudio = null;
-      } catch (_) {}
-    }
-    if (this.synth) {
-      try { this.synth.cancel(); } catch (_) {}
-    }
-    this.isSpeaking = false;
-    this.lastSpeakingEndedTime = Date.now();
-    this.updateVoiceStatusUI(this.isListeningActive, false);
-  }
-
-  async speak(text, lang = null) {
-    if (!text || !text.trim()) return;
-
-    const targetLang = (lang || this.getSpeechLang() || 'en').slice(0, 2);
-
-    this.stopSpeech();
-    const currentSeq = ++this.speakSeq;
-    this.isSpeaking = true;
-    this.currentSpokenText = text.toLowerCase().trim();
-    this.lastSpokenText = this.currentSpokenText;
-    this.updateVoiceStatusUI(true, true);
-
-    // Watchdog to auto-release speaking lock after 7 seconds max
-    clearTimeout(this.speakingWatchdog);
-    this.speakingWatchdog = setTimeout(() => {
-      if (currentSeq === this.speakSeq) {
-        this.isSpeaking = false;
-        this.currentSpokenText = '';
-        this.lastSpeakingEndedTime = Date.now();
-        this.updateVoiceStatusUI(this.isListeningActive, false);
-      }
-    }, 7000);
-
-    try {
-      this.fetchAbortController = new AbortController();
-      const response = await fetch('/api/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text.trim(), lang: targetLang }),
-        signal: this.fetchAbortController.signal
-      });
-
-      if (currentSeq !== this.speakSeq) return;
-      const data = await response.json();
-      if (currentSeq !== this.speakSeq) return;
-
-      if (data && data.success && data.audioUrl) {
-        const audio = new Audio(data.audioUrl);
-        this.currentAudio = audio;
-        audio.onended = () => {
-          if (currentSeq === this.speakSeq) {
-            clearTimeout(this.speakingWatchdog);
-            this.isSpeaking = false;
-            this.currentSpokenText = '';
-            this.lastSpeakingEndedTime = Date.now();
-            this.updateVoiceStatusUI(this.isListeningActive, false);
-          }
-        };
-        audio.onerror = () => {
-          if (currentSeq === this.speakSeq) {
-            this.fallbackSpeak(text, targetLang, currentSeq);
-          }
-        };
-        try {
-          await audio.play();
-          return;
-        } catch (_) {
-          this.fallbackSpeak(text, targetLang, currentSeq);
-          return;
-        }
-      }
-    } catch (err) {
-      if (err.name === 'AbortError') return;
-      console.warn("[A11yManager] Neural TTS fetch error, falling back:", err);
-    }
-
-    if (currentSeq === this.speakSeq) {
-      this.fallbackSpeak(text, targetLang, currentSeq);
-    }
-  }
-
-  fallbackSpeak(text, lang, expectedSeq) {
-    if (expectedSeq && expectedSeq !== this.speakSeq) return;
-    if (!this.synth) {
-      this.isSpeaking = false;
-      this.updateVoiceStatusUI(this.isListeningActive, false);
-      return;
-    }
-    try {
-      this.synth.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = 1.05;
-      utter.pitch = 1.0;
-      utter.lang = lang === 'am' ? 'am-ET' : lang === 'ti' ? 'ti-ET' : lang === 'om' ? 'om-ET' : 'en-US';
-
-      utter.onend = () => {
-        if (!expectedSeq || expectedSeq === this.speakSeq) {
-          clearTimeout(this.speakingWatchdog);
-          this.isSpeaking = false;
-          this.lastSpeakingEndedTime = Date.now();
-          this.updateVoiceStatusUI(this.isListeningActive, false);
-        }
-      };
-      utter.onerror = () => {
-        if (!expectedSeq || expectedSeq === this.speakSeq) {
-          clearTimeout(this.speakingWatchdog);
-          this.isSpeaking = false;
-          this.lastSpeakingEndedTime = Date.now();
-          this.updateVoiceStatusUI(this.isListeningActive, false);
-        }
-      };
-      this.synth.speak(utter);
-    } catch (_) {
-      this.isSpeaking = false;
-      this.updateVoiceStatusUI(this.isListeningActive, false);
-    }
-  }
-
   setupSpeechRecognition() {
-    // 1. Check if running inside iframe (embedded under LearnBridge LMS)
-    if (typeof window !== 'undefined' && window.self !== window.top) {
-      console.log("[A11yManager] Embedded in iframe: microphone lifecycle delegated to parent LearnBridgeVoiceController via VoiceBridge.");
-      this.isListeningActive = false;
-      this.voiceActive = false;
-      this.initVoiceBridge();
-      return;
-    }
-
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       console.warn("[A11yManager] SpeechRecognition not available in this environment.");
@@ -772,199 +646,94 @@ class AccessibilityManager {
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = true;
       this.recognition.interimResults = true;
-      this.recognition.lang = this.getSpeechLang(this.currentLanguage || 'en');
-      this.isListeningActive = false; // Explicit tap-to-speak; no unprompted auto-listen
+      this.recognition.lang = 'en-US';
+      this.isListeningActive = true;
 
       this.recognition.onstart = () => {
         this.voiceActive = true;
-        this.updateVoiceStatusUI(true, this.isSpeaking);
+        this.updateVoiceStatusUI(true);
+        this.announceLive("Voice listening active. Say more, apply, or pass.", false);
       };
 
       this.recognition.onend = () => {
         this.voiceActive = false;
-        // Never loop synchronously at 0ms. Controlled backoff only if intentionally listening.
         if (this.isListeningActive) {
-          setTimeout(() => {
-            if (this.isListeningActive && !this.voiceActive) {
-              try {
-                this.recognition.start();
-              } catch (_) {
-                this.updateVoiceStatusUI(false, this.isSpeaking);
-              }
-            }
-          }, 600);
+          try {
+            this.recognition.start();
+          } catch (_) {
+            this.updateVoiceStatusUI(false);
+          }
         } else {
-          this.updateVoiceStatusUI(false, this.isSpeaking);
+          this.updateVoiceStatusUI(false);
         }
       };
 
       this.recognition.onerror = (e) => {
         console.warn("[A11yManager] Voice recognition error:", e.error);
-        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        if (e.error === 'not-allowed') {
           this.isListeningActive = false;
-          this.updateVoiceStatusUI(false, false);
-          this.showVisualToast("Microphone access denied. Please click the microphone button to grant access.");
+          this.updateVoiceStatusUI(false);
+          this.showVisualToast("Microphone access denied. Please click the microphone icon in your browser address bar to allow.");
         }
       };
 
       this.recognition.onresult = (event) => {
-        // Allow instant barge-in for commands like apply, reject, pass, stop, profile in all languages
-        if (this.isSpeaking) {
-          let hasCommand = false;
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            const tr = (event.results[i][0]?.transcript || '').toLowerCase();
-            if (tr.includes('apply') || tr.includes('reject') || tr.includes('pass') || tr.includes('stop') ||
-                tr.includes('dashboard') || tr.includes('profile') || tr.includes('settings') || tr.includes('archive') ||
-                // Amharic (አማርኛ)
-                tr.includes('አመልክት') || tr.includes('አመልክቺ') || tr.includes('ማመልከቻ') || tr.includes('ውድቅ') ||
-                tr.includes('ቀጣይ') || tr.includes('እለፍ') || tr.includes('ለፍ') || tr.includes('ተው') ||
-                tr.includes('ፕሮፋይል') || tr.includes('አርካይቭ') || tr.includes('ተመለስ') || tr.includes('ዝም') ||
-                tr.includes('amelkit') || tr.includes('widik') || tr.includes('ilef') ||
-                // Afaan Oromoo
-                tr.includes('iyyadhu') || tr.includes('didi') || tr.includes('didii') || tr.includes('darbi') ||
-                tr.includes('dhaabi') || tr.includes('piroofaayilii') || tr.includes('arkaa') ||
-                // Tigrinya (ትግርኛ)
-                tr.includes('ኣመልክት') || tr.includes('ንጸግ') || tr.includes('ሕለፍ') || tr.includes('መለለዪ') ||
-                tr.includes('nitseg') || tr.includes('hilef')) {
-              hasCommand = true;
-              break;
-            }
-          }
-          if (hasCommand) {
-            this.stopSpeech();
-          } else {
-            return;
-          }
-        } else if (Date.now() - this.lastSpeakingEndedTime < 350) {
-          return;
-        }
-
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           const res = event.results[i];
-          if (!res.isFinal) continue; // Only execute on final transcript to prevent interim false triggers
-          const transcript = (res[0]?.transcript || '').trim();
-          if (!transcript) continue;
-
-          // Strict echo rejection against last spoken system message
-          if (this.lastSpokenText && transcript.length > 2) {
-            const cleanT = transcript.toLowerCase();
-            const cleanS = this.lastSpokenText.toLowerCase();
-            if (cleanS.includes(cleanT) || (cleanT.length > 6 && cleanS.slice(0, 30).includes(cleanT.slice(0, 10)))) {
-              continue;
-            }
-          }
+          const transcript = res[0]?.transcript || '';
+          console.log("[A11yManager] Heard voice result:", transcript, "isFinal:", res.isFinal);
 
           if (window.app && typeof window.app.handleVoiceCommand === 'function') {
             const handled = window.app.handleVoiceCommand(transcript);
-            if (handled) {
-              this.playChime('success');
-              break;
-            }
+            if (handled) break;
           }
         }
       };
+
+      // Auto-start microphone by default on load or first interaction
+      this.startMicDefault();
     } catch (err) {
       console.warn("[A11yManager] Failed to init SpeechRecognition:", err);
     }
   }
 
-  initVoiceBridge() {
-    if (typeof VoiceBridge === 'undefined') {
-      console.warn("[A11yManager] VoiceBridge not available in frame.");
-      return;
+  startMicDefault() {
+    this.isListeningActive = true;
+    try {
+      this.recognition.start();
+      this.updateVoiceStatusUI(true);
+    } catch (_) {
+      // Browser requires user gesture to start microphone: hook first user interaction
+      const startOnGesture = () => {
+        if (this.isListeningActive && !this.voiceActive && this.recognition) {
+          try {
+            this.recognition.start();
+            this.updateVoiceStatusUI(true);
+          } catch (_) {}
+        }
+      };
+      window.addEventListener('click', startOnGesture, { once: true });
+      window.addEventListener('keydown', startOnGesture, { once: true });
+      window.addEventListener('pointerdown', startOnGesture, { once: true });
     }
-    this.voiceBridge = new VoiceBridge(false); // child mode
-
-    this.voiceBridge.registerActionHandler('JOB_APPLY', () => {
-      console.log('[A11yManager] Received JOB_APPLY via VoiceBridge');
-      if (window.app && typeof window.app.handleCardApply === 'function') {
-        window.app.handleCardApply();
-        return { applied: true };
-      }
-      const btn = document.getElementById('btnApply') || document.querySelector('.btn-apply');
-      if (btn) { btn.click(); return { applied: true }; }
-      return { applied: false };
-    });
-
-    this.voiceBridge.registerActionHandler('JOB_PASS', () => {
-      console.log('[A11yManager] Received JOB_PASS via VoiceBridge');
-      if (window.app && typeof window.app.handleCardPass === 'function') {
-        window.app.handleCardPass();
-        return { passed: true };
-      }
-      const btn = document.getElementById('btnPass') || document.querySelector('.btn-pass');
-      if (btn) { btn.click(); return { passed: true }; }
-      return { passed: false };
-    });
-
-    this.voiceBridge.registerActionHandler('JOB_DETAILS', () => {
-      console.log('[A11yManager] Received JOB_DETAILS via VoiceBridge');
-      if (window.app && typeof window.app.openDetailsModal === 'function') {
-        window.app.openDetailsModal();
-        return { details: true };
-      }
-      const btn = document.getElementById('btnDetails') || document.querySelector('.btn-details');
-      if (btn) { btn.click(); return { details: true }; }
-      return { details: false };
-    });
-
-    this.voiceBridge.registerActionHandler('JOB_ARCHIVE', () => {
-      if (window.app && typeof window.app.switchView === 'function') {
-        window.app.switchView('archive');
-        return { view: 'archive' };
-      }
-      return { view: false };
-    });
-
-    this.voiceBridge.registerActionHandler('JOB_PROFILE_SETTINGS', () => {
-      if (window.app && typeof window.app.openProfileModal === 'function') {
-        window.app.openProfileModal();
-        return { profile: true };
-      }
-      const btn = document.getElementById('btnProfile') || document.getElementById('profileBtn');
-      if (btn) { btn.click(); return { profile: true }; }
-      return { profile: false };
-    });
-
-    this.voiceBridge.registerActionHandler('JOB_READ_CARD', () => {
-      if (window.app && typeof window.app.readCurrentJobCardAloud === 'function') {
-        window.app.readCurrentJobCardAloud();
-        return { read: true };
-      }
-      return { read: false };
-    });
-
-    this.voiceBridge.registerActionHandler('PING', () => ({ pong: true, timestamp: Date.now() }));
   }
 
   toggleVoiceListening() {
-    if (typeof window !== 'undefined' && window.self !== window.top) {
-      // Running in iframe: request parent host to toggle microphone
-      try {
-        window.parent.postMessage({ type: 'LB_REQUEST_MIC_TOGGLE' }, window.location.origin);
-      } catch (_) {}
-      return;
-    }
-
     if (!this.recognition) {
-      this.showVisualToast("Speech recognition not supported in this browser. Please use keyboard navigation.");
+      this.showVisualToast("Speech recognition not supported in this browser. Please use M, Left Arrow, and Right Arrow.");
       return;
     }
 
     if (this.voiceActive || this.isListeningActive) {
       this.isListeningActive = false;
       try { this.recognition.stop(); } catch (_) {}
-      this.updateVoiceStatusUI(false, this.isSpeaking);
-      this.playChime('neutral');
-      this.showVisualToast("Microphone muted (Press V to resume).");
+      this.updateVoiceStatusUI(false);
+      this.showVisualToast("Microphone muted.");
     } else {
       this.isListeningActive = true;
       try {
-        this.recognition.lang = this.getSpeechLang(this.currentLanguage || 'en');
         this.recognition.start();
-        this.playChime('success');
-        this.updateVoiceStatusUI(true, this.isSpeaking);
-        this.showVisualToast("Listening: Say 'apply', 'pass', 'more', or 'less'");
+        this.showVisualToast("Listening for voice commands: 'more', 'apply', 'pass'");
       } catch (err) {
         console.warn("[A11yManager] Speech start error:", err);
         this.showVisualToast("Please allow microphone access in your browser.");
@@ -972,24 +741,19 @@ class AccessibilityManager {
     }
   }
 
-  updateVoiceStatusUI(isActive, isSpeaking = false) {
+  updateVoiceStatusUI(isActive) {
     this.voiceActive = isActive;
     const btns = document.querySelectorAll('.btn-deck-mic');
     btns.forEach(btn => {
-      const lbl = btn.querySelector('.mic-status-label');
-      if (isSpeaking) {
-        btn.classList.add('is-speaking');
-        btn.classList.remove('is-listening');
-        btn.setAttribute('aria-pressed', 'true');
-        if (lbl) lbl.textContent = 'Speaking 🔊';
-      } else if (isActive) {
-        btn.classList.remove('is-speaking');
+      if (isActive) {
         btn.classList.add('is-listening');
         btn.setAttribute('aria-pressed', 'true');
+        const lbl = btn.querySelector('.mic-status-label');
         if (lbl) lbl.textContent = 'Mic: Listening (V)';
       } else {
-        btn.classList.remove('is-speaking', 'is-listening');
+        btn.classList.remove('is-listening');
         btn.setAttribute('aria-pressed', 'false');
+        const lbl = btn.querySelector('.mic-status-label');
         if (lbl) lbl.textContent = 'Voice (V)';
       }
     });

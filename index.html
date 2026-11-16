@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Accessibility Keyboard Skip Link -->
+  <a href="#main-learning-content" class="skip-link">Skip to main learning content</a>
 
   <!-- ========================================================
        PAGE 1: SIGN IN / LANDING PAGE
@@ -51,20 +53,17 @@
                 </div>
               </div>
             </div>
-            <h1 id="loginWelcomeHeading">Welcome back!</h1>
-            <p id="loginWelcomeSub">Please enter your details.</p>
+            <h1 id="loginWelcomeHeading">Welcome to LearnBridge</h1>
+            <p id="loginWelcomeSub">Inclusive Learning Platform</p>
           </header>
 
-          <!-- Direct Sign In Section -->
-          <form id="login-form" novalidate style="margin-top: 2rem;">
-            <button type="submit" class="btn-signin" id="btn-login-submit" title="Log In to Dashboard" style="font-size: 1.15rem; font-weight: 600; padding: 0.95rem 1.75rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%;">
-              <span>Log in to Dashboard</span>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 12h14"></path>
-                <path d="M12 5l7 7-7 7"></path>
-              </svg>
+          <!-- Single Direct Login Action Button -->
+          <div class="login-action-box" style="margin-top: 2rem;">
+            <button type="button" class="btn-signin" id="btn-login-submit" style="width: 100%; padding: 16px 24px; font-size: 1.15rem; font-weight: 700; border-radius: 8px; background: #e02b20; color: #ffffff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.2s ease;" title="Log in to Dashboard">
+              <span>Log in</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>
@@ -75,6 +74,13 @@
        PAGE 2: ALX LEARNING DASHBOARD (LIGHT THEME LMS)
        ======================================================== -->
   <div id="page-learning" class="app-page">
+
+    <!-- Persistent Demo Sandbox Warning Banner -->
+    <div class="demo-sandbox-banner" id="demoSandboxBanner" hidden role="status">
+      <span class="badge-demo-status">⚠️ DEMO SANDBOX</span>
+      <span class="demo-banner-text">Operating in Guest Sandbox Mode with synthetic curriculum. Official milestone submissions and employer job applications require verified learner sign-in.</span>
+      <button type="button" class="btn-demo-exit" id="btnExitDemoMode" aria-label="Exit Demo Mode and Return to Sign In">Exit Demo</button>
+    </div>
     
     <!-- Top Navigation Header -->
     <header class="lms-header">
@@ -109,14 +115,8 @@
       </div>
 
       <div class="header-right">
-        <!-- LearnBridge Studio & Job Portal Integration Buttons -->
-        <a href="/" class="btn-job-portal" id="btnStudioPortal" title="LearnBridge Inclusive Learning Studio" aria-label="Open LearnBridge Inclusive Studio" style="background: rgba(11, 62, 59, 0.9); color: #85d7bb; border-color: rgba(133, 215, 187, 0.4); text-decoration: none;">
-          <span class="job-portal-icon" aria-hidden="true">🎧</span>
-          <span class="job-portal-text">Studio</span>
-        </a>
-
-        <!-- Job Portal Integration Button (Beside Language Selector) -->
-        <a href="/job-portal" target="_blank" class="btn-job-portal" id="btnJobPortal" title="ALX Job Portal — Match & Apply for Opportunities" aria-label="Open ALX Job Portal">
+        <!-- Job Portal Integration Button (Beside Language Selector - Opens in New Tab) -->
+        <a href="/job-portal" target="_blank" rel="noopener noreferrer" class="btn-job-portal" id="btnJobPortal" title="ALX Job Portal — Match & Apply for Opportunities" aria-label="Open ALX Job Portal in new tab">
           <span class="job-portal-icon" aria-hidden="true">💼</span>
           <span class="job-portal-text">Job Portal</span>
           <span class="job-portal-badge">NEW</span>
@@ -147,15 +147,6 @@
               <span class="lang-name">ትግርኛ (Tigrinya)</span>
             </button>
           </div>
-        </div>
-
-        <!-- Points Pill Badge -->
-        <div class="points-pill-badge" title="1140 total learning points">
-          <svg class="coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2">
-            <rect x="2" y="2" width="20" height="20" rx="4"/>
-            <path d="M12 6v12M8 10h8M8 14h6"/>
-          </svg>
-          <span id="headerPointsText">1140 points</span>
         </div>
 
         <!-- User Profile Avatar -->
@@ -272,15 +263,6 @@
                 <span data-i18n="nav-vod">Video on demand</span>
               </a>
             </li>
-
-            <!-- Job Portal (Integrated Employment Platform) -->
-            <li class="nav-item">
-              <a href="#jobs" class="nav-link nav-link-job-portal" data-tab="jobs" title="ALX Job Portal — Match & Apply for Opportunities" style="border: 1px solid rgba(211, 47, 47, 0.25); background: rgba(211, 47, 47, 0.04); border-radius: 8px;">
-                <span class="nav-icon" style="font-size: 1.15rem; display: inline-flex; align-items: center; justify-content: center;" aria-hidden="true">💼</span>
-                <span data-i18n="nav-jobs" style="font-weight: 700; color: var(--primary-red, #D32F2F);">Job Portal</span>
-                <span class="nav-badge-pill" style="background: var(--primary-red, #D32F2F); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; font-weight: 800; margin-left: auto;">NEW</span>
-              </a>
-            </li>
           </ul>
 
           <!-- Bottom Profile Nav Link -->
@@ -297,7 +279,7 @@
       </aside>
 
       <!-- Main Dynamic Content Canvas -->
-      <main class="lms-main-content">
+      <main class="lms-main-content" id="main-learning-content" tabindex="-1">
         
         <!-- ==============================================
              MOCKUP 1: HOME (EXACT MATCH TO USER SLIDE)
@@ -372,32 +354,6 @@
               </div>
             </article>
 
-          </div>
-
-          <!-- Featured Row: ALX Job Portal & Career Opportunities -->
-          <div class="dashboard-job-portal-banner" style="margin-top: 1.5rem; margin-bottom: 1.5rem; background: linear-gradient(135deg, #0b2420 0%, #071311 100%); border: 1.5px solid rgba(133, 215, 187, 0.35); border-radius: 14px; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem; color: #fff; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);">
-            <div style="flex: 1; min-width: 280px;">
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <span style="background: rgba(197, 241, 142, 0.2); color: #c5f18e; border: 1px solid rgba(197, 241, 142, 0.4); font-size: 0.70rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">CAREER ACCELERATION</span>
-                <span style="color: #85d7bb; font-size: 0.8rem; font-weight: 600;">ALX Integrated Employment Platform</span>
-              </div>
-              <h2 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin: 0 0 6px 0; display: flex; align-items: center; gap: 10px;">
-                <span>💼</span> Match with 12+ Tech Employers &amp; Remote Roles
-              </h2>
-              <p style="font-size: 0.88rem; color: #9bb5a4; margin: 0; line-height: 1.5;">
-                Explore verified software engineering, data analytics, and cloud opportunities with 3D Tinder card swiping, voice-guided applications, and Ethiopian Sign Language assistance.
-              </p>
-            </div>
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-              <button type="button" class="btn-dashboard-job-portal" id="btnOpenDashboardJobPortal" style="background: #c5f18e; color: #071311; font-weight: 800; font-size: 0.90rem; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.15s ease;" title="Open Integrated Job Portal">
-                <span>Explore Job Portal</span>
-                <span>→</span>
-              </button>
-              <a href="/job-portal" target="_blank" style="background: rgba(255, 255, 255, 0.1); color: #fff; text-decoration: none; font-size: 0.85rem; font-weight: 600; padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); display: inline-flex; align-items: center; gap: 6px;" title="Open in new window">
-                <span>New Tab</span>
-                <span>↗</span>
-              </a>
-            </div>
           </div>
 
           <!-- Bottom Row: 3 Status Cards Grid -->
@@ -661,7 +617,7 @@
 
                   <!-- SYNCHRONIZED CLOSED CAPTIONS / SUBTITLES BAR -->
                   <div class="video-subtitles-bar" id="videoSubtitlesBar" hidden aria-live="polite">
-                    <span class="video-subtitle-text" id="videoSubtitleText">Welcome to Module 8: Final Portfolio Integration &amp; Live Demo.</span>
+                    <span class="video-subtitle-text" id="videoSubtitleText">DO-IT: Disabilities, Opportunities, Internetworking, and Technology (University of Washington).</span>
                   </div>
 
                   <!-- THEATER FULL SCREEN TOP BAR (EXIT & CONTROLS) -->
@@ -1249,30 +1205,8 @@
              MOCKUP 10: ALX JOB PORTAL & EMPLOYMENT PLATFORM
              ============================================== -->
         <section id="tab-jobs" class="tab-pane">
-          <div class="job-portal-tab-header" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-            <div>
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 1.5rem;">💼</span>
-                <h1 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0;">ALX Job Portal &amp; Employment Platform</h1>
-                <span style="background: #fee2e2; color: #dc2626; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">INTEGRATED</span>
-              </div>
-              <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 0 0;">
-                AI-powered match recommendations, 3D swipeable card deck, voice-assisted application, and Ethiopian Sign Language (ESL).
-              </p>
-            </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <a href="/job-portal" target="_blank" class="btn-card-outline-action" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; padding: 8px 14px; font-weight: 600;" title="Open full standalone page in new window">
-                <span>Open in New Tab</span>
-                <span>↗</span>
-              </a>
-              <button type="button" class="btn-card-outline-action" id="btnReloadJobPortalFrame" style="padding: 8px 12px;" title="Reload Job Portal">
-                🔄 Refresh
-              </button>
-            </div>
-          </div>
-
           <!-- Embedded Seamless Job Portal -->
-          <div class="job-portal-embed-wrapper" style="width: 100%; height: 820px; border-radius: 14px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); background: #071311;">
+          <div class="job-portal-embed-wrapper" style="width: 100%; height: calc(100vh - 120px); border-radius: 14px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); background: #071311;">
             <iframe id="jobPortalIframe" src="/job-portal/" title="ALX Job Portal" style="width: 100%; height: 100%; border: none; display: block;" allow="microphone; autoplay; clipboard-write"></iframe>
           </div>
         </section>

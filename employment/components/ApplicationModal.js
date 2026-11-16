@@ -103,8 +103,8 @@ class ApplicationModal {
       this.dialog.showModal();
     }
     if (window.a11y) {
-      window.a11y.announceLive(`Application dialog opened for ${job.title}. Confirm your details with your verified ALX profile.`, true);
-      window.a11y.speak(`Apply for ${job.title} at ${job.employerName} with your verified ALX profile.`);
+      window.a11y.announceLive(`Application dialog opened for ${job.title}. Select your CV and confirm details.`, true);
+      window.a11y.speak(`Apply for ${job.title} at ${job.employerName}. Review your CV and optional accommodations.`);
     }
   }
 
@@ -127,10 +127,9 @@ class ApplicationModal {
   async submitApplication() {
     if (!this.activeJob || !this.candidate) return;
 
-    const coverNote = document.getElementById('apply-cover-note') ? document.getElementById('apply-cover-note').value : '';
-    const shareAccommodations = document.getElementById('apply-share-accomm') ? document.getElementById('apply-share-accomm').checked : false;
-    const resumeSelect = document.getElementById('apply-resume-select');
-    const resumeId = resumeSelect ? resumeSelect.value : 'alx-verified-profile';
+    const coverNote = document.getElementById('apply-cover-note').value;
+    const shareAccommodations = document.getElementById('apply-share-accomm').checked;
+    const resumeId = document.getElementById('apply-resume-select').value;
 
     const payload = {
       jobId: this.activeJob.id,
@@ -164,27 +163,13 @@ class ApplicationModal {
         return;
       }
 
-      // Successful submission - Archive it
-      if (window.app && typeof window.app.saveToArchive === 'function') {
-        window.app.saveToArchive({
-          jobId: this.activeJob.id,
-          jobTitle: this.activeJob.title,
-          employerName: this.activeJob.employerName,
-          compensation: this.activeJob.compensation,
-          location: this.activeJob.location,
-          remoteType: this.activeJob.remoteType,
-          matchScore: 98,
-          status: 'Submitted · Under Review',
-          coverNote: coverNote || 'Application submitted with verified ALX talent credentials.'
-        });
-      }
-
+      // Successful submission
       this.dialog.close();
       if (window.a11y) {
         window.a11y.playEarcon('rising');
-        window.a11y.showVisualToast(`Application submitted for ${this.activeJob.title}! Added to Archive.`);
-        window.a11y.announceLive(`Application successfully submitted for ${this.activeJob.title}. Saved in your Archive.`, true);
-        window.a11y.speak(`Congratulations. Your application for ${this.activeJob.title} has been submitted and archived.`);
+        window.a11y.showVisualToast(`Application submitted for ${this.activeJob.title}!`);
+        window.a11y.announceLive(`Application successfully submitted for ${this.activeJob.title}. Tracking is active on your dashboard.`, true);
+        window.a11y.speak(`Congratulations. Your application for ${this.activeJob.title} has been submitted.`);
       }
 
       // Refresh applications view if on applications page or dashboard

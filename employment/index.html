@@ -22,7 +22,7 @@
     <span id="visual-toast-text">System alert</span>
   </div>
 
-  <!-- Top Bar: Platform Brand on Left, Dashboard Link, Archive Button & Language Switcher at Right -->
+  <!-- Top Bar: Platform Brand on Left, Language Switcher at Top Right Only -->
   <header class="top-nav-bar" role="banner">
     <div class="brand-container">
       <a href="#search" style="text-decoration: none;">
@@ -31,36 +31,18 @@
       <span class="brand-tagline">Ethiopian & Remote Career Hub</span>
     </div>
 
-    <!-- Right-aligned Actions -->
-    <div class="top-nav-right" style="display: flex; align-items: center; gap: 12px;">
-      <!-- Back to ALX Dashboard Button -->
-      <a href="/" class="btn-back-dashboard" id="btn-back-dashboard" title="Return to ALX Learning Home & Dashboard">
-        <span>←</span> Back to ALX Dashboard
-      </a>
-
-      <!-- Learner Profile & Settings Button -->
-      <button type="button" class="btn-profile-top" id="btn-open-profile-top" title="View & edit your verified ALX Learner Profile and settings" aria-label="Open Learner Profile Settings">
-        <span>👤</span> Profile & Settings
-      </button>
-
-      <!-- Applied Jobs Archive Button -->
-      <button type="button" class="btn-archive-top" id="btn-open-archive" title="Review your submitted job applications" aria-label="Review applied jobs archive">
-        <span>📁</span> Archive (<span id="top-archive-count-badge">0</span>)
-      </button>
-
-      <!-- Top Right Language Switcher Dropdown -->
-      <div class="lang-dropdown-container">
-        <label for="lang-select-dropdown" class="visually-hidden">Interface Language</label>
-        <div class="lang-dropdown-wrapper">
-          <svg class="ui-icon" style="color: var(--primary-red); width: 15px; height: 15px; margin-right: 6px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          <select id="lang-select-dropdown" class="lang-select-dropdown" aria-label="Select Interface Language">
-            <option value="en">English (EN)</option>
-            <option value="am">አማርኛ (AM)</option>
-            <option value="om">Afaan Oromoo (OM)</option>
-            <option value="ti">ትግርኛ (TI)</option>
-            <option value="so">Af-Soomaali (SO)</option>
-          </select>
-        </div>
+    <!-- Top Right Language Switcher Dropdown -->
+    <div class="lang-dropdown-container">
+      <label for="lang-select-dropdown" class="visually-hidden">Interface Language</label>
+      <div class="lang-dropdown-wrapper">
+        <svg class="ui-icon" style="color: var(--primary-red); width: 15px; height: 15px; margin-right: 6px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <select id="lang-select-dropdown" class="lang-select-dropdown" aria-label="Select Interface Language">
+          <option value="en">English (EN)</option>
+          <option value="am">አማርኛ (AM)</option>
+          <option value="om">Afaan Oromoo (OM)</option>
+          <option value="ti">ትግርኛ (TI)</option>
+          <option value="so">Af-Soomaali (SO)</option>
+        </select>
       </div>
     </div>
   </header>
@@ -69,38 +51,62 @@
   <main class="fullscreen-main" id="main-employment-content" tabindex="-1">
 
     <!-- ========================================================= -->
-    <!-- PRIMARY FULL-SCREEN VIEW: MATCHED JOBS & SWIPEABLE DECK   -->
+    <!-- PRIMARY FULL-SCREEN VIEW: CV MATCHING & SWIPEABLE CARDS   -->
     <!-- ========================================================= -->
     <section id="view-search" class="page-view" aria-labelledby="search-heading">
 
-      <!-- Verified ALX Learner Profile Banner (Direct 1-Click Application, No CV Required) -->
-      <div id="active-alx-profile-banner" class="active-alx-banner" role="button" tabindex="0" title="Click to view & edit your verified ALX Profile Settings" aria-label="Open Learner Profile Settings">
-        <div class="alx-learner-info">
-          <div class="alx-learner-avatar" id="alx-learner-avatar">AH</div>
-          <div class="alx-learner-meta">
-            <div class="alx-learner-name-row">
-              <strong style="font-size: 1.05rem; color: var(--text-main);" id="alx-learner-name">Abenezer Habtamu</strong>
-              <span class="badge badge-verified">✓ ALX Certified Profile</span>
-              <span class="badge badge-points">1,140 XP</span>
-              <span class="badge" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd;">SWE Portfolio 100%</span>
-            </div>
-            <div class="alx-learner-sub" id="alx-learner-sub">
-              Software Engineering Learner · Professional Foundations Validated · Direct 1-Click Application Enabled
-            </div>
+      <!-- Active Candidate CV Banner (Displayed after CV is uploaded/selected) -->
+      <div id="active-cv-banner" class="active-cv-banner" style="display: none;">
+        <div class="active-cv-info">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg class="ui-icon" style="color: var(--primary-red); width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span style="font-weight: 700; color: var(--text-main);" id="active-cv-candidate-name">Candidate Profile</span>
+            <span class="badge badge-verified" id="active-cv-file-badge">CV Loaded</span>
           </div>
+          <div id="active-cv-skills-preview" class="active-cv-skills-row" style="margin-top: 6px;"></div>
         </div>
-        <div class="alx-banner-actions" style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="btn btn-sm btn-profile-settings" id="btn-open-profile-banner" title="View & edit your verified ALX Profile and accommodations">
-            ⚙️ Profile Settings
-          </button>
-          <button type="button" class="btn btn-sm btn-archive-nav" id="btn-open-archive-banner" title="Review your submitted job applications">
-            📁 Applied Archive (<span id="archive-count-badge">0</span>)
-          </button>
+        <button type="button" class="btn btn-sm btn-outline" id="btn-reupload-cv">
+          Change CV
+        </button>
+      </div>
+
+      <!-- CV Upload Stage (Shown if no CV uploaded yet) -->
+      <div id="cv-upload-stage" class="cv-upload-stage">
+        <h2 id="search-heading" class="cv-upload-title">Upload Your CV to Unlock Matched Jobs</h2>
+        <p class="cv-upload-subtitle">
+          LearnBridge analyzes your skills, experience, and accessibility needs to tailor and rank opportunities. Swipe right with your keyboard to apply directly.
+        </p>
+
+        <!-- Drag & Drop Zone -->
+        <div class="cv-dropzone" id="cv-dropzone" role="button" tabindex="0">
+          <input type="file" id="cv-file-input" accept=".txt,.pdf,.docx" style="display: none;">
+          <svg class="ui-icon" style="width: 36px; height: 36px; color: var(--primary-red); margin-bottom: 10px;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);">Drop your CV here or click to browse</div>
+          <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 4px;">Supports TXT, PDF, DOCX (Max 5MB)</div>
+        </div>
+
+        <div id="cv-upload-status" style="display: none; padding: 10px; margin-bottom: 14px; font-size: 0.875rem; border-radius: var(--radius-control); background: var(--primary-red-tint); color: var(--primary-red);"></div>
+
+        <!-- Quick Demo CV Options -->
+        <div class="demo-cv-section">
+          <div style="font-size: 0.875rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">
+            Or test instantly with a pre-configured Ethiopian Demo CV:
+          </div>
+          <div class="demo-cv-options">
+            <button type="button" class="btn btn-outline" id="btn-demo-swe">
+              <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Software Engineer Demo CV (React, TS, Python)
+            </button>
+            <button type="button" class="btn btn-outline" id="btn-demo-qa">
+              <svg class="ui-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Accessibility QA Demo CV (axe-core, Playwright)
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Swipeable Card Deck Stage (Immediate Match Display) -->
-      <div id="swipe-deck-stage" class="swipe-stage-container" style="display: block;">
+      <!-- Swipeable Card Deck Stage -->
+      <div id="swipe-deck-stage" class="swipe-stage-container" style="display: none;">
         <!-- Card Active Container -->
         <div id="active-card-wrapper" class="active-card-wrapper">
           <!-- Rendered via JS -->
@@ -111,14 +117,14 @@
           <div style="font-size: 40px; margin-bottom: 10px;">🎉</div>
           <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">You've Reviewed All Recommended Matches!</h3>
           <p style="color: var(--text-secondary); margin-top: 6px;" id="deck-empty-summary">
-            Applications have been automatically sent to the employers you approved with your verified ALX profile.
+            Applications have been automatically sent to the employers you approved with your CV.
           </p>
           <div style="display: flex; justify-content: center; gap: 12px; margin-top: 24px;">
             <button type="button" class="btn btn-primary" id="btn-restart-deck">
               Review Recommended Jobs Again
             </button>
-            <button type="button" class="btn btn-outline" id="btn-view-archive-empty">
-              📁 View Applied Jobs Archive
+            <button type="button" class="btn btn-outline" id="btn-empty-change-cv">
+              Upload Different CV
             </button>
           </div>
         </div>
@@ -310,14 +316,9 @@
 
       <div id="apply-error-banner" style="display: none; background: var(--primary-red-tint); border: 1px solid var(--primary-red-border); color: var(--primary-red); padding: 10px; border-radius: var(--radius-control); margin-bottom: 14px; font-size: 0.875rem;"></div>
 
-      <div class="alx-verified-apply-badge" style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid #10b981; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 1.6rem;">🎓</span>
-        <div>
-          <div style="font-weight: 700; color: #0f172a; font-size: 0.95rem;">Applying with Verified ALX Talent Profile</div>
-          <div style="font-size: 0.80rem; color: #475569; margin-top: 2px;">
-            Candidate: <strong>Abenezer Habtamu</strong> · Software Engineering Learner · 1,140 XP · Portfolio Validated
-          </div>
-        </div>
+      <div class="filter-group" style="margin-bottom: 14px;">
+        <label for="apply-resume-select" class="filter-label">Select Saved CV / Resume</label>
+        <select id="apply-resume-select" class="select-input"></select>
       </div>
 
       <div class="filter-group" style="margin-bottom: 14px;">
@@ -341,107 +342,6 @@
         <button type="submit" class="btn btn-primary" id="btn-submit-application">Confirm & Submit</button>
       </div>
     </form>
-  </dialog>
-
-  <!-- ========================================================= -->
-  <!-- PROFILE SETTINGS MODAL (LEARNER PROFILE & PREFERENCES)     -->
-  <!-- ========================================================= -->
-  <dialog id="modal-profile-settings" class="accessible-dialog modal-profile-settings" aria-labelledby="profile-modal-title" style="max-width: 620px; width: 95%;">
-    <div class="dialog-header">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 1.4rem;">👤</span>
-        <h3 id="profile-modal-title" class="dialog-title">ALX Verified Learner Profile & Settings</h3>
-      </div>
-      <button type="button" class="btn-close" id="btn-close-profile-modal" aria-label="Close profile settings">&times;</button>
-    </div>
-
-    <div class="dialog-body" style="padding: 18px 20px; max-height: 65vh; overflow-y: auto;">
-      <!-- Learner Hero Card -->
-      <div style="display: flex; align-items: center; gap: 16px; padding: 14px; background: rgba(16, 185, 129, 0.08); border: 1.5px solid #10b981; border-radius: 12px; margin-bottom: 18px;">
-        <div style="width: 54px; height: 54px; border-radius: 50%; background: #0f172a; color: #fff; font-weight: 800; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid #10b981;">
-          AH
-        </div>
-        <div style="flex: 1; min-width: 0;">
-          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <strong style="font-size: 1.15rem; color: var(--text-main);">Abenezer Habtamu</strong>
-            <span class="badge badge-verified">✓ Verified ALX Learner</span>
-            <span class="badge badge-points">1,140 XP</span>
-          </div>
-          <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 3px;">
-            abenezer.h@alx.app · Software Engineering Track · Addis Ababa, Ethiopia
-          </div>
-        </div>
-      </div>
-
-      <!-- Verified Qualifications & CV Replacement Note -->
-      <div style="margin-bottom: 18px; background: var(--bg-muted); border: 1px solid var(--border-line); border-radius: 10px; padding: 14px;">
-        <div style="font-weight: 700; color: var(--text-main); font-size: 0.92rem; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-          <span>🎓</span> Verified Credentials (Used as Direct Digital CV)
-        </div>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 10px 0;">
-          Your verified ALX competencies, project portfolio scores, and accommodation guarantees are directly verified and dispatched with your 1-click applications. No PDF upload needed.
-        </p>
-        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-          <span class="badge" style="background:#f0fdf4; color:#166534; border:1px solid #bbf7d0;">Full-Stack Web Specialization</span>
-          <span class="badge" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd;">SWE Portfolio 100% Validated</span>
-          <span class="badge" style="background:#fef3c7; color:#92400e; border:1px solid #fde68a;">Professional Foundations Complete</span>
-        </div>
-      </div>
-
-      <!-- Workplace Accommodations Setting -->
-      <div style="margin-bottom: 18px; background: var(--bg-muted); border: 1px solid var(--border-line); border-radius: 10px; padding: 14px;">
-        <label class="checkbox-label" style="font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
-          <input type="checkbox" id="profile-accomm-checkbox" checked>
-          <span>Include verified accessibility accommodations in job applications</span>
-        </label>
-        <p style="font-size: 0.80rem; color: var(--text-secondary); margin: 6px 0 0 24px;">
-          Screen-reader software compatibility, high-contrast visual materials, and flexible interview scheduling.
-        </p>
-      </div>
-
-      <!-- Quick Link to Full Dashboard Profile -->
-      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px;">
-        <div>
-          <strong style="font-size: 0.88rem; color: #1e293b;">Need to edit LMS credentials or bio?</strong>
-          <div style="font-size: 0.78rem; color: #64748b;">Manage password, contact info, and learning progress on your ALX Profile.</div>
-        </div>
-        <a href="/#profile" class="btn btn-sm btn-outline" style="text-decoration: none; white-space: nowrap;">
-          Open ALX Profile Settings ↗
-        </a>
-      </div>
-    </div>
-
-    <div class="dialog-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-top: 1px solid var(--border-line); background: var(--bg-muted);">
-      <a href="/#profile" style="font-size: 0.82rem; color: var(--primary-red); font-weight: 600; text-decoration: none;">
-        ← Back to Learning Dashboard Profile
-      </a>
-      <button type="button" class="btn btn-primary" id="btn-save-profile-settings">Save & Close</button>
-    </div>
-  </dialog>
-
-  <!-- ========================================================= -->
-  <!-- ARCHIVE MODAL (REVIEW SUBMITTED APPLICATIONS)             -->
-  <!-- ========================================================= -->
-  <dialog id="modal-archive" class="accessible-dialog modal-archive" aria-labelledby="archive-modal-title">
-    <div class="dialog-header">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 1.4rem;">📁</span>
-        <h3 id="archive-modal-title" class="dialog-title">Submitted Applications Archive</h3>
-        <span class="badge badge-verified" id="archive-total-badge">0 Applied</span>
-      </div>
-      <button type="button" class="btn-close" id="btn-close-archive" aria-label="Close archive dialog">&times;</button>
-    </div>
-
-    <div class="dialog-body" id="archive-modal-body" style="padding: 16px; max-height: 60vh; overflow-y: auto;">
-      <!-- Populated dynamically via JS -->
-    </div>
-
-    <div class="dialog-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-top: 1px solid var(--border-line); background: var(--bg-muted);">
-      <span style="font-size: 0.80rem; color: var(--text-muted);">
-        All applications submitted with verified ALX talent credentials.
-      </span>
-      <button type="button" class="btn btn-outline" id="btn-close-archive-footer">Close Archive</button>
-    </div>
   </dialog>
 
   <!-- External Job Redirect Modal -->
@@ -473,7 +373,6 @@
   </dialog>
 
   <!-- Scripts -->
-  <script src="voice/voiceBridge.js"></script>
   <script src="accessibility/a11yManager.js"></script>
   <script src="components/JobCard.js"></script>
   <script src="components/ApplicationModal.js"></script>

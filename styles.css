@@ -4883,4 +4883,164 @@ html, body {
   }
 }
 
+/* ========================================================
+   AUTHENTICATION & DEMO SANDBOX STYLES (WCAG 2.2 AA)
+   ======================================================== */
+.login-alert-box {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.login-alert-box[hidden] {
+  display: none !important;
+}
+
+.demo-mode-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.75rem 0 1rem 0;
+  color: var(--text-muted, #64748b);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.demo-mode-divider::before,
+.demo-mode-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.demo-mode-divider span {
+  padding: 0 0.75rem;
+}
+
+.demo-sandbox-card {
+  margin-top: 0.5rem;
+}
+
+.btn-demo-mode {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background-color: #f8fafc;
+  border: 1.5px dashed #94a3b8;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.btn-demo-mode:hover,
+.btn-demo-mode:focus-visible {
+  background-color: #f1f5f9;
+  border-color: #3b82f6;
+  outline: 2px solid #3b82f6;
+}
+
+.demo-badge-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.demo-content-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.demo-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.demo-subtitle {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.demo-arrow {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+/* Persistent Demo Sandbox Warning Banner in LMS */
+.demo-sandbox-banner {
+  background: linear-gradient(90deg, #fffbeb 0%, #fef3c7 100%);
+  border-bottom: 1.5px solid #f59e0b;
+  padding: 0.65rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.demo-sandbox-banner[hidden] {
+  display: none !important;
+}
+
+.badge-demo-status {
+  background-color: #b45309;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.demo-banner-text {
+  flex: 1;
+  font-weight: 500;
+}
+
+.btn-demo-exit {
+  background-color: #ffffff;
+  color: #b45309;
+  border: 1px solid #d97706;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.btn-demo-exit:hover {
+  background-color: #fef3c7;
+}
+
+/* 200% Zoom and 320px Reflow Safeguards */
+@media (max-width: 480px) {
+  .demo-sandbox-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+
 
