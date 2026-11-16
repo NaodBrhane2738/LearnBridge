@@ -259,6 +259,22 @@ class JobCardComponent {
           </div>
         ` : ''}
 
+        ${!isCenter ? `
+          <!-- Prominent Job Posting Preview Callout for Background Cards (Ensures Background Is Never Blank) -->
+          <div class="side-card-preview-callout side-callout-${role}">
+            <div class="side-callout-top-row">
+              <span class="side-callout-badge">${role === 'next' ? 'Next Up (→)' : 'Upcoming (←)'}</span>
+              <span class="side-callout-score">${matchScore}% Match</span>
+            </div>
+            <h3 class="side-callout-title">${escapeHTML(job.title)}</h3>
+            <div class="side-callout-sub">${escapeHTML(job.employerName)} • ${escapeHTML(job.location)}</div>
+            <div class="side-callout-meta">
+              <span class="side-callout-salary">${salaryString}</span>
+              <span class="side-callout-type">${escapeHTML(job.employmentType || 'Full-time')}</span>
+            </div>
+          </div>
+        ` : ''}
+
         <!-- Job Header -->
         <div class="swipe-card-header">
           <h2 class="swipe-card-title" id="${cardTitleId}">${escapeHTML(job.title)}</h2>
@@ -425,8 +441,8 @@ class JobCardComponent {
     const rightIndex = (currentIndex + 1) % total;
     const nextItem = total > 1 ? cardDeck[rightIndex] : null;
 
-    // 2. Left background card has the NEXT-NEXT one (currentIndex + 2) in queue
-    const leftIndex = (currentIndex + 2) % total;
+    // 2. Left background card has previous opportunity when moving forward, or upcoming in queue (+2) at start
+    const leftIndex = currentIndex > 0 ? (currentIndex - 1) : ((currentIndex + 2) % total);
     const leftItem = total > 2 ? cardDeck[leftIndex] : (total > 1 ? cardDeck[rightIndex] : null);
 
     // Pre-structured identical card markup for all 3 positions
