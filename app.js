@@ -3569,10 +3569,10 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         const isLoginPage = !state.isAuthenticated || (pageLogin && pageLogin.classList.contains('active'));
         if (isLoginPage) {
           const onboardingPrompts = {
-            am: "ዝግጁ ነው። ለመግባት log in ወይም ይግቡ ይበሉ።",
-            en: "Ready, say login or sign in to login",
-            om: "Qophii dha, seenuuf login jedhaa.",
-            ti: "ድሉው እዩ፣ ንምእታው login ወይ እቶ በሉ።"
+            am: "እንኳን ወደ LearnBridge በደህና መጡ። ቋንቋዎን ይምረጡ፡ English ወይም አማርኛ ይበሉ። ለመግባት ይግቡ ወይም login ይበሉ።",
+            en: "Welcome to LearnBridge. Please select your language: say English, Amharic, Oromo, or Tigrinya. Or say login to enter.",
+            om: "Baga gara LearnBridge nagaan dhuftan. Afaan keessan filadhaa: English, Oromo, ykn Amharic jedhaa. Seenuuf login jedhaa.",
+            ti: "እንቋዕ ብደሓን መጻእኹም። ቋንቋኹም ሕረዩ፡ እንግሊዝኛ፣ ትግርኛ፣ ወይ ኣምሓርኛ በሉ። ንምእታው login ወይ እቶ በሉ።"
           };
           const prompt = onboardingPrompts[currentLang] || onboardingPrompts.en;
           if (this.hudHeard) this.hudHeard.textContent = prompt;
@@ -4002,17 +4002,31 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           const now = Date.now();
           const normRaw = rawText.toLowerCase().replace(/[.,!?;:'"\\-_/\\()]/g, ' ').trim();
 
-          // INSTANT BARGE-IN FOR STOP:
+          // INSTANT BARGE-IN FOR STOP, LOGIN, AND LANGUAGE SELECTION:
           if (/^(stop|quiet|silence|shut up|mute|pause|ዝም|ቆም|ደው|dhaabi|ስቕ)/i.test(normRaw)) {
             this.stopSpeaking();
             if (typeof window.stopAllSpeech === 'function') window.stopAllSpeech('barge_in_stop');
             return;
           }
 
-          // STRICT ACOUSTIC ISOLATION:
-          // Never process recognition while assistant is speaking or right after (< 250ms)
-          if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 250) {
-            return;
+          // If assistant is speaking, allow instant barge-in for login, language, and card actions
+          if (this.isSpeaking) {
+            const isBargeInAction = /(?<![\p{L}\p{N}])(log in|sign in|login|signin|log me in|sign me in|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|ሳይን ኢን|seeni|seensa|እቶ|ምእታው|english|amharic|oromo|afaan oromoo|oromiffa|tigrinya|tigrigna|አማርኛ|ትግርኛ|እንግሊዝኛ|pass|reject|skip|apply)(?![\p{L}\p{N}])/iu.test(normRaw);
+            if (isBargeInAction) {
+              this.stopSpeaking();
+              if ('speechSynthesis' in window) {
+                try { window.speechSynthesis.cancel(); } catch (_) {}
+              }
+              this.isSpeaking = false;
+            } else if ((now - (this.lastSpeakingEndedTime || 0)) < 250) {
+              return;
+            }
+          } else if ((now - (this.lastSpeakingEndedTime || 0)) < 150) {
+            // Check if user is speaking an active command right after prompt ended
+            const isAllowedCommand = /(?<![\p{L}\p{N}])(log in|sign in|login|signin|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|seeni|እቶ|english|amharic|oromo|tigrinya|አማርኛ|ትግርኛ|እንግሊዝኛ|pass|reject|apply)(?![\p{L}\p{N}])/iu.test(normRaw);
+            if (!isAllowedCommand) {
+              return;
+            }
           }
 
           // Live visual feedback in HUD while user is speaking
@@ -4164,13 +4178,24 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
       // Dynamic acoustic isolation (prevent echo or self-feedback loops)
       if (!isExplicitUserAction) {
-        if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 250) {
+        const isBargeInCommand = /^(stop|quiet|silence|shut up|pause|ዝም|ቆም|ደው|dhaabi|ስቕ)/i.test(text) ||
+          /(?<![\p{L}\p{N}])(log in|sign in|login|signin|log me in|sign me in|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|seeni|seensa|እቶ|ምእታው|english|amharic|oromo|afaan oromoo|oromiffa|tigrinya|tigrigna|አማርኛ|ትግርኛ|እንግሊዝኛ|pass|reject|skip|apply)(?![\p{L}\p{N}])/iu.test(text);
+
+        if (this.isSpeaking) {
+          if (isBargeInCommand) {
+            this.stopSpeaking();
+            if ('speechSynthesis' in window) {
+              try { window.speechSynthesis.cancel(); } catch (_) {}
+            }
+            this.isSpeaking = false;
+          } else {
+            return false;
+          }
+        }
+        if ((now - (this.lastSuccessfulCommandTime || 0)) < 200) {
           return false;
         }
-        if ((now - (this.lastSuccessfulCommandTime || 0)) < 250) {
-          return false;
-        }
-        if (text === this.lastCommand && (now - this.lastCommandTime) < 600) {
+        if (text === this.lastCommand && (now - this.lastCommandTime) < 500) {
           return false;
         }
       }
@@ -4224,6 +4249,134 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         if (typeof window.stopAllSpeech === 'function') window.stopAllSpeech('voice_command');
         this.playChime('neutral');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'ድምፅ ቆሟል' : 'Speech stopped');
+        return true;
+      }
+
+      // 00-LANG. MULTI-LANGUAGE VOICE SELECTION ("ASK LIKE THE LANGUAGE")
+      const isEnglishCmd = /(?<![\p{L}\p{N}])(english|switch to english|change language to english|in english|select english|ወደ እንግሊዝኛ|በእንግሊዝኛ|እንግሊዝኛ|gara ingiliffaatti|ingiliffa|ናብ እንግሊዝኛ|ብእንግሊዝኛ)(?![\p{L}\p{N}])/iu.test(text) ||
+        text === 'english' || text === 'en' || text === 'እንግሊዝኛ';
+      if (isEnglishCmd) {
+        this.stopSpeaking();
+        this.clearWelcomeTimer();
+        this.lastCommand = text;
+        this.lastCommandTime = now;
+        this.lastSuccessfulCommandTime = now;
+        this.playChime('success');
+        if (typeof applyLanguage === 'function') {
+          applyLanguage('en', false);
+        }
+        if (window.universalGateway && window.universalGateway.isOpen) {
+          window.universalGateway.selectLanguage('en');
+        }
+        this.setRecognitionLanguage('en');
+        if (this.hudHeard) this.hudHeard.textContent = 'English (EN)';
+        this.speakInstant('Language set to English. Say login or sign in to enter.', 'en');
+        return true;
+      }
+
+      const isAmharicCmd = /(?<![\p{L}\p{N}])(amharic|switch to amharic|change language to amharic|in amharic|amharigna|select amharic|አማርኛ|አማርኛ ምረጥ|ቋንቋ ወደ አማርኛ|ወደ አማርኛ|በአማርኛ|አማርኛ አድርገው|ቋንቋ ቀይር ወደ አማርኛ)(?![\p{L}\p{N}])/iu.test(text) ||
+        text === 'amharic' || text === 'am' || text === 'አማርኛ';
+      if (isAmharicCmd) {
+        this.stopSpeaking();
+        this.clearWelcomeTimer();
+        this.lastCommand = text;
+        this.lastCommandTime = now;
+        this.lastSuccessfulCommandTime = now;
+        this.playChime('success');
+        if (typeof applyLanguage === 'function') {
+          applyLanguage('am', false);
+        }
+        if (window.universalGateway && window.universalGateway.isOpen) {
+          window.universalGateway.selectLanguage('am');
+        }
+        this.setRecognitionLanguage('am');
+        if (this.hudHeard) this.hudHeard.textContent = 'አማርኛ (AM)';
+        this.speakInstant('ቋንቋ ወደ አማርኛ ተቀይሯል። ለመግባት ይግቡ ወይም login ይበሉ።', 'am');
+        return true;
+      }
+
+      const isOromoCmd = /(?<![\p{L}\p{N}])(oromiffa|oromo|afaan oromoo|switch to oromiffa|switch to oromo|change language to oromo|in oromo|select oromo|afaan oromotti|gara afaan oromootti|gara oromootti|afaan oromootti jijjiiri)(?![\p{L}\p{N}])/iu.test(text) ||
+        text === 'oromo' || text === 'om' || text === 'oromiffa' || text === 'afaan oromoo';
+      if (isOromoCmd) {
+        this.stopSpeaking();
+        this.clearWelcomeTimer();
+        this.lastCommand = text;
+        this.lastCommandTime = now;
+        this.lastSuccessfulCommandTime = now;
+        this.playChime('success');
+        if (typeof applyLanguage === 'function') {
+          applyLanguage('om', false);
+        }
+        if (window.universalGateway && window.universalGateway.isOpen) {
+          window.universalGateway.selectLanguage('om');
+        }
+        this.setRecognitionLanguage('om');
+        if (this.hudHeard) this.hudHeard.textContent = 'Afaan Oromoo (OM)';
+        this.speakInstant('Afaan Oromotti jijjiirameera. Seenuuf login jedhaa.', 'om');
+        return true;
+      }
+
+      const isTigrinyaCmd = /(?<![\p{L}\p{N}])(tigrinya|tigrigna|switch to tigrinya|change language to tigrinya|in tigrinya|select tigrinya|ትግርኛ|ትግርኛ ምረጽ|ቋንቋ ናብ ትግርኛ|ናብ ትግርኛ|ብትግርኛ|ናብ ትግርኛ ቀይሮ)(?![\p{L}\p{N}])/iu.test(text) ||
+        text === 'tigrinya' || text === 'ti' || text === 'ትግርኛ' || text === 'tigrigna';
+      if (isTigrinyaCmd) {
+        this.stopSpeaking();
+        this.clearWelcomeTimer();
+        this.lastCommand = text;
+        this.lastCommandTime = now;
+        this.lastSuccessfulCommandTime = now;
+        this.playChime('success');
+        if (typeof applyLanguage === 'function') {
+          applyLanguage('ti', false);
+        }
+        if (window.universalGateway && window.universalGateway.isOpen) {
+          window.universalGateway.selectLanguage('ti');
+        }
+        this.setRecognitionLanguage('ti');
+        if (this.hudHeard) this.hudHeard.textContent = 'ትግርኛ (TI)';
+        this.speakInstant('ቋንቋ ናብ ትግርኛ ተቐይሩ ኣሎ። ንምእታው login ወይ እቶ በሉ።', 'ti');
+        return true;
+      }
+
+      // 00-LOGIN. ACCURATE VOICE SIGN IN IN SELECTED LANGUAGE
+      const isLoginTrigger = /(?<![\p{L}\p{N}])(log in|sign in|login|signin|log me in|sign me in|please log in|submit login|log in to dashboard|login to dashboard|enter|ተመዝገብ|ግባ|ይግቡ|መግቢያ|ሎግ ኢን|ሎጊን|ሳይን ኢን|ግባ ወደ ዳሽቦርድ|yigbu|igbu|egbu|yegebu|seeni|seensa|seeni gara daashboorditti|እቶ|ምእታው|ናብ ዳሽቦርድ እቶ)(?![\p{L}\p{N}])/iu.test(text) ||
+        text === 'login' || text === 'log in' || text === 'sign in' || text === 'signin' ||
+        text === 'ይግቡ' || text === 'ግባ' || text === 'መግቢያ' || text === 'ሎጊን' || text === 'ሎግ ኢን' ||
+        text === 'seeni' || text === 'seensa' || text === 'እቶ' || text === 'ምእታው' ||
+        /^click\s+(sign in|log in)$/i.test(text);
+
+      if (isLoginTrigger && (!state.isAuthenticated || isLoginContext)) {
+        this.stopSpeaking();
+        this.clearWelcomeTimer();
+        this.lastCommand = text;
+        this.lastCommandTime = now;
+        this.lastSuccessfulCommandTime = now;
+        this.playChime('success');
+
+        if (state.isAuthenticated) {
+          if (this.hudHeard) this.hudHeard.textContent = 'Already logged in';
+          window.location.hash = '#home';
+          showPage('learning');
+          switchTab('home');
+          return true;
+        }
+
+        // Close Gateway modal if open
+        const gatewayDialog = document.getElementById('gateway-dialog');
+        if (gatewayDialog && typeof gatewayDialog.close === 'function' && gatewayDialog.open) {
+          try { gatewayDialog.close(); } catch (_) {}
+        }
+        if (window.universalGateway && window.universalGateway.isOpen) {
+          try { window.universalGateway.close(); } catch (_) {}
+        }
+
+        // Execute direct login immediately
+        performDirectLogin();
+
+        const loginMsg = currentLang === 'am' ? 'ወደ መማሪያ ዳሽቦርድ ገብተዋል።' :
+                         currentLang === 'om' ? 'Gara daashboordii barumsaatti seentaniittu.' :
+                         currentLang === 'ti' ? 'ናብ መምሃሪ ዳሽቦርድ ኣቲኹም ኣለኹም።' :
+                         'Logged in to learning dashboard.';
+        this.speakInstant(loginMsg, currentLang);
         return true;
       }
 
@@ -4359,29 +4512,6 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         return true;
       }
 
-      // 00-LOGIN. EXPLICIT HANDS-FREE LOGIN ONLY (NEVER LOOSE SUBSTRINGS OR AUTO-LOGIN)
-      const isExplicitLoginCmd = isLoginContext && (
-        /(?<![\p{L}\p{N}])(log in|sign in|login|log me in|sign me in|please log in|submit login|log in to dashboard|login to dashboard|ተመዝገብ|ግባ|ይግቡ|ሎግ ኢን|ሎጊን|ሳይን ኢን|ግባ ወደ ዳሽቦርድ|seeni|seensa|seeni gara daashboorditti|እቶ|ምእታው)(?![\p{L}\p{N}])/iu.test(text) ||
-        /^click\s+(sign in|log in)$/i.test(text)
-      );
-      if (isExplicitLoginCmd) {
-        if (this.isSpeaking) return false;
-        this.stopSpeaking();
-        this.clearWelcomeTimer();
-        this.lastCommand = text;
-        this.lastCommandTime = now;
-        this.lastSuccessfulCommandTime = now;
-        this.playChime('success');
-
-        if (state.isAuthenticated) {
-          if (this.hudHeard) this.hudHeard.textContent = 'Already logged in';
-          return true;
-        }
-
-        performDirectLogin();
-        this.speakInstant(currentLang === 'am' ? 'ወደ መማሪያ ዳሽቦርድ ገብተዋል።' : 'Logged in to learning dashboard.');
-        return true;
-      }
 
       // 00A. SELECT FIRST ACCOUNT (Abenezer Habtamu - abenezer@alx.app)
       if (/(?<![\\p{L}\\p{N}])(the first|first|first one|first email|first account|number one|account one|account 1|number 1|1|one|abenezer|abenezer habtamu|አንደኛ|አንደኛው|አንደኛውን|አንደኛ ኢሜይል|ቁጥር አንድ|አንድ|አበነዘር|አቤኔዘር|tokkoffaa|tokko|ቀዳማይ|ቀዳመይቲ|ቀዳማይ ኢመይል|ሓደ)(?![\\p{L}\\p{N}])/iu.test(text)) {
