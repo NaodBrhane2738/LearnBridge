@@ -128,7 +128,11 @@ class CommandRegistry {
       description: 'Open ALX Job Portal and Employment Platform',
       phrases: ['jobs', 'job portal', 'careers', 'employment', 'vacancies', 'ስራ', 'የስራ እድል', 'የስራ በር', 'hojii', 'ስራሕ'],
       handler: (ctx) => {
-        if (typeof window !== 'undefined' && window.location) window.location.hash = '#jobs';
+        if (typeof window !== 'undefined' && typeof window.openJobPortalStandalone === 'function') {
+          window.openJobPortalStandalone();
+        } else if (typeof window !== 'undefined' && window.location) {
+          window.location.hash = '#jobs';
+        }
         return { success: true, message: 'Opened ALX Job Portal & Employment Platform' };
       }
     });

@@ -135,6 +135,22 @@
     }
   }
 
+  // Resilient Standalone Job Portal Opener (handles browser popup blockers seamlessly)
+  function openJobPortalStandalone() {
+    let opened = null;
+    try {
+      opened = window.open('/job-portal/', '_blank');
+    } catch (_) {
+      opened = null;
+    }
+    // If window.open was blocked by browser popup protection or returned null/closed
+    if (!opened || opened.closed || typeof opened.closed === 'undefined') {
+      window.location.assign('/job-portal/');
+    }
+    return opened;
+  }
+  window.openJobPortalStandalone = openJobPortalStandalone;
+
   // ==========================================================
   // 2. LMS SIDEBAR TAB SWITCHING (ALL 9 MOCKUPS)
   // ==========================================================
@@ -174,7 +190,7 @@
     }
 
     if (tabId === 'jobs') {
-      window.open('/job-portal/', '_blank');
+      openJobPortalStandalone();
       const homePane = document.getElementById('tab-home');
       if (homePane) homePane.classList.add('active');
       const homeLink = document.querySelector('[data-tab="home"]');
@@ -605,7 +621,7 @@
   if (btnOpenDashJob) {
     btnOpenDashJob.addEventListener('click', (e) => {
       e.preventDefault();
-      window.open('/job-portal/', '_blank');
+      openJobPortalStandalone();
     });
   }
 
@@ -613,7 +629,7 @@
   if (btnReloadJobFrame) {
     btnReloadJobFrame.addEventListener('click', (e) => {
       e.preventDefault();
-      window.open('/job-portal/', '_blank');
+      openJobPortalStandalone();
     });
   }
 
@@ -4009,9 +4025,9 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
             return;
           }
 
-          // If assistant is speaking, allow instant barge-in for login, language, and card actions
+          // If assistant is speaking, allow instant barge-in for login, language, job portal, and card actions
           if (this.isSpeaking) {
-            const isBargeInAction = /(?<![\p{L}\p{N}])(log in|sign in|login|signin|log me in|sign me in|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|ሳይን ኢን|seeni|seensa|እቶ|ምእታው|english|amharic|oromo|afaan oromoo|oromiffa|tigrinya|tigrigna|አማርኛ|ትግርኛ|እንግሊዝኛ|pass|reject|skip|apply)(?![\p{L}\p{N}])/iu.test(normRaw);
+            const isBargeInAction = /(?<![\p{L}\p{N}])(log in|sign in|login|signin|log me in|sign me in|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|ሳይን ኢን|seeni|seensa|እቶ|ምእታው|english|amharic|oromo|afaan oromoo|oromiffa|tigrinya|tigrigna|አማርኛ|ትግርኛ|እንግሊዝኛ|job|jobs|job portal|jobs portal|open job portal|open jobs|open job|go to job portal|career|careers|employment|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|የስራ እድል|ስራ መድረክ|hojii|waltajjii hojii|ስራሕ|ዕድላት ስራሕ|pass|reject|skip|apply)(?![\p{L}\p{N}])/iu.test(normRaw);
             if (isBargeInAction) {
               this.stopSpeaking();
               if ('speechSynthesis' in window) {
@@ -4023,7 +4039,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
             }
           } else if ((now - (this.lastSpeakingEndedTime || 0)) < 150) {
             // Check if user is speaking an active command right after prompt ended
-            const isAllowedCommand = /(?<![\p{L}\p{N}])(log in|sign in|login|signin|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|seeni|እቶ|english|amharic|oromo|tigrinya|አማርኛ|ትግርኛ|እንግሊዝኛ|pass|reject|apply)(?![\p{L}\p{N}])/iu.test(normRaw);
+            const isAllowedCommand = /(?<![\p{L}\p{N}])(log in|sign in|login|signin|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|seeni|እቶ|english|amharic|oromo|tigrinya|አማርኛ|ትግርኛ|እንግሊዝኛ|job|jobs|job portal|jobs portal|open job portal|open jobs|open job|career|careers|employment|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|የስራ እድል|ስራ መድረክ|hojii|waltajjii hojii|ስራሕ|ዕድላት ስራሕ|pass|reject|apply)(?![\p{L}\p{N}])/iu.test(normRaw);
             if (!isAllowedCommand) {
               return;
             }
@@ -4179,7 +4195,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       // Dynamic acoustic isolation (prevent echo or self-feedback loops)
       if (!isExplicitUserAction) {
         const isBargeInCommand = /^(stop|quiet|silence|shut up|pause|ዝም|ቆም|ደው|dhaabi|ስቕ)/i.test(text) ||
-          /(?<![\p{L}\p{N}])(log in|sign in|login|signin|log me in|sign me in|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|seeni|seensa|እቶ|ምእታው|english|amharic|oromo|afaan oromoo|oromiffa|tigrinya|tigrigna|አማርኛ|ትግርኛ|እንግሊዝኛ|pass|reject|skip|apply)(?![\p{L}\p{N}])/iu.test(text);
+          /(?<![\p{L}\p{N}])(log in|sign in|login|signin|log me in|sign me in|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|seeni|seensa|እቶ|ምእታው|english|amharic|oromo|afaan oromoo|oromiffa|tigrinya|tigrigna|አማርኛ|ትግርኛ|እንግሊዝኛ|job|jobs|job portal|jobs portal|open job portal|open jobs|open job|go to job portal|career|careers|employment|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|የስራ እድል|ስራ መድረክ|hojii|waltajjii hojii|ስራሕ|ዕድላት ስራሕ|pass|reject|skip|apply)(?![\p{L}\p{N}])/iu.test(text);
 
         if (this.isSpeaking) {
           if (isBargeInCommand) {
@@ -4380,6 +4396,43 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         return true;
       }
 
+      // 00-JOB-PORTAL. OPEN STANDALONE ALX JOB PORTAL IMMEDIATELY
+      const isJobPortalCmd = /(?<![\p{L}\p{N}])(job portal|jobs portal|job-portal|the job portal|open job portal|open jobs portal|open jobs|open job|go to job portal|go to jobs|show jobs|view jobs|find jobs|career portal|employment portal|job|jobs|career|careers|employment|vacancies|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|የስራ እድል|ስራ መድረክ|hojii|waltajjii hojii|carraa hojii|ስራሕ|ዕድላት ስራሕ|መድረኽ ስራሕ|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||
+        (text.includes('job') && (text.includes('portal') || text.includes('open') || text.includes('go to') || text.includes('show') || text.includes('find'))) ||
+        text.includes('የስራ መድረክ') || text.includes('የስራ እድል') || text.includes('ስራሕ') || text.includes('hojii');
+
+      if (isJobPortalCmd) {
+        this.stopSpeaking();
+        this.lastCommand = text;
+        this.lastCommandTime = now;
+        this.lastSuccessfulCommandTime = now;
+        this.playChime('success');
+        if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'የስራ መድረክ' : 'ALX Job Portal');
+
+        if (typeof openJobPortalStandalone === 'function') {
+          openJobPortalStandalone();
+        } else if (typeof window.openJobPortalStandalone === 'function') {
+          window.openJobPortalStandalone();
+        } else {
+          let opened = null;
+          try {
+            opened = window.open('/job-portal/', '_blank');
+          } catch (_) {
+            opened = null;
+          }
+          if (!opened || opened.closed || typeof opened.closed === 'undefined') {
+            window.location.assign('/job-portal/');
+          }
+        }
+
+        const jobPortalMsg = currentLang === 'am' ? 'የስራ መድረክ እየተከፈተ ነው።' :
+                             currentLang === 'om' ? 'Waltajjiin hojii banamaa jira.' :
+                             currentLang === 'ti' ? 'መድረኽ ስራሕ ይኽፈት ኣሎ።' :
+                             'Opening ALX Job Portal.';
+        this.speakInstant(jobPortalMsg, currentLang);
+        return true;
+      }
+
       // 00-JOB-PASS & REJECT. PASS / REJECT JOB OPPORTUNITY
       if (/(?<![\p{L}\p{N}])(pass|reject|skip|pass job|reject job|next job|skip job|swipe left|dislike|decline|ውድቅ|ቀጣይ|እለፍ|ለፍ|ተው|didi|didii|darbi|ንጸግ|ሕለፍ)(?![\p{L}\p{N}])/iu.test(text) ||
           text === 'pass' || text === 'reject' || text === 'skip' || text === 'next' || text === 'ውድቅ' || text === 'እለፍ' || text === 'didi') {
@@ -4454,31 +4507,6 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         if (window.app && typeof window.app.showCardDetailsAndRead === 'function') {
           window.app.showCardDetailsAndRead();
         }
-        return true;
-      }
-
-      // 00-JOB-PORTAL. OPEN ALX JOB PORTAL / EMPLOYMENT PLATFORM
-      if (/(?<![\p{L}\p{N}])(job portal|jobs portal|job|jobs|career|careers|employment|open job portal|open jobs|open portal|go to job portal|show jobs|view jobs|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|hojii|waltajjii hojii|carraa hojii|ስራሕ|ዕድላት ስራሕ|መድረኽ ስራሕ|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||
-          (text.includes('job') && (text.includes('portal') || text.includes('open') || text.includes('go to') || text.includes('show'))) ||
-          text.includes('የስራ መድረክ') || text.includes('የስራ እድል') || text.includes('ስራሕ') || text.includes('hojii')) {
-        this.stopSpeaking();
-        this.lastCommand = text;
-        this.lastCommandTime = now;
-        this.playChime('success');
-        if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'የስራ መድረክ' : 'ALX Job Portal');
-        
-        // Immediate local UI automation (Auth Protected)
-        if (!state.isAuthenticated && !state.isDemoMode) {
-          this.playChime('neutral');
-          this.speak(currentLang === 'am' ? 'እባክዎ በመጀመሪያ ወደ መለያዎ ይግቡ ወይም የሙከራ ሁነታን ይጠቀሙ።' : 'Please sign in first to access the Job Portal.');
-          window.location.hash = '#login';
-          showPage('login');
-          return true;
-        }
-        // Deployed on another page: opens /job-portal/ in separate window/tab
-        window.open('/job-portal/', '_blank');
-        
-        this.speakInstant(currentLang === 'am' ? 'የስራ መድረክ በአዲስ ገጽ እየተከፈተ ነው።' : 'Opening ALX Job Portal in a new page.');
         return true;
       }
 
