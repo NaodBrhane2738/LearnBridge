@@ -1,8 +1,0 @@
-qa/evidence/
-qa-toolkit/
-qa-toolkit/test-results/
-qa-toolkit/playwright-report/
-install-log.txt
-*.log
-_backup_pre_audit/
-ref-savanna/
