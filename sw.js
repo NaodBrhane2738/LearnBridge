@@ -8,26 +8,29 @@
  * - Dedicated media cache for offline lesson bundles
  */
 
-const CACHE_NAME = 'learnbridge-shell-v4';
-const MEDIA_CACHE = 'learnbridge-media-v4';
+const CACHE_NAME = 'learnbridge-shell-v5';
+const MEDIA_CACHE = 'learnbridge-media-v5';
 
 const CORE_ASSETS = [
   './',
   './index.html',
-  './player-lab.html',
   './styles.css',
   './app.js',
-  './dist/learnbridge.js',
-  './components/learnbridge-player.js',
-  './components/learnbridge-transcript.js',
-  './components/learnbridge-interpreter.js',
-  './components/learnbridge-job-card.js',
-  './components/learnbridge-certificate.js',
-  './components/learnbridge-resource-list.js',
-  './media/poster.jpg',
-  './media/captions-en.vtt',
-  './media/captions-am.vtt',
-  './media/transcript.json',
+  './voice/stateMachine.js',
+  './voice/languageCapabilities.js',
+  './voice/commandRegistry.js',
+  './voice/speechOutput.js',
+  './voice/voiceBridge.js',
+  './voice/voiceController.js',
+  './offline/offlineStore.js',
+  './offline/syncManager.js',
+  './offline/offlineManager.js',
+  './assets/login-hero.jpg',
+  './assets/foundations-icon.png',
+  './assets/guide-avatar.png',
+  './assets/guide-face.png',
+  './assets/lesson-poster.jpg',
+  './assets/portfolio-banner.jpg',
   './assets/living-room-bg.webp'
 ];
 

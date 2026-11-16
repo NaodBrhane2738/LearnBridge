@@ -536,8 +536,8 @@
   "savanna-lms:savanna-student-1": {
     "language": "en",
     "profileId": "low_vision",
-    "high_contrast": false,
-    "highContrast": false,
+    "high_contrast": true,
+    "highContrast": true,
     "reduce_transparency": true,
     "captions": true,
     "captionsEnabled": true,
@@ -556,11 +556,11 @@
     "simplified_interface": false,
     "keyboard_only": false,
     "tts_feedback": true,
-    "updatedAt": "2026-11-14T10:48:16.646Z",
+    "updatedAt": "2026-11-16T05:56:19.599Z",
     "enhanced_focus": true,
     "visual_alerts": true,
     "userId": "savanna-student-1",
-    "profile": "deaf",
-    "signLanguage": true
+    "profile": "blind",
+    "signLanguage": false
   }
 }

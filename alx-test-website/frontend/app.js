@@ -364,25 +364,62 @@
     }
   }
 
+  function performDirectLogin() {
+    if (state.isAuthenticated) return;
+    state.isAuthenticating = true;
+
+    if (window.lbSpeechOutput) {
+      window.lbSpeechOutput.stop();
+    } else if (voiceNav && typeof voiceNav.stopSpeaking === 'function') {
+      voiceNav.stopSpeaking();
+    }
+
+    const submitBtn = document.getElementById('btn-login-submit');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Opening Dashboard...';
+    }
+
+    const defaultAcct = AVAILABLE_ACCOUNTS[0] || {
+      name: 'Abenezer Habtamu',
+      email: 'abenezer@alx.app',
+      role: 'Software Engineering Learner',
+      avatar: 'AH'
+    };
+
+    setTimeout(() => {
+      state.isAuthenticating = false;
+      state.isAuthenticated = true;
+      updateUserProfileUi(defaultAcct);
+      window.location.hash = '#home';
+      showPage('learning');
+      switchTab('home');
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Log in to Dashboard';
+      }
+
+      if (window.lbSpeechOutput) {
+        window.lbSpeechOutput.speak('Welcome to ALX Learning, Abenezer. Your dashboard is ready.');
+      } else if (voiceNav && typeof voiceNav.speak === 'function') {
+        voiceNav.speak('Welcome to ALX Learning, Abenezer. Your dashboard is ready.');
+      }
+    }, 120);
+  }
+
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const email = emailInput ? emailInput.value.trim() : '';
-      const password = passwordInput ? passwordInput.value : '';
+      performDirectLogin();
+    });
+  }
 
-      if (!email || !password) {
-        // Accessible non-blocking feedback: NEVER show native browser alert
-        if (window.voiceNav) {
-          window.voiceNav.playChime('neutral');
-          window.voiceNav.speak(currentLang === 'am' ? 'እባክዎ ኢሜይልዎን እና የይለፍ ቃልዎን ያስገቡ ወይም በድምጽ "ግባ" ይበሉ።' :
-                                'Please enter your email and password, or say "Log in" to authenticate hands-free.');
-        }
-        if (emailInput && !email) emailInput.focus();
-        else if (passwordInput && !password) passwordInput.focus();
-        return;
-      }
-
-      performLoginWithCredentials(email, password);
+  const directLoginBtn = document.getElementById('btn-login-submit');
+  if (directLoginBtn) {
+    directLoginBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      performDirectLogin();
     });
   }
 
@@ -3658,37 +3695,23 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
         this.recognition.onend = () => {
           this.isListening = false;
-          if (this.isEnabled) {
-            clearTimeout(this.restartTimer);
-            this.restartTimer = setTimeout(() => {
-              if (this.isEnabled && !this.isListening) {
-                this.startSafe();
-              }
-            }, 80);
-          } else {
-            this.updateUiState(false);
-          }
+          this.updateUiState(false, 'Idle');
         };
 
         this.recognition.onerror = (e) => {
           console.warn('[ALX Voice Navigator] Speech recognition event:', e.error);
+          this.isListening = false;
           if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-            this.isListening = false;
-            this.updateUiState(false, 'Mic Needs Tap');
-            if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'እባክዎ በስክሪኑ ላይ ጠቅ በማድረግ ማይኩን ያግብሩ' : 'Click anywhere on screen to enable microphone');
+            this.isEnabled = false;
+            this.updateUiState(false, 'Mic Disabled');
+            if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'እባክዎ ማይክሮፎኑን ለማብራት አዶውን ይጫኑ' : 'Click the microphone button to enable voice navigation');
           } else if (e.error === 'network' || e.error === 'language-not-supported') {
             if (this.recognition && this.recognition.lang !== 'en-US') {
               console.log('[ALX Voice] Switching recognition lang to en-US fallback');
               this.recognition.lang = 'en-US';
-              if (this.isEnabled) {
-                setTimeout(() => this.startSafe(), 200);
-              }
             }
           } else if (e.error === 'no-speech') {
-            if (this.isEnabled) {
-              clearTimeout(this.restartTimer);
-              this.restartTimer = setTimeout(() => this.startSafe(), 80);
-            }
+            this.updateUiState(false, 'Idle');
           }
         };
 
@@ -3721,9 +3744,8 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           const now = Date.now();
           const normRaw = rawText.toLowerCase().replace(/[.,!?;:'"\\-_/\\()]/g, ' ').trim();
           // STRICT ECHO SUPPRESSION:
-          // Never process recognition while assistant is speaking or right after (< 300ms)
-          // This completely prevents the system's own spoken output from auto-triggering login or commands.
-          if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 300) {
+          // Never process recognition while assistant is speaking or right after (< 350ms)
+          if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 350) {
             if (/^(stop|quiet|silence|ዝም|ቆም)/i.test(normRaw)) {
               this.stopSpeaking();
             }
@@ -3742,28 +3764,19 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
             this.hudHeard.textContent = `"${rawText.length > 28 ? rawText.substring(0, 28) + '...' : rawText}"`;
           }
 
-          // Try matching candidate phrases in order of confidence
-          for (const cand of candidatePhrases) {
-            const executed = this.dispatchCommand(cand);
-            if (executed) {
-              clearTimeout(this.interimDebounceTimer);
-              return;
-            }
-          }
-
-          // Debounce remainder if unexecuted
-          if (interimText.trim()) {
-            clearTimeout(this.interimDebounceTimer);
-            this.interimDebounceTimer = setTimeout(() => {
-              if (!this.isSpeaking) {
-                this.dispatchCommand(interimText.trim());
+          // ONLY execute commands on FINAL utterance to prevent interim false triggers
+          if (finalUtterance.trim()) {
+            for (const cand of candidatePhrases) {
+              const executed = this.dispatchCommand(cand);
+              if (executed) {
+                clearTimeout(this.interimDebounceTimer);
+                return;
               }
-            }, 120);
+            }
           }
         };
 
-        // Try soft start (if browser policy allows auto-listening)
-        this.startSafe();
+        // Microphone defaults to non-autoplay (tap-to-speak)
       } catch (err) {
         console.warn('Speech init error:', err);
       }
@@ -5339,16 +5352,6 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         });
       }
 
-      // Keep microphone permanently open across all gestures and pages
-      const ensureMicAlwaysOpen = () => {
-        if (this.isEnabled && !this.isListening) {
-          this.startSafe();
-        }
-      };
-      ['click', 'keydown', 'touchstart'].forEach(evt => {
-        window.addEventListener(evt, ensureMicAlwaysOpen, { passive: true });
-      });
-
       window.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (e.key === 'v' || e.key === 'V') {
@@ -5357,6 +5360,32 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         }
       });
     }
+  }
+
+  // Initialize Global Unified LearnBridge Voice & Offline Subsystems
+  try {
+    if (typeof window !== 'undefined') {
+      if (typeof LearnBridgeVoiceController !== 'undefined' && !window.lbVoiceController) {
+        const cmdReg = typeof CommandRegistry !== 'undefined' ? new CommandRegistry() : null;
+        const spOut = typeof SpeechOutputCoordinator !== 'undefined' ? new SpeechOutputCoordinator() : null;
+        const vBridge = typeof VoiceBridge !== 'undefined' ? new VoiceBridge(true) : null;
+        window.lbCommandRegistry = cmdReg;
+        window.lbSpeechOutput = spOut;
+        window.lbVoiceBridge = vBridge;
+        window.lbVoiceController = new LearnBridgeVoiceController({
+          commandRegistry: cmdReg,
+          speechOutput: spOut
+        });
+      }
+
+      if (typeof LearnBridgeLocalStore !== 'undefined' && !window.lbLocalStore) {
+        window.lbLocalStore = new LearnBridgeLocalStore();
+        window.lbSyncManager = typeof LearnBridgeSyncManager !== 'undefined' ? new LearnBridgeSyncManager(window.lbLocalStore) : null;
+        window.lbOfflineManager = typeof LearnBridgeOfflineManager !== 'undefined' ? new LearnBridgeOfflineManager(window.lbLocalStore) : null;
+      }
+    }
+  } catch (err) {
+    console.warn('LearnBridge subsystems init notice:', err);
   }
 
   // Instantiate Voice Platform Navigator

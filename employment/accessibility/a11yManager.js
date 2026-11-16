@@ -753,6 +753,15 @@ class AccessibilityManager {
   }
 
   setupSpeechRecognition() {
+    // 1. Check if running inside iframe (embedded under LearnBridge LMS)
+    if (typeof window !== 'undefined' && window.self !== window.top) {
+      console.log("[A11yManager] Embedded in iframe: microphone lifecycle delegated to parent LearnBridgeVoiceController via VoiceBridge.");
+      this.isListeningActive = false;
+      this.voiceActive = false;
+      this.initVoiceBridge();
+      return;
+    }
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       console.warn("[A11yManager] SpeechRecognition not available in this environment.");
@@ -764,7 +773,7 @@ class AccessibilityManager {
       this.recognition.continuous = true;
       this.recognition.interimResults = true;
       this.recognition.lang = this.getSpeechLang(this.currentLanguage || 'en');
-      this.isListeningActive = true;
+      this.isListeningActive = false; // Explicit tap-to-speak; no unprompted auto-listen
 
       this.recognition.onstart = () => {
         this.voiceActive = true;
@@ -773,12 +782,17 @@ class AccessibilityManager {
 
       this.recognition.onend = () => {
         this.voiceActive = false;
+        // Never loop synchronously at 0ms. Controlled backoff only if intentionally listening.
         if (this.isListeningActive) {
-          try {
-            this.recognition.start();
-          } catch (_) {
-            this.updateVoiceStatusUI(false, this.isSpeaking);
-          }
+          setTimeout(() => {
+            if (this.isListeningActive && !this.voiceActive) {
+              try {
+                this.recognition.start();
+              } catch (_) {
+                this.updateVoiceStatusUI(false, this.isSpeaking);
+              }
+            }
+          }, 600);
         } else {
           this.updateVoiceStatusUI(false, this.isSpeaking);
         }
@@ -786,10 +800,10 @@ class AccessibilityManager {
 
       this.recognition.onerror = (e) => {
         console.warn("[A11yManager] Voice recognition error:", e.error);
-        if (e.error === 'not-allowed') {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
           this.isListeningActive = false;
           this.updateVoiceStatusUI(false, false);
-          this.showVisualToast("Microphone access denied. Please click the microphone icon in your browser address bar to allow.");
+          this.showVisualToast("Microphone access denied. Please click the microphone button to grant access.");
         }
       };
 
@@ -821,12 +835,13 @@ class AccessibilityManager {
           } else {
             return;
           }
-        } else if (Date.now() - this.lastSpeakingEndedTime < 200) {
+        } else if (Date.now() - this.lastSpeakingEndedTime < 350) {
           return;
         }
 
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           const res = event.results[i];
+          if (!res.isFinal) continue; // Only execute on final transcript to prevent interim false triggers
           const transcript = (res[0]?.transcript || '').trim();
           if (!transcript) continue;
 
@@ -848,38 +863,91 @@ class AccessibilityManager {
           }
         }
       };
-
-      // Auto-start microphone by default on load or first interaction
-      this.startMicDefault();
     } catch (err) {
       console.warn("[A11yManager] Failed to init SpeechRecognition:", err);
     }
   }
 
-  startMicDefault() {
-    this.isListeningActive = true;
-    try {
-      this.recognition.start();
-      this.updateVoiceStatusUI(true, this.isSpeaking);
-    } catch (_) {
-      // Browser requires user gesture to start microphone: hook first user interaction
-      const startOnGesture = () => {
-        if (this.isListeningActive && !this.voiceActive && this.recognition) {
-          try {
-            this.recognition.start();
-            this.updateVoiceStatusUI(true, this.isSpeaking);
-          } catch (_) {}
-        }
-      };
-      window.addEventListener('click', startOnGesture, { once: true });
-      window.addEventListener('keydown', startOnGesture, { once: true });
-      window.addEventListener('pointerdown', startOnGesture, { once: true });
+  initVoiceBridge() {
+    if (typeof VoiceBridge === 'undefined') {
+      console.warn("[A11yManager] VoiceBridge not available in frame.");
+      return;
     }
+    this.voiceBridge = new VoiceBridge(false); // child mode
+
+    this.voiceBridge.registerActionHandler('JOB_APPLY', () => {
+      console.log('[A11yManager] Received JOB_APPLY via VoiceBridge');
+      if (window.app && typeof window.app.handleCardApply === 'function') {
+        window.app.handleCardApply();
+        return { applied: true };
+      }
+      const btn = document.getElementById('btnApply') || document.querySelector('.btn-apply');
+      if (btn) { btn.click(); return { applied: true }; }
+      return { applied: false };
+    });
+
+    this.voiceBridge.registerActionHandler('JOB_PASS', () => {
+      console.log('[A11yManager] Received JOB_PASS via VoiceBridge');
+      if (window.app && typeof window.app.handleCardPass === 'function') {
+        window.app.handleCardPass();
+        return { passed: true };
+      }
+      const btn = document.getElementById('btnPass') || document.querySelector('.btn-pass');
+      if (btn) { btn.click(); return { passed: true }; }
+      return { passed: false };
+    });
+
+    this.voiceBridge.registerActionHandler('JOB_DETAILS', () => {
+      console.log('[A11yManager] Received JOB_DETAILS via VoiceBridge');
+      if (window.app && typeof window.app.openDetailsModal === 'function') {
+        window.app.openDetailsModal();
+        return { details: true };
+      }
+      const btn = document.getElementById('btnDetails') || document.querySelector('.btn-details');
+      if (btn) { btn.click(); return { details: true }; }
+      return { details: false };
+    });
+
+    this.voiceBridge.registerActionHandler('JOB_ARCHIVE', () => {
+      if (window.app && typeof window.app.switchView === 'function') {
+        window.app.switchView('archive');
+        return { view: 'archive' };
+      }
+      return { view: false };
+    });
+
+    this.voiceBridge.registerActionHandler('JOB_PROFILE_SETTINGS', () => {
+      if (window.app && typeof window.app.openProfileModal === 'function') {
+        window.app.openProfileModal();
+        return { profile: true };
+      }
+      const btn = document.getElementById('btnProfile') || document.getElementById('profileBtn');
+      if (btn) { btn.click(); return { profile: true }; }
+      return { profile: false };
+    });
+
+    this.voiceBridge.registerActionHandler('JOB_READ_CARD', () => {
+      if (window.app && typeof window.app.readCurrentJobCardAloud === 'function') {
+        window.app.readCurrentJobCardAloud();
+        return { read: true };
+      }
+      return { read: false };
+    });
+
+    this.voiceBridge.registerActionHandler('PING', () => ({ pong: true, timestamp: Date.now() }));
   }
 
   toggleVoiceListening() {
+    if (typeof window !== 'undefined' && window.self !== window.top) {
+      // Running in iframe: request parent host to toggle microphone
+      try {
+        window.parent.postMessage({ type: 'LB_REQUEST_MIC_TOGGLE' }, window.location.origin);
+      } catch (_) {}
+      return;
+    }
+
     if (!this.recognition) {
-      this.showVisualToast("Speech recognition not supported in this browser. Please use M, Left Arrow, and Right Arrow.");
+      this.showVisualToast("Speech recognition not supported in this browser. Please use keyboard navigation.");
       return;
     }
 
