@@ -583,12 +583,11 @@ class AccessibilityManager {
   }
 
   speak(text, lang = null) {
-    if (window.self !== window.top) return; // Suppress all speech synthesis when inside an iframe
     if (!this.synth) return;
     try {
       this.synth.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.05;
+      utterance.rate = 1.15;
       utterance.pitch = 1.0;
       utterance.lang = lang || this.getSpeechLang();
 

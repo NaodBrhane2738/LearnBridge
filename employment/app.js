@@ -443,7 +443,7 @@ class EmploymentApp {
     }
   }
 
-  renderActiveCard() {
+  renderActiveCard(options = {}) {
     const deckStage = document.getElementById('swipe-deck-stage');
     const uploadStage = document.getElementById('cv-upload-stage');
     const wrapper = document.getElementById('active-card-wrapper');
@@ -480,10 +480,10 @@ class EmploymentApp {
     // Accessible announcements for screen readers & TTS
     const currentItem = this.cardDeck[this.currentCardIndex];
     const job = currentItem.job;
-    const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply with CV, Left Arrow to pass, or M for full details.`;
+    const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow or say Apply to apply. Press Left Arrow or say Reject to pass. Press M for full details.`;
     if (window.a11y) {
       window.a11y.announceLive(spokenSummary, false);
-      if (window.self === window.top && window.a11y.currentMode === 'blind') {
+      if (!options.skipSpeech && window.self === window.top && (window.a11y.currentMode === 'blind' || window.a11y.voiceActive)) {
         window.a11y.speak(spokenSummary);
       }
     }
@@ -654,10 +654,11 @@ class EmploymentApp {
       return true;
     }
 
-    // 3. Apply / Right Command
+    // 3. Apply / Right Arrow Command
     const isApply = words.includes('apply') || words.includes('right') || words.includes('yes') ||
                     words.includes('submit') || words.includes('accept') ||
-                    clean.includes('apply') || clean.includes('አመልክት') || clean.includes('iyyadhu') || clean.includes('ኣመልክት');
+                    clean.includes('apply') || clean.includes('right arrow') || clean.includes('arrow right') ||
+                    clean.includes('ቀኝ') || clean.includes('አመልክት') || clean.includes('iyyadhu') || clean.includes('ኣመልክት');
     if (isApply) {
       if (window.a11y) window.a11y.stopSpeech();
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -666,11 +667,12 @@ class EmploymentApp {
       return true;
     }
 
-    // 4. Pass / Reject / Next Command
+    // 4. Pass / Reject / Left Arrow Command
     const isPass = words.includes('pass') || words.includes('reject') || words.includes('skip') ||
                    words.includes('left') || words.includes('no') || words.includes('next') ||
                    words.includes('dislike') || words.includes('decline') ||
                    clean.includes('pass') || clean.includes('reject') || clean.includes('skip') ||
+                   clean.includes('left arrow') || clean.includes('arrow left') || clean.includes('ግራ') ||
                    clean.includes('next job') || clean.includes('pass job') || clean.includes('reject job') ||
                    clean.includes('ውድቅ') || clean.includes('ቀጣይ') || clean.includes('እለፍ') ||
                    clean.includes('ተው') || clean.includes('didi') || clean.includes('darbi') ||
@@ -679,7 +681,7 @@ class EmploymentApp {
       if (window.a11y) window.a11y.stopSpeech();
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       this.handleCardPass();
-      if (window.a11y) window.a11y.showVisualToast('Voice: Passed / Rejected Opportunity');
+      if (window.a11y) window.a11y.showVisualToast('Voice: Rejected / Passed Opportunity');
       return true;
     }
 
@@ -805,18 +807,35 @@ class EmploymentApp {
       console.warn("[EmploymentApp] Direct apply error:", err);
     }
 
+    // Calculate next opportunity preview for spoken feedback to blind users
+    const nextIndex = this.currentCardIndex + 1;
+    const nextItem = nextIndex < this.cardDeck.length ? this.cardDeck[nextIndex] : null;
+    const isAm = window.a11y && window.a11y.currentLanguage === 'am';
+
+    let spokenAction = '';
+    if (isAm) {
+      spokenAction = nextItem
+        ? `አመልክተዋል: ${job.title} በ ${job.employerName}። ቀጣይ ዕድል ${nextIndex + 1} ከ ${this.cardDeck.length}: ${nextItem.job.title} በ ${nextItem.job.employerName}። ለማመልከት የቀኝ ቀስት ወይም Apply፣ ውድቅ ለማድረግ የግራ ቀስት ወይም Reject ይበሉ።`
+        : `አመልክተዋል: ${job.title} በ ${job.employerName}። ሁሉንም ዕድሎች ተመልክተዋል!`;
+    } else {
+      spokenAction = nextItem
+        ? `Applied: ${job.title} at ${job.employerName}. Next opportunity ${nextIndex + 1} of ${this.cardDeck.length}: ${nextItem.job.title} at ${nextItem.job.employerName}, ${nextItem.matchScore} percent match. Press Right Arrow or say Apply to apply. Press Left Arrow or say Reject to pass.`
+        : `Applied: ${job.title} at ${job.employerName}. You have reviewed all recommended opportunities!`;
+    }
+
     // Audio & Toast Feedback
     const successMsg = `Applied for ${job.title} at ${job.employerName}!`;
     if (window.a11y) {
       window.a11y.playEarcon('chime');
       window.a11y.showVisualToast(successMsg, 2500);
-      window.a11y.announceLive(successMsg, true);
+      window.a11y.announceLive(spokenAction, true);
+      window.a11y.speak(spokenAction);
     }
 
     setTimeout(() => {
       this.currentCardIndex++;
       this.isCardAnimating = false;
-      this.renderActiveCard();
+      this.renderActiveCard({ skipSpeech: true });
     }, 110);
   }
 
@@ -857,17 +876,33 @@ class EmploymentApp {
     }
 
     const title = job ? job.title : 'Opportunity';
+    const nextIndex = this.currentCardIndex + 1;
+    const nextItem = nextIndex < this.cardDeck.length ? this.cardDeck[nextIndex] : null;
+    const isAm = window.a11y && window.a11y.currentLanguage === 'am';
+
+    let spokenAction = '';
+    if (isAm) {
+      spokenAction = nextItem
+        ? `ውድቅ ተደርጓል: ${title}። ቀጣይ ዕድል ${nextIndex + 1} ከ ${this.cardDeck.length}: ${nextItem.job.title} በ ${nextItem.job.employerName}። ለማመልከት የቀኝ ቀስት ወይም Apply፣ ውድቅ ለማድረግ የግራ ቀስት ወይም Reject ይበሉ።`
+        : `ውድቅ ተደርጓል: ${title}። ሁሉንም ዕድሎች ተመልክተዋል!`;
+    } else {
+      spokenAction = nextItem
+        ? `Rejected: ${title}. Next opportunity ${nextIndex + 1} of ${this.cardDeck.length}: ${nextItem.job.title} at ${nextItem.job.employerName}, ${nextItem.matchScore} percent match. Press Right Arrow or say Apply to apply. Press Left Arrow or say Reject to pass.`
+        : `Rejected: ${title}. You have reviewed all recommended opportunities!`;
+    }
+
     const passMsg = `Passed / Rejected: ${title}`;
     if (window.a11y) {
       window.a11y.showVisualToast(passMsg, 1800);
-      window.a11y.announceLive(passMsg, false);
+      window.a11y.announceLive(spokenAction, true);
       window.a11y.playEarcon('falling');
+      window.a11y.speak(spokenAction);
     }
 
     setTimeout(() => {
       this.currentCardIndex++;
       this.isCardAnimating = false;
-      this.renderActiveCard();
+      this.renderActiveCard({ skipSpeech: true });
     }, 110);
   }
 

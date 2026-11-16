@@ -174,11 +174,13 @@
     }
 
     if (tabId === 'jobs') {
-      const iframe = document.getElementById('jobPortalIframe');
-      if (iframe && (!iframe.src || iframe.src === 'about:blank' || iframe.src.endsWith('/about:blank'))) {
-        iframe.src = '/job-portal/';
-      }
-      document.title = 'ALX Job Portal & Employment Platform | ALX';
+      window.open('/job-portal/', '_blank');
+      const homePane = document.getElementById('tab-home');
+      if (homePane) homePane.classList.add('active');
+      const homeLink = document.querySelector('[data-tab="home"]');
+      if (homeLink) homeLink.classList.add('active');
+      document.title = 'ALX Learning';
+      return;
     } else {
       document.title = 'ALX Learning';
     }
@@ -598,27 +600,28 @@
     });
   });
 
-  // Direct Job Portal Integration Buttons
+  // Direct Job Portal Integration Buttons (Opens standalone in new page/tab)
   const btnOpenDashJob = document.getElementById('btnOpenDashboardJobPortal');
   if (btnOpenDashJob) {
-    btnOpenDashJob.addEventListener('click', () => {
-      window.location.hash = '#jobs';
-      switchTab('jobs');
+    btnOpenDashJob.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.open('/job-portal/', '_blank');
     });
   }
 
   const btnReloadJobFrame = document.getElementById('btnReloadJobPortalFrame');
   if (btnReloadJobFrame) {
-    btnReloadJobFrame.addEventListener('click', () => {
-      const iframe = document.getElementById('jobPortalIframe');
-      if (iframe) iframe.src = '/job-portal/';
+    btnReloadJobFrame.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.open('/job-portal/', '_blank');
     });
   }
 
   const btnHeaderJob = document.getElementById('btnJobPortal');
   if (btnHeaderJob) {
-    btnHeaderJob.addEventListener('click', () => {
-      // Allow default behavior: opens /job-portal in a new tab via target="_blank"
+    btnHeaderJob.addEventListener('click', (e) => {
+      // Default behavior opens /job-portal in a new tab via target="_blank"
+      e.stopPropagation();
     });
   }
 
@@ -4319,11 +4322,10 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           showPage('login');
           return true;
         }
-        showPage('learning');
-        window.location.hash = '#jobs';
-        switchTab('jobs');
+        // Deployed on another page: opens /job-portal/ in separate window/tab
+        window.open('/job-portal/', '_blank');
         
-        this.speakInstant(currentLang === 'am' ? 'የስራ መድረክ ተከፍቷል።' : 'Opened ALX Job Portal.');
+        this.speakInstant(currentLang === 'am' ? 'የስራ መድረክ በአዲስ ገጽ እየተከፈተ ነው።' : 'Opening ALX Job Portal in a new page.');
         return true;
       }
 

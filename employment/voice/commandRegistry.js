@@ -204,8 +204,12 @@ class CommandRegistry {
       description: 'Apply for the current job opening',
       isConsequential: true,
       confirmationPrompt: 'Are you sure you want to submit your verified 1-click application for this position? Say "Confirm" or "Yes" to submit.',
-      phrases: ['apply', 'apply now', 'submit application', 'አመልክት', 'አመልክቺ', 'ማመልከቻ', 'iyyadhu', 'ኣመልክት'],
+      phrases: ['apply', 'apply now', 'submit application', 'submit cv', 'right arrow', 'arrow right', 'right', 'swipe right', 'አመልክት', 'አመልክቺ', 'ማመልከቻ', 'iyyadhu', 'ኣመልክት'],
       handler: (ctx) => {
+        if (typeof window !== 'undefined' && window.app && typeof window.app.handleCardApply === 'function') {
+          window.app.handleCardApply();
+          return { success: true, message: 'Application submitted successfully.' };
+        }
         const bridge = window.lbVoiceBridge;
         if (bridge) {
           bridge.sendActionToFrame('JOB_APPLY');
@@ -218,7 +222,7 @@ class CommandRegistry {
     this.registerCommand('EMPLOYMENT_PASS', {
       category: 'employment',
       description: 'Pass current job opening',
-      phrases: ['pass', 'pass job', 'next job', 'skip', 'skip job', 'swipe left', 'ቀጣይ', 'እለፍ', 'ለፍ', 'ተው', 'didi', 'didii', 'darbi', 'ሕለፍ'],
+      phrases: ['pass', 'pass job', 'next job', 'skip', 'skip job', 'swipe left', 'left arrow', 'arrow left', 'ቀጣይ', 'እለፍ', 'ለፍ', 'ተው', 'didi', 'didii', 'darbi', 'ሕለፍ'],
       handler: (ctx) => {
         const bridge = window.lbVoiceBridge;
         if (bridge) {
@@ -238,7 +242,7 @@ class CommandRegistry {
     this.registerCommand('EMPLOYMENT_REJECT', {
       category: 'employment',
       description: 'Reject current job opening',
-      phrases: ['reject', 'reject job', 'dislike', 'decline', 'not interested', 'ውድቅ', 'ውድቅ አድርግ', 'ንጸግ'],
+      phrases: ['reject', 'reject job', 'dislike', 'decline', 'not interested', 'left arrow', 'arrow left', 'swipe left', 'ውድቅ', 'ውድቅ አድርግ', 'ንጸግ'],
       handler: (ctx) => {
         const bridge = window.lbVoiceBridge;
         if (bridge) {

@@ -180,6 +180,13 @@ runTest('Job Portal Voice Commands: Pass and Reject recognized and routed', () =
   assert.ok(rejectResult.executed);
   assert.strictEqual(rejectResult.intent, 'EMPLOYMENT_REJECT');
 
+  const leftArrowResult = reg.execute('left arrow');
+  assert.ok(leftArrowResult.executed);
+  assert.strictEqual(leftArrowResult.intent, 'EMPLOYMENT_PASS');
+
+  const rightArrowResult = reg.execute('right arrow');
+  assert.strictEqual(rightArrowResult.intent, 'EMPLOYMENT_APPLY');
+
   const amharicReject = reg.execute('ውድቅ');
   assert.ok(amharicReject.executed);
 
