@@ -31,7 +31,7 @@
   "bugs": {
     "url": "https://github.com/NaodBrhane2738/LearnBridge/issues"
   },
-  "homepage": "https://github.com/NaodBrhane2738/LearnBridge#readme",
+  "homepage": "https://learn-bridge-786j.vercel.app/",
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^18.0.10",

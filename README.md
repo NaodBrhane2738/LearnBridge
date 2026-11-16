@@ -1,9 +1,12 @@
 # LearnBridge — Accessible Learning Without Barriers
 
+[![Live Vercel Deployment](https://img.shields.io/badge/Live%20Deployment-learn--bridge--786j.vercel.app-blue?style=for-the-badge&logo=vercel)](https://learn-bridge-786j.vercel.app/)
 [![WCAG 2.2 AA Verified](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA%20Verified-brightgreen)](#accessibility-audit--qa-status)
 [![Axe-Core Violations](https://img.shields.io/badge/Axe--Core%20Violations-0-success)](#automated-testing-results)
 [![Browsers Supported](https://img.shields.io/badge/Browsers-Chromium%20%7C%20Firefox%20%7C%20WebKit-blue)](#automated-testing-results)
 [![Platform Embed](https://img.shields.io/badge/Platform-ALX%20Savanna%20Ready-emerald)](#savanna-platform-integration)
+
+> 🚀 **Live Production Link:** [https://learn-bridge-786j.vercel.app/](https://learn-bridge-786j.vercel.app/)
 
 **LearnBridge** is an accessibility-first educational learning media and content platform developed for the **ALX Ethiopia Digital Bridge Hackathon (Track 2: Accessible Learning Media)**. 
 
