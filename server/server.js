@@ -370,7 +370,13 @@ app.post('/api/tts', (req, res) => {
   const audioPublicUrl = `/alx/assets/audio_cache/${cacheFileName}`;
 
   if (fs.existsSync(cacheFilePath)) {
-    return res.json({ success: true, audioUrl: audioPublicUrl, cached: true });
+    try {
+      const stat = fs.statSync(cacheFilePath);
+      if (stat.size > 200) {
+        return res.json({ success: true, audioUrl: audioPublicUrl, cached: true });
+      }
+      fs.unlinkSync(cacheFilePath);
+    } catch (_) {}
   }
 
   const scriptPath = path.join(ROOT_DIR, 'alx-test-website', 'backend', 'tts_engine.py');
@@ -405,8 +411,18 @@ app.post('/api/tts', (req, res) => {
       if (handled) return;
       handled = true;
       if (code !== 0 || !fs.existsSync(cacheFilePath)) {
+        if (fs.existsSync(cacheFilePath)) {
+          try { fs.unlinkSync(cacheFilePath); } catch (_) {}
+        }
         return res.json({ success: false, fallback: true, error: stderrData });
       }
+      try {
+        const stat = fs.statSync(cacheFilePath);
+        if (stat.size <= 200) {
+          fs.unlinkSync(cacheFilePath);
+          return res.json({ success: false, fallback: true, error: 'Empty audio output' });
+        }
+      } catch (_) {}
       return res.json({ success: true, audioUrl: audioPublicUrl, cached: false });
     });
 
@@ -418,6 +434,7 @@ app.post('/api/tts', (req, res) => {
 });
 
 // 4. Static Files & Demonstrations Serving
+app.use('/assets/audio_cache', express.static(AUDIO_CACHE_DIR));
 app.use('/job-portal', express.static(path.join(ROOT_DIR, 'employment')));
 app.use('/employment', express.static(path.join(ROOT_DIR, 'employment')));
 app.use('/alx', express.static(path.join(ROOT_DIR, 'alx-test-website', 'frontend')));

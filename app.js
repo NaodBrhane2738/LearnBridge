@@ -3265,7 +3265,9 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
       this.hudBubble = {
         classList: {
-          add(cls) { if (cls === 'visible') self.openChat(); },
+          add(cls) {
+            // Keep assistant minimized by default; do not auto-open on speech or action
+          },
           remove(cls) {}
         }
       };
@@ -3496,10 +3498,10 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         const isLoginPage = !state.isAuthenticated || (pageLogin && pageLogin.classList.contains('active'));
         if (isLoginPage) {
           const onboardingPrompts = {
-            am: "ዝግጁ ነው። ለመግባት login ወይም ይግቡ ይበሉ።",
+            am: "ዝግጁ ነው። ለመግባት log in ወይም ይግቡ ይበሉ።",
             en: "Ready, say login or sign in to login",
             om: "Qophii dha, seenuuf login jedhaa.",
-            ti: "ድሉው እዩ፣ ንምእታው login በሉ።"
+            ti: "ድሉው እዩ፣ ንምእታው login ወይ እቶ በሉ።"
           };
           const prompt = onboardingPrompts[currentLang] || onboardingPrompts.en;
           if (this.hudHeard) this.hudHeard.textContent = prompt;
@@ -3517,10 +3519,10 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         const isDashboard = pageLearning && pageLearning.classList.contains('active') && (window.location.hash === '#home' || window.location.hash === '');
         if (isDashboard) {
           const dashboardPrompts = {
-            am: "ዝግጁ ነው። ለመማር access learning ይበሉ።",
+            am: "ዝግጁ ነው። ለመማር access learning ወይም መማር ጀምር ይበሉ።",
             en: "Ready, say access learning to start learning",
             om: "Qophii dha, barumsa eegaluuf access learning jedhaa.",
-            ti: "ድሉው እዩ፣ ንምምሃር access learning በሉ።"
+            ti: "ድሉው እዩ፣ ንምምሃር access learning ወይ ትምህርተይ በሉ።"
           };
           const prompt = dashboardPrompts[currentLang] || dashboardPrompts.en;
           if (this.hudHeard) this.hudHeard.textContent = prompt;
@@ -3703,6 +3705,27 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       } catch (_) {}
     }
 
+    _onSpeakingEnded() {
+      clearTimeout(this.speakingWatchdog);
+      this.isSpeaking = false;
+      this.currentSpokenText = '';
+      this.lastSpeakingEndedTime = Date.now();
+      if (this.botVoiceRing) this.botVoiceRing.classList.remove('pulse');
+      if (this.hudBubble) this.hudBubble.classList.remove('visible');
+      if (this.hudState) {
+        this.hudState.textContent = (currentLang === 'am' ? 'እየሰማ ነው' : currentLang === 'om' ? 'DHAGGEEFFATA' : currentLang === 'ti' ? 'ይሰምዕ ኣሎ' : 'LISTENING');
+      }
+      // Ensure continuous recognition restarts cleanly
+      if (this.isEnabled) {
+        clearTimeout(this.restartTimer);
+        this.restartTimer = setTimeout(() => {
+          if (this.isEnabled && !this.isSpeaking && !this.isListening) {
+            this.startSafe();
+          }
+        }, 200);
+      }
+    }
+
     stopSpeaking() {
       this.speakSeq++;
       if (this.speakingWatchdog) {
@@ -3723,13 +3746,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       if ('speechSynthesis' in window) {
         try { window.speechSynthesis.cancel(); } catch (_) {}
       }
-      this.isSpeaking = false;
-      this.currentSpokenText = '';
-      this.lastSpeakingEndedTime = Date.now();
-      if (this.botVoiceRing) this.botVoiceRing.classList.remove('pulse');
-      if (this.hudState) {
-        this.hudState.textContent = (currentLang === 'am' ? 'እየሰማ ነው' : currentLang === 'om' ? 'DHAGGEEFFATA' : currentLang === 'ti' ? 'ይሰምዕ ኣሎ' : 'LISTENING');
-      }
+      this._onSpeakingEnded();
     }
 
     async speak(text, targetLang) {
@@ -3754,19 +3771,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       clearTimeout(this.speakingWatchdog);
       this.speakingWatchdog = setTimeout(() => {
         if (currentSeq === this.speakSeq) {
-          this.isSpeaking = false;
-          this.currentSpokenText = '';
-          this.lastSpeakingEndedTime = Date.now();
-          if (this.botVoiceRing) this.botVoiceRing.classList.remove('pulse');
-          if (this.hudBubble) this.hudBubble.classList.remove('visible');
-          if (this.hudState) {
-            this.hudState.textContent = (currentLang === 'am' ? 'ተከናውኗል' : currentLang === 'om' ? 'RAAWWATEERA' : currentLang === 'ti' ? 'ተዛዚሙ' : 'READY');
-          }
-          setTimeout(() => {
-            if (!this.isSpeaking && this.hudState) {
-              this.hudState.textContent = (currentLang === 'am' ? 'እየሰማ ነው' : currentLang === 'om' ? 'DHAGGEEFFATA' : currentLang === 'ti' ? 'ይሰምዕ ኣሎ' : 'LISTENING');
-            }
-          }, 1500);
+          this._onSpeakingEnded();
         }
       }, 4000);
 
@@ -3800,22 +3805,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           this.currentAudio = audio;
           audio.onended = () => {
             if (currentSeq === this.speakSeq) {
-              clearTimeout(this.speakingWatchdog);
-              this.isSpeaking = false;
-              this.currentSpokenText = '';
-              this.lastSpeakingEndedTime = Date.now();
-              if (this.botVoiceRing) this.botVoiceRing.classList.remove('pulse');
-              if (this.hudState) {
-                this.hudState.textContent = (currentLang === 'am' ? 'ተከናውኗል' : currentLang === 'om' ? 'RAAWWATEERA' : currentLang === 'ti' ? 'ተዛዚሙ' : 'READY');
-              }
-              setTimeout(() => {
-                if (!this.isSpeaking && this.hudBubble) {
-                  this.hudBubble.classList.remove('visible');
-                }
-                if (!this.isSpeaking && this.hudState) {
-                  this.hudState.textContent = (currentLang === 'am' ? 'እየሰማ ነው' : currentLang === 'om' ? 'DHAGGEEFFATA' : currentLang === 'ti' ? 'ይሰምዕ ኣሎ' : 'LISTENING');
-                }
-              }, 1500);
+              this._onSpeakingEnded();
             }
           };
           audio.onerror = () => {
@@ -3861,32 +3851,12 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
       utter.onend = () => {
         if (!expectedSeq || expectedSeq === this.speakSeq) {
-          clearTimeout(this.speakingWatchdog);
-          this.isSpeaking = false;
-          this.currentSpokenText = '';
-          this.lastSpeakingEndedTime = Date.now();
-          if (this.botVoiceRing) this.botVoiceRing.classList.remove('pulse');
-          if (this.hudBubble) this.hudBubble.classList.remove('visible');
-          if (this.hudState) {
-            this.hudState.textContent = (currentLang === 'am' ? 'ተከናውኗል' : currentLang === 'om' ? 'RAAWWATEERA' : currentLang === 'ti' ? 'ተዛዚሙ' : 'READY');
-          }
-          setTimeout(() => {
-            if (!this.isSpeaking && this.hudState) {
-              this.hudState.textContent = (currentLang === 'am' ? 'እየሰማ ነው' : currentLang === 'om' ? 'DHAGGEEFFATA' : currentLang === 'ti' ? 'ይሰምዕ ኣሎ' : 'LISTENING');
-            }
-          }, 1500);
+          this._onSpeakingEnded();
         }
       };
       utter.onerror = () => {
         if (!expectedSeq || expectedSeq === this.speakSeq) {
-          clearTimeout(this.speakingWatchdog);
-          this.isSpeaking = false;
-          this.currentSpokenText = '';
-          this.lastSpeakingEndedTime = Date.now();
-          if (this.botVoiceRing) this.botVoiceRing.classList.remove('pulse');
-          if (this.hudState) {
-            this.hudState.textContent = (currentLang === 'am' ? 'እየሰማ ነው' : currentLang === 'om' ? 'DHAGGEEFFATA' : currentLang === 'ti' ? 'ይሰምዕ ኣሎ' : 'LISTENING');
-          }
+          this._onSpeakingEnded();
         }
       };
       try {
@@ -3898,7 +3868,11 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     }
 
     setRecognitionLanguage(lang) {
-      const code = lang === 'am' ? 'am-ET' : lang === 'ti' ? 'ti-ET' : lang === 'om' ? 'om-ET' : 'en-US';
+      let code = 'en-US';
+      if (lang === 'am') code = 'am-ET';
+      else if (lang === 'ti') code = 'ti-ET';
+      else if (lang === 'om') code = 'om-ET';
+      this.currentLangCode = code;
       if (this.recognition) {
         const wasListening = this.isListening;
         this.recognition.lang = code;
@@ -3974,10 +3948,16 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
             };
             ['click', 'keydown'].forEach(evt => window.addEventListener(evt, retryMic, { once: true, passive: true }));
           } else if (e.error === 'language-not-supported') {
-            if (this.recognition && this.recognition.lang !== 'en-US') {
-              console.log('[ALX Voice] Switching recognition lang to en-US fallback');
-              this.recognition.lang = 'en-US';
-              this.startSafe();
+            if (this.recognition) {
+              if (this.recognition.lang === 'ti-ET') {
+                console.log('[ALX Voice] ti-ET not supported, falling back to am-ET (Ge\'ez phonology)');
+                this.recognition.lang = 'am-ET';
+                this.startSafe();
+              } else if (this.recognition.lang !== 'en-US') {
+                console.log('[ALX Voice] Falling back to en-US');
+                this.recognition.lang = 'en-US';
+                this.startSafe();
+              }
             }
           }
         };
@@ -4210,7 +4190,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       if (executed) {
         if (!isExplicitUserAction) {
           this.addDialogueMessage('user', `🎙️ "${raw}"`);
-          this.openChat();
+          // Kept minimized by default so hands-free navigation does not obscure the screen
         }
         this.lastSuccessfulCommandTime = Date.now();
         this.lastCommand = text;
@@ -4228,9 +4208,9 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       const isLoginContext = !state.isAuthenticated || (pageLogin && pageLogin.classList.contains('active'));
 
       // 00-JOB-PORTAL. OPEN ALX JOB PORTAL / EMPLOYMENT PLATFORM
-      if (/(?<![\p{L}\p{N}])(job portal|jobs portal|job|jobs|career|careers|employment|open job portal|open jobs|open portal|go to job portal|show jobs|view jobs|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|hojii|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||
+      if (/(?<![\p{L}\p{N}])(job portal|jobs portal|job|jobs|career|careers|employment|open job portal|open jobs|open portal|go to job portal|show jobs|view jobs|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|hojii|waltajjii hojii|carraa hojii|ስራሕ|ዕድላት ስራሕ|መድረኽ ስራሕ|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||
           (text.includes('job') && (text.includes('portal') || text.includes('open') || text.includes('go to') || text.includes('show'))) ||
-          text.includes('የስራ መድረክ') || text.includes('የስራ እድል')) {
+          text.includes('የስራ መድረክ') || text.includes('የስራ እድል') || text.includes('ስራሕ') || text.includes('hojii')) {
         this.stopSpeaking();
         this.lastCommand = text;
         this.lastCommandTime = now;
@@ -4285,7 +4265,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
       // 00-LOGIN. EXPLICIT HANDS-FREE LOGIN ONLY (NEVER LOOSE SUBSTRINGS OR AUTO-LOGIN)
       const isExplicitLoginCmd = isLoginContext && (
-        /^(log in|sign in|login|log me in|sign me in|please log in|submit login|ተመዝገብ|ግባ|ግባ በል|seeni|እቶ)$/i.test(text) ||
+        /(?<![\p{L}\p{N}])(log in|sign in|login|log me in|sign me in|please log in|submit login|log in to dashboard|login to dashboard|ተመዝገብ|ግባ|ይግቡ|ሎግ ኢን|ሎጊን|ሳይን ኢን|ግባ ወደ ዳሽቦርድ|seeni|seensa|seeni gara daashboorditti|እቶ|ምእታው)(?![\p{L}\p{N}])/iu.test(text) ||
         /^click\s+(sign in|log in)$/i.test(text)
       );
       if (isExplicitLoginCmd) {
@@ -4555,8 +4535,8 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       }
 
       // 0C. PLAY LESSON VIDEO (Strict idempotent play - never toggles to pause)
-      if (/(?<![\\p{L}\\p{N}])(play video|start video|play lesson|video play|resume video|አጫውት|ቪዲዮ አጫውት|ጀምር|ክፈት|taphachiisi|viidiyoo taphachiisi|jalqabi|ወልዕ|ቪድዮ ወልዕ)(?![\\p{L}\\p{N}])/iu.test(text) ||
-          ((text === 'play' || text === 'አጫውት' || text === 'taphachiisi' || text === 'ወልዕ') && (!learningCourseView || !learningCourseView.hidden))) {
+      if (/(?<![\p{L}\p{N}])(play video|start video|play lesson|video play|resume video|አጫውት|ቪዲዮ አጫውት|ጀምር|ክፈት|taphachiisi|viidiyoo taphachiisi|jalqabi|ወልዕ|ቪድዮ ወልዕ|ኣጻውት|ቪድዮ ኣጻውት)(?![\p{L}\p{N}])/iu.test(text) ||
+          ((text === 'play' || text === 'አጫውት' || text === 'taphachiisi' || text === 'ወልዕ' || text === 'ኣጻውት') && (!learningCourseView || !learningCourseView.hidden))) {
         this.stopSpeaking();
         this.playChime('success');
         if (learningCourseView && learningCourseView.hidden) {
@@ -4574,8 +4554,8 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       }
 
       // 0C-2. PAUSE LESSON VIDEO (Strict idempotent pause - never toggles to play)
-      if (/(?<![\\p{L}\\p{N}])(pause video|stop video|pause lesson|video pause|አቁም|ቪዲዮ አቁም|ቆም|dhaabi|viidiyoo dhaabi|ኣዕርፍ|ቪድዮ ኣዕርፍ|ደው ኣብል)(?![\\p{L}\\p{N}])/iu.test(text) ||
-          ((text === 'pause' || text === 'stop' || text === 'አቁም' || text === 'dhaabi' || text === 'ኣዕርፍ') && (!learningCourseView || !learningCourseView.hidden))) {
+      if (/(?<![\p{L}\p{N}])(pause video|stop video|pause lesson|video pause|አቁም|ቪዲዮ አቁም|ቆም|እረፍት|dhaabi|viidiyoo dhaabi|ኣዕርፍ|ቪድዮ ኣዕርፍ|ደው ኣብል|ደው)(?![\p{L}\p{N}])/iu.test(text) ||
+          ((text === 'pause' || text === 'stop' || text === 'አቁም' || text === 'dhaabi' || text === 'ኣዕርፍ' || text === 'ደው') && (!learningCourseView || !learningCourseView.hidden))) {
         this.stopSpeaking();
         this.playChime('success');
         if (courseLessonVideo) {
@@ -4838,7 +4818,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
       // 2. "GO TO EVERYWHERE" (UNIVERSAL TAB & PAGE NAVIGATION - AUTH PROTECTED)
       // Home
-      if (/(?<![\\p{L}\\p{N}])(go to home|open home|home tab|home dashboard|show home|home|መነሻ|ወደ መነሻ|መነሻ ገጽ|fuula duraa|gara fuula duraatti|ቀንዲ ገጽ|ናብ ቀንዲ ገጽ)(?![\\p{L}\\p{N}])/iu.test(text)) {
+      if (/(?<![\p{L}\p{N}])(go to home|open home|home tab|home dashboard|show home|home|dashboard|go to dashboard|open dashboard|መነሻ|ወደ መነሻ|መነሻ ገጽ|ዳሽቦርድ|ወደ ዳሽቦርድ|fuula duraa|gara fuula duraatti|daashboordii|gara daashboordiitti|ቀንዲ ገጽ|ናብ ቀንዲ ገጽ)(?![\p{L}\p{N}])/iu.test(text)) {
         this.lastCommand = text;
         this.lastCommandTime = now;
         if (!state.isAuthenticated && !state.isDemoMode) {
@@ -4861,7 +4841,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       }
 
       // Access My Learning / Start Learning
-      if (/(?<![\p{L}\p{N}])(go to access learning|access my learning|access learning|start learning|start my learning|open access learning|open learning|learning tab|curriculum|my learning|learning|ትምህርት|ትምህርቴን ጀምር|መማር ጀምር|ትምህርቴ|ወደ ትምህርት|barnoota koo|gara barnootaatti|barumsa eegali|barumsa|ትምህርተይ|ትምህርተይ ጀምር|ናብ ትምህርተይ)(?![\p{L}\p{N}])/iu.test(text)) {
+      if (/(?<![\p{L}\p{N}])(go to access learning|access my learning|access learning|start learning|start my learning|open access learning|open learning|learning tab|curriculum|my learning|learning|ትምህርት|ትምህርቴን ጀምር|መማር ጀምር|ትምህርቴ|ወደ ትምህርት|አክሰስ ለርኒንግ|ለርኒንግ|barnoota koo|gara barnootaatti|barumsa eegali|barumsa|barnoota|ትምህርተይ|ትምህርተይ ጀምር|ናብ ትምህርተይ|ትምህርቲ|ምምሃር ጀምር)(?![\p{L}\p{N}])/iu.test(text)) {
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
