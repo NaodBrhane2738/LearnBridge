@@ -55,23 +55,32 @@
     <!-- ========================================================= -->
     <section id="view-search" class="page-view" aria-labelledby="search-heading">
 
-      <!-- Active Candidate CV Banner (Displayed after CV is uploaded/selected) -->
-      <div id="active-cv-banner" class="active-cv-banner" style="display: none;">
+      <!-- Active Candidate CV Banner (Displayed for Candidate Profile) -->
+      <div id="active-cv-banner" class="active-cv-banner" style="display: flex;">
         <div class="active-cv-info">
           <div style="display: flex; align-items: center; gap: 8px;">
             <svg class="ui-icon" style="color: var(--primary-red); width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            <span style="font-weight: 700; color: var(--text-main);" id="active-cv-candidate-name">Candidate Profile</span>
+            <span style="font-weight: 700; color: var(--text-main);" id="active-cv-candidate-name">Yohannes Bekele</span>
             <span class="badge badge-verified" id="active-cv-file-badge">CV Loaded</span>
           </div>
-          <div id="active-cv-skills-preview" class="active-cv-skills-row" style="margin-top: 6px;"></div>
+          <div id="active-cv-skills-preview" class="active-cv-skills-row" style="margin-top: 6px;">
+            <span class="meta-pill">WCAG 2.2</span>
+            <span class="meta-pill">axe-core</span>
+            <span class="meta-pill">NVDA</span>
+            <span class="meta-pill">VoiceOver</span>
+            <span class="meta-pill">Playwright</span>
+            <span class="meta-pill">JavaScript</span>
+            <span class="meta-pill">HTML/ARIA Semantics</span>
+            <span class="meta-pill">React</span>
+          </div>
         </div>
         <button type="button" class="btn btn-sm btn-outline" id="btn-reupload-cv">
           Change CV
         </button>
       </div>
 
-      <!-- CV Upload Stage (Shown if no CV uploaded yet) -->
-      <div id="cv-upload-stage" class="cv-upload-stage">
+      <!-- CV Upload Stage (Hidden when candidate is loaded) -->
+      <div id="cv-upload-stage" class="cv-upload-stage" style="display: none;">
         <h2 id="search-heading" class="cv-upload-title">Upload Your CV to Unlock Matched Jobs</h2>
         <p class="cv-upload-subtitle">
           LearnBridge analyzes your skills, experience, and accessibility needs to tailor and rank opportunities. Swipe right with your keyboard to apply directly.
@@ -105,11 +114,121 @@
         </div>
       </div>
 
-      <!-- Swipeable Card Deck Stage -->
-      <div id="swipe-deck-stage" class="swipe-stage-container" style="display: none;">
-        <!-- Card Active Container -->
+      <!-- Swipeable Card Deck Stage (Pre-rendered for Instant Display) -->
+      <div id="swipe-deck-stage" class="swipe-stage-container" style="display: block;">
+        <!-- Card Active Container with Immediate First Card -->
         <div id="active-card-wrapper" class="active-card-wrapper">
-          <!-- Rendered via JS -->
+          <div class="deck-3d-stack" id="deck-3d-stack">
+            <div class="deck-card-layer deck-layer-deep" aria-hidden="true"></div>
+            <div class="deck-card-layer deck-layer-mid" aria-hidden="true"></div>
+            <article class="swipe-card tinder-card" id="swipe-card-job-emp-1794745870715" role="region" aria-label="Job card: Junior Cloud Infrastructure Specialist at ALX Africa / The ROOM" tabindex="0">
+              <div class="swipe-card-top-bar">
+                <div class="deck-counter-badge">
+                  Opportunity <strong>1</strong> of <strong>19</strong>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button type="button" class="btn-deck-mic is-listening" id="btn-deck-mic" aria-label="Voice microphone on by default (Press V to mute)" aria-pressed="true" title="Voice Control Active (Say 'more', 'apply', 'pass' or press V to mute)">
+                    <svg class="ui-icon mic-icon" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                    <span class="mic-status-label">Mic: On (V)</span>
+                  </button>
+                  <div class="match-score-pill">
+                    <svg class="ui-icon" style="width: 13px; height: 13px;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span><strong>92%</strong> Match</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="match-explanation-banner">
+                <svg class="ui-icon" style="color: var(--primary-red); width: 13px; height: 13px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Matches your digital infrastructure skills and assistive testing background.</span>
+              </div>
+
+              <div class="swipe-card-header">
+                <h2 class="swipe-card-title" id="swipe-title-job-emp-1794745870715">Junior Cloud Infrastructure Specialist</h2>
+                <div class="swipe-card-subhead">
+                  <strong class="swipe-card-employer">ALX Africa / The ROOM</strong>
+                  <span class="dot-separator">•</span>
+                  <span class="swipe-card-location">Addis Ababa, Ethiopia</span>
+                </div>
+                <div class="swipe-card-badges">
+                  <span class="badge badge-verified" title="Verified Trade License &amp; Legal Entity">
+                    <svg class="ui-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Verified Employer
+                  </span>
+                  <span class="badge badge-onsite">On-site</span>
+                  <span class="badge badge-standard">Full-time</span>
+                </div>
+              </div>
+
+              <div class="swipe-card-meta-row compact-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Compensation</span>
+                  <span class="meta-val meta-salary">Competitive / Disclosed Upon Interview</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Industry</span>
+                  <span class="meta-val">Technology &amp; Software</span>
+                </div>
+              </div>
+
+              <div class="swipe-card-body compact-body">
+                <p class="swipe-card-desc">Assist in cloud deployments, accessibility compliance monitoring, and infrastructure automation across regional tech hubs.</p>
+                <div class="swipe-card-section" style="margin-top: 6px;">
+                  <div class="job-tags-row"><span class="meta-pill">Cloud</span> <span class="meta-pill">Linux</span> <span class="meta-pill">Automation</span> <span class="meta-pill">Accessibility</span></div>
+                </div>
+              </div>
+
+              <button type="button" class="btn-card-toggle-details" id="btn-card-toggle-details" aria-expanded="false" aria-controls="card-expanded-details-job-emp-1794745870715" aria-label="Toggle full job details (Press M or click)">
+                <span class="toggle-text">More Details (Press M or click)</span>
+                <svg class="ui-icon toggle-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+
+              <div class="swipe-card-expanded-details" id="card-expanded-details-job-emp-1794745870715" style="display: none;" aria-hidden="true">
+                <div class="swipe-card-section">
+                  <h4 class="swipe-section-heading">Key Responsibilities</h4>
+                  <ul class="bullet-list"><li>Maintain cloud test environments and verify screen reader accessibility.</li><li>Automate deployment workflows with container pipelines.</li></ul>
+                </div>
+                <div class="swipe-card-section">
+                  <h4 class="swipe-section-heading">Requirements &amp; Qualifications</h4>
+                  <ul class="bullet-list"><li>Foundational experience with cloud technologies and Linux environments.</li><li>Passion for accessible digital inclusion.</li></ul>
+                </div>
+                <div class="swipe-card-section">
+                  <h4 class="swipe-section-heading">Verified Workplace Accommodations</h4>
+                  <div class="job-tags-row"><span class="meta-pill">Screen-Reader Ready</span> <span class="meta-pill">Captioned Meetings</span> <span class="meta-pill">Barrier-Free</span></div>
+                </div>
+                <div class="swipe-card-section swipe-card-footer-info">
+                  <span class="info-pill">Employer: <strong>ALX Africa / The ROOM</strong></span>
+                  <span class="info-pill">Location: <strong>Addis Ababa, Ethiopia</strong></span>
+                </div>
+              </div>
+
+              <div class="swipe-keyboard-hint compact-hint" aria-hidden="true">
+                <div class="hint-col hint-left">
+                  <kbd class="key-kbd">← Arrow</kbd>
+                  <span>Pass</span>
+                </div>
+                <div class="hint-col hint-mid">
+                  <kbd class="key-kbd">M</kbd>
+                  <span>More Info</span>
+                </div>
+                <div class="hint-col hint-right">
+                  <span>Apply</span>
+                  <kbd class="key-kbd">Arrow →</kbd>
+                </div>
+              </div>
+
+              <div class="swipe-card-actions tinder-actions">
+                <button type="button" class="btn btn-card-pass" id="btn-card-pass" data-id="job-emp-1794745870715" aria-label="Pass on this job (Left Arrow)">
+                  <svg class="ui-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Pass (←)
+                </button>
+                <button type="button" class="btn btn-card-apply" id="btn-card-apply" data-id="job-emp-1794745870715" aria-label="Apply to this job with CV (Right Arrow)">
+                  <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Apply with CV (→)
+                </button>
+              </div>
+            </article>
+          </div>
         </div>
 
         <!-- Empty / Complete State -->
@@ -373,6 +492,7 @@
   </dialog>
 
   <!-- Scripts -->
+  <script src="data/preloadedJobs.js"></script>
   <script src="accessibility/a11yManager.js"></script>
   <script src="components/JobCard.js"></script>
   <script src="components/ApplicationModal.js"></script>

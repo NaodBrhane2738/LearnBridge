@@ -65,6 +65,12 @@
     showPage('learning');
     const targetTab = rawHash || 'home';
     switchTab(targetTab);
+
+    if (state.isAuthenticated && (targetTab === 'home' || !targetTab)) {
+      if (window.voiceNav) {
+        window.voiceNav.announceDashboardWelcome();
+      }
+    }
   }
 
   function showPage(pageName) {
@@ -485,6 +491,10 @@
     showPage('learning');
     window.location.hash = '#home';
     switchTab('home');
+
+    if (window.voiceNav) {
+      window.voiceNav.announceDashboardWelcome();
+    }
   }
 
   const btnLoginSubmit = document.getElementById('btn-login-submit');
@@ -3467,6 +3477,8 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     init() {
       this.initRecognition();
       this.setupDomEvents();
+      this.checkAndInstallDependencies();
+      this.autoStartListening();
       this.announceWelcome();
     }
 
@@ -3479,21 +3491,113 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
     announceWelcome() {
       this.clearWelcomeTimer();
-      // Safe non-triggering welcome prompt that NEVER feeds trigger phrases back to speech recognition
+      // Announce initial hands-free prompt on the landing page
       this.welcomeTimer = setTimeout(() => {
         if (!this.isEnabled) return;
         if (state.isAuthenticated) return; // Never announce login prompt if already logged in!
         const isLoginPage = !state.isAuthenticated || (pageLogin && pageLogin.classList.contains('active'));
         if (isLoginPage) {
           const onboardingPrompts = {
-            am: "እንኳን ወደ ኤ ኤል ኤክስ በደህና መጡ። የመግቢያ መረጃዎን በማስገባት ወይም መለያ በመምረጥ ይግቡ።",
-            en: "Welcome to ALX Learning portal. Select a profile or enter credentials to sign in.",
-            om: "Baga nagaan gara ALX Learning dhuftan. Seenuuf piroofaayilii filadhaa.",
-            ti: "እንቋዕ ናብ ኤ ኤል ኤክስ ብደሓን መጻእኹም። ንምእታው ፕሮፋይልኩም ይምረጹ።"
+            am: "ዝግጁ ነው። ለመግባት login ወይም ይግቡ ይበሉ።",
+            en: "Ready, say login or sign in to login",
+            om: "Qophii dha, seenuuf login jedhaa.",
+            ti: "ድሉው እዩ፣ ንምእታው login በሉ።"
           };
-          this.speak(onboardingPrompts[currentLang] || onboardingPrompts.en);
+          const prompt = onboardingPrompts[currentLang] || onboardingPrompts.en;
+          if (this.hudHeard) this.hudHeard.textContent = prompt;
+          this.speak(prompt);
         }
-      }, 1500);
+      }, 750);
+    }
+
+    announceDashboardWelcome() {
+      this.clearWelcomeTimer();
+      // Announce next steps on the dashboard
+      this.welcomeTimer = setTimeout(() => {
+        if (!this.isEnabled) return;
+        if (!state.isAuthenticated && !state.isDemoMode) return;
+        const isDashboard = pageLearning && pageLearning.classList.contains('active') && (window.location.hash === '#home' || window.location.hash === '');
+        if (isDashboard) {
+          const dashboardPrompts = {
+            am: "ዝግጁ ነው። ለመማር access learning ይበሉ።",
+            en: "Ready, say access learning to start learning",
+            om: "Qophii dha, barumsa eegaluuf access learning jedhaa.",
+            ti: "ድሉው እዩ፣ ንምምሃር access learning በሉ።"
+          };
+          const prompt = dashboardPrompts[currentLang] || dashboardPrompts.en;
+          if (this.hudHeard) this.hudHeard.textContent = prompt;
+          this.speak(prompt);
+        }
+      }, 600);
+    }
+
+    async checkAndInstallDependencies() {
+      try {
+        // 1. Silent Service Worker cache verification & installation
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+        }
+
+        // 2. Pre-warm AudioContext for instant chime feedback
+        try {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx && !this.audioCtx) {
+            this.audioCtx = new AudioCtx();
+            if (this.audioCtx.state === 'suspended') {
+              this.audioCtx.resume().catch(() => {});
+            }
+          }
+        } catch (_) {}
+
+        // 3. Pre-warm SpeechSynthesis & preload voices
+        if ('speechSynthesis' in window) {
+          try {
+            const v = window.speechSynthesis.getVoices();
+            if (!v || v.length === 0) {
+              window.speechSynthesis.onvoiceschanged = () => {
+                try { window.speechSynthesis.getVoices(); } catch (_) {}
+              };
+            }
+          } catch (_) {}
+        }
+
+        // 4. Pre-cache TTS audio prompts silently from backend
+        try {
+          const precachePrompts = [
+            { text: 'Ready, say login or sign in to login', lang: 'en' },
+            { text: 'Ready, say access learning to start learning', lang: 'en' },
+            { text: 'ዝግጁ ነው። ለመግባት login ወይም ይግቡ ይበሉ።', lang: 'am' },
+            { text: 'ዝግጁ ነው። ለመማር access learning ይበሉ።', lang: 'am' }
+          ];
+          precachePrompts.forEach(p => {
+            fetch('/api/tts', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(p)
+            }).catch(() => {});
+          });
+        } catch (_) {}
+      } catch (err) {
+        console.warn('[Dependencies] Background check completed:', err);
+      }
+    }
+
+    autoStartListening() {
+      if (!this.recognition || this.isListening) return;
+      try {
+        this.recognition.start();
+        this.isListening = true;
+        this.updateUiState(true, currentLang === 'am' ? 'እየሰማ ነው 🎙️' : 'Listening 🎙️ · Hands-Free Active');
+      } catch (err) {
+        // Browser gesture requirement fallback: attach transparent listeners to activate on first tap/click/key
+        const engageMic = () => {
+          ['click', 'touchstart', 'keydown'].forEach(evt => window.removeEventListener(evt, engageMic));
+          if (this.isEnabled && !this.isListening) {
+            this.startSafe();
+          }
+        };
+        ['click', 'touchstart', 'keydown'].forEach(evt => window.addEventListener(evt, engageMic, { once: true, passive: true }));
+      }
     }
 
     speakInstant(text, targetLang) {
@@ -3788,28 +3892,51 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
         this.recognition.onstart = () => {
           this.isListening = true;
-          this.updateUiState(true, currentLang === 'am' ? 'እየሰማ ነው' : 'MIC OPEN');
+          this.updateUiState(true, currentLang === 'am' ? 'እየሰማ ነው 🎙️' : 'Listening 🎙️ · Hands-Free Active');
         };
 
         this.recognition.onend = () => {
           this.isListening = false;
           this.updateUiState(false, 'Idle');
+          // Auto-restart continuous listening unless explicitly disabled or assistant is speaking
+          if (this.isEnabled && !this.isSpeaking) {
+            clearTimeout(this.restartTimer);
+            this.restartTimer = setTimeout(() => {
+              if (this.isEnabled && !this.isSpeaking && !this.isListening) {
+                this.startSafe();
+              }
+            }, 250);
+          }
         };
 
         this.recognition.onerror = (e) => {
           console.warn('[ALX Voice Navigator] Speech recognition event:', e.error);
+          if (e.error === 'no-speech' || e.error === 'network') {
+            if (this.isEnabled && !this.isSpeaking) {
+              clearTimeout(this.restartTimer);
+              this.restartTimer = setTimeout(() => {
+                if (this.isEnabled && !this.isSpeaking && !this.isListening) {
+                  this.startSafe();
+                }
+              }, 300);
+            }
+            return;
+          }
           this.isListening = false;
           if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-            this.isEnabled = false;
-            this.updateUiState(false, 'Mic Disabled');
-            if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'እባክዎ ማይክሮፎኑን ለማብራት አዶውን ይጫኑ' : 'Click the microphone button to enable voice navigation');
-          } else if (e.error === 'network' || e.error === 'language-not-supported') {
+            this.updateUiState(false, 'Mic Blocked');
+            if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'እባክዎ ማይክሮፎኑን ለማብራት አዶውን ይጫኑ' : 'Click anywhere or tap microphone to enable voice');
+            const retryMic = () => {
+              ['click', 'keydown'].forEach(evt => window.removeEventListener(evt, retryMic));
+              this.startWithPermission();
+            };
+            ['click', 'keydown'].forEach(evt => window.addEventListener(evt, retryMic, { once: true, passive: true }));
+          } else if (e.error === 'language-not-supported') {
             if (this.recognition && this.recognition.lang !== 'en-US') {
               console.log('[ALX Voice] Switching recognition lang to en-US fallback');
               this.recognition.lang = 'en-US';
+              this.startSafe();
             }
-          } else if (e.error === 'no-speech') {
-            this.updateUiState(false, 'Idle');
           }
         };
 
@@ -4691,8 +4818,8 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         return true;
       }
 
-      // Access My Learning
-      if (/(?<![\p{L}\p{N}])(go to access learning|access my learning|access learning|learning tab|curriculum|my learning|learning|ትምህርት|ትምህርቴን ጀምር|ትምህርቴ|ወደ ትምህርት|barnoota koo|gara barnootaatti|barumsa eegali|barumsa|ትምህርተይ|ትምህርተይ ጀምር|ናብ ትምህርተይ)(?![\p{L}\p{N}])/iu.test(text)) {
+      // Access My Learning / Start Learning
+      if (/(?<![\p{L}\p{N}])(go to access learning|access my learning|access learning|start learning|start my learning|open access learning|open learning|learning tab|curriculum|my learning|learning|ትምህርት|ትምህርቴን ጀምር|መማር ጀምር|ትምህርቴ|ወደ ትምህርት|barnoota koo|gara barnootaatti|barumsa eegali|barumsa|ትምህርተይ|ትምህርተይ ጀምር|ናብ ትምህርተይ)(?![\p{L}\p{N}])/iu.test(text)) {
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');

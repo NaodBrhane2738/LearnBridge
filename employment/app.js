@@ -6,13 +6,14 @@
 class EmploymentApp {
   constructor() {
     this.currentRoute = 'search';
-    this.currentCandidate = null;
-    this.allJobs = [];
+    this.currentCandidate = window.PRELOADED_CANDIDATE || null;
+    this.allJobs = (window.PRELOADED_JOBS || []).map(item => item.job || item);
     this.savedJobIds = new Set();
-    this.activeCandidateProfile = null;
-    this.cardDeck = [];
+    this.activeCandidateProfile = window.PRELOADED_CANDIDATE || null;
+    this.cardDeck = (window.PRELOADED_JOBS || []).slice();
     this.currentCardIndex = 0;
     this.isCardAnimating = false;
+    this._cardNodeCache = new Map();
     this.activeSearchFilters = {
       q: '',
       industry: 'all',
@@ -33,25 +34,44 @@ class EmploymentApp {
   }
 
   async init() {
-    // 1. Initialize Accessibility Engine
+    // 1. Synchronous warm-up of preloaded candidate & jobs for instant 0ms first paint
+    if (window.PRELOADED_CANDIDATE && !this.activeCandidateProfile) {
+      this.currentCandidate = window.PRELOADED_CANDIDATE;
+      this.activeCandidateProfile = window.PRELOADED_CANDIDATE;
+    }
+    if (window.PRELOADED_JOBS && (!this.cardDeck || this.cardDeck.length === 0)) {
+      this.allJobs = window.PRELOADED_JOBS.map(item => item.job || item);
+      this.cardDeck = window.PRELOADED_JOBS.slice();
+    }
+
+    // Bind events to the pre-baked first card immediately
+    const existingStack = document.getElementById('deck-3d-stack');
+    if (existingStack) {
+      this.bindCardNodeEvents(existingStack, 0);
+      if (!this._cardNodeCache) this._cardNodeCache = new Map();
+      this._cardNodeCache.set(0, existingStack);
+    }
+
+    // 2. Pre-render upcoming card DOM nodes into cache immediately
+    this.preloadCardCache();
+
+    // 3. Immediately render initial route on tick 0
+    this.bindGlobalEvents();
+    this.handleRoute();
+    window.addEventListener('hashchange', () => this.handleRoute());
+
+    // 4. Initialize Accessibility Engine
     if (window.a11y) {
       window.a11y.init();
     }
 
-    // 2. Load Localization Dictionary (check shared player preferences first)
-    const initialLang = localStorage.getItem('lb_emp_lang') || localStorage.getItem('learnbridge_lang') || 'en';
-    await this.loadLanguage(initialLang);
-
-    // 3. Load Candidate & Initial Opportunities
-    await this.loadInitialData();
-
-    // 4. Initialize Application Wizard Modal
+    // 5. Initialize Application Wizard Modal
     if (window.applicationModal) window.applicationModal.init();
 
-    // 5. Setup Routing & Events
-    this.bindGlobalEvents();
-    this.handleRoute();
-    window.addEventListener('hashchange', () => this.handleRoute());
+    // 6. Non-blocking background sync
+    const initialLang = localStorage.getItem('lb_emp_lang') || localStorage.getItem('learnbridge_lang') || 'en';
+    this.loadLanguage(initialLang).catch(() => {});
+    this.loadInitialData().catch(() => {});
 
     window.refreshAppState = () => this.refreshData();
   }
@@ -259,23 +279,18 @@ class EmploymentApp {
     if (!view) return;
     view.style.display = 'block';
 
-    const savedCv = localStorage.getItem('lb_active_cv');
-    if (savedCv && !this.activeCandidateProfile) {
-      try {
-        this.activeCandidateProfile = JSON.parse(savedCv);
-      } catch (_) {}
+    if (!this.activeCandidateProfile && window.PRELOADED_CANDIDATE) {
+      this.activeCandidateProfile = window.PRELOADED_CANDIDATE;
+    }
+
+    if (this.cardDeck.length === 0 && window.PRELOADED_JOBS) {
+      this.cardDeck = window.PRELOADED_JOBS.slice();
     }
 
     if (this.activeCandidateProfile) {
       this.displayActiveCvBanner(this.activeCandidateProfile);
-      if (this.cardDeck.length === 0) {
-        this.loadRecommendationsForCandidate(this.activeCandidateProfile);
-      } else {
-        this.renderActiveCard();
-      }
-    } else {
-      this.showCvUploadStage();
     }
+    this.renderActiveCard();
   }
 
   showCvUploadStage() {
@@ -307,69 +322,43 @@ class EmploymentApp {
     }
   }
 
-  async loadRecommendationsForCandidate(profile) {
-    try {
-      const res = await fetch('/api/v1/employment/jobs/recommendations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ candidateProfile: profile, limit: 50 })
-      });
-      const json = await res.json();
-      if (json.success && json.data && json.data.length > 0) {
-        this.cardDeck = json.data;
-      } else {
-        this.cardDeck = this.allJobs.map(job => ({
-          job,
-          matchScore: 85,
-          explanation: { summary: "Matches your broad career profile." }
-        }));
-      }
-      this.currentCardIndex = 0;
-      this.renderActiveCard();
-    } catch (err) {
-      console.warn("[EmploymentApp] Error loading recommendations:", err);
-      this.cardDeck = this.allJobs.map(job => ({
-        job,
-        matchScore: 80,
-        explanation: { summary: "Recommended opportunity." }
-      }));
-      this.currentCardIndex = 0;
-      this.renderActiveCard();
+  preloadCardCache() {
+    if (!this._cardNodeCache) this._cardNodeCache = new Map();
+    const start = this.currentCardIndex;
+    const end = Math.min(start + 4, this.cardDeck.length);
+    for (let i = start; i < end; i++) {
+      this.getPreRenderedCardElement(i);
     }
   }
 
-  renderActiveCard() {
-    const deckStage = document.getElementById('swipe-deck-stage');
-    const uploadStage = document.getElementById('cv-upload-stage');
-    const wrapper = document.getElementById('active-card-wrapper');
-    const emptyState = document.getElementById('deck-empty-state');
-
-    if (uploadStage) uploadStage.style.display = 'none';
-    if (deckStage) deckStage.style.display = 'block';
-
-    if (!wrapper) return;
-
-    if (this.currentCardIndex >= this.cardDeck.length || this.cardDeck.length === 0) {
-      wrapper.innerHTML = '';
-      if (emptyState) emptyState.style.display = 'block';
-      if (window.a11y) {
-        window.a11y.announceLive("You've reviewed all recommended opportunities.", true);
-      }
-      return;
+  getPreRenderedCardElement(index) {
+    if (index >= this.cardDeck.length) return null;
+    if (!this._cardNodeCache) this._cardNodeCache = new Map();
+    if (this._cardNodeCache.has(index)) {
+      return this._cardNodeCache.get(index);
     }
 
-    if (emptyState) emptyState.style.display = 'none';
-
-    const currentItem = this.cardDeck[this.currentCardIndex];
-    wrapper.innerHTML = window.JobCardComponent.renderSwipeCard(
+    const currentItem = this.cardDeck[index];
+    const temp = document.createElement('div');
+    temp.innerHTML = window.JobCardComponent.renderSwipeCard(
       currentItem,
-      this.currentCardIndex,
+      index,
       this.cardDeck.length
     );
+    const stackNode = temp.firstElementChild; // .deck-3d-stack
 
-    // Bind card action buttons
-    const passBtn = wrapper.querySelector('#btn-card-pass');
-    const applyBtn = wrapper.querySelector('#btn-card-apply');
+    this.bindCardNodeEvents(stackNode, index);
+    this._cardNodeCache.set(index, stackNode);
+    return stackNode;
+  }
+
+  bindCardNodeEvents(stackNode, index) {
+    if (!stackNode) return;
+
+    const passBtn = stackNode.querySelector('#btn-card-pass');
+    const applyBtn = stackNode.querySelector('#btn-card-apply');
+    const toggleBtn = stackNode.querySelector('#btn-card-toggle-details');
+    const micBtn = stackNode.querySelector('#btn-deck-mic');
 
     if (passBtn) {
       passBtn.onclick = (e) => {
@@ -385,8 +374,6 @@ class EmploymentApp {
       };
     }
 
-    // Bind More Details toggle button
-    const toggleBtn = wrapper.querySelector('#btn-card-toggle-details');
     if (toggleBtn) {
       toggleBtn.onclick = (e) => {
         e.preventDefault();
@@ -394,8 +381,6 @@ class EmploymentApp {
       };
     }
 
-    // Bind Voice Microphone toggle button
-    const micBtn = wrapper.querySelector('#btn-deck-mic');
     if (micBtn) {
       micBtn.onclick = (e) => {
         e.preventDefault();
@@ -408,7 +393,46 @@ class EmploymentApp {
       }
     }
 
+    const activeCard = stackNode.querySelector('.swipe-card');
+    if (activeCard) {
+      this.bindSwipeGestures(activeCard);
+    }
+  }
+
+  renderActiveCard() {
+    const deckStage = document.getElementById('swipe-deck-stage');
+    const uploadStage = document.getElementById('cv-upload-stage');
+    const wrapper = document.getElementById('active-card-wrapper');
+    const emptyState = document.getElementById('deck-empty-state');
+
+    if (uploadStage) uploadStage.style.display = 'none';
+    if (deckStage) deckStage.style.display = 'block';
+
+    if (!wrapper) return;
+
+    if (this.currentCardIndex >= this.cardDeck.length || this.cardDeck.length === 0) {
+      wrapper.replaceChildren();
+      if (emptyState) emptyState.style.display = 'block';
+      if (window.a11y) {
+        window.a11y.announceLive("You've reviewed all recommended opportunities.", true);
+      }
+      return;
+    }
+
+    if (emptyState) emptyState.style.display = 'none';
+
+    // Retrieve pre-rendered element instantly (0ms DOM creation)
+    const cardNode = this.getPreRenderedCardElement(this.currentCardIndex);
+    wrapper.replaceChildren(cardNode);
+
+    // Auto-focus the active card for immediate keyboard accessibility
+    const activeCard = cardNode.querySelector('.swipe-card');
+    if (activeCard) {
+      activeCard.focus({ preventScroll: true });
+    }
+
     // Accessible announcements for screen readers & TTS
+    const currentItem = this.cardDeck[this.currentCardIndex];
     const job = currentItem.job;
     const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply with CV, Left Arrow to pass, or M for full details.`;
     if (window.a11y) {
@@ -418,12 +442,8 @@ class EmploymentApp {
       }
     }
 
-    // Auto-focus the active card for immediate keyboard accessibility
-    const activeCard = wrapper.querySelector('.swipe-card');
-    if (activeCard) {
-      activeCard.focus({ preventScroll: true });
-      this.bindSwipeGestures(activeCard);
-    }
+    // Preload next cards in the pipeline
+    this.preloadCardCache();
   }
 
   buildFullSpokenDetails(job, currentItem) {
@@ -731,7 +751,7 @@ class EmploymentApp {
       this.currentCardIndex++;
       this.isCardAnimating = false;
       this.renderActiveCard();
-    }, 240);
+    }, 110);
   }
 
   handleCardPass() {
@@ -764,7 +784,7 @@ class EmploymentApp {
       this.currentCardIndex++;
       this.isCardAnimating = false;
       this.renderActiveCard();
-    }, 240);
+    }, 110);
   }
 
   async processCvText(cvText, fileName = 'uploaded-cv.txt') {
