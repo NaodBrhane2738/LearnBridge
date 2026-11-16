@@ -72,7 +72,8 @@
     state.activeTab = tabId;
 
     // Update active nav-link
-    navLinks.forEach((link) => {
+    const allNavLinks = document.querySelectorAll('.nav-link');
+    allNavLinks.forEach((link) => {
       const linkTab = link.getAttribute('data-tab');
       if (linkTab === tabId) {
         link.classList.add('active');
@@ -82,8 +83,9 @@
     });
 
     // Update active tab-pane
+    const allTabPanes = document.querySelectorAll('.tab-pane');
     let matched = false;
-    tabPanes.forEach((pane) => {
+    allTabPanes.forEach((pane) => {
       if (pane.id === `tab-${tabId}`) {
         pane.classList.add('active');
         matched = true;
@@ -98,6 +100,16 @@
       if (homePane) homePane.classList.add('active');
       const homeLink = document.querySelector('[data-tab="home"]');
       if (homeLink) homeLink.classList.add('active');
+    }
+
+    if (tabId === 'jobs') {
+      const iframe = document.getElementById('jobPortalIframe');
+      if (iframe && (!iframe.src || iframe.src === 'about:blank' || iframe.src.endsWith('/about:blank'))) {
+        iframe.src = '/job-portal/';
+      }
+      document.title = 'ALX Job Portal & Employment Platform | ALX';
+    } else {
+      document.title = 'ALX Learning';
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -385,6 +397,34 @@
       switchTab(targetTab);
     });
   });
+
+  // Direct Job Portal Integration Buttons
+  const btnOpenDashJob = document.getElementById('btnOpenDashboardJobPortal');
+  if (btnOpenDashJob) {
+    btnOpenDashJob.addEventListener('click', () => {
+      window.location.hash = '#jobs';
+      switchTab('jobs');
+    });
+  }
+
+  const btnReloadJobFrame = document.getElementById('btnReloadJobPortalFrame');
+  if (btnReloadJobFrame) {
+    btnReloadJobFrame.addEventListener('click', () => {
+      const iframe = document.getElementById('jobPortalIframe');
+      if (iframe) iframe.src = '/job-portal/';
+    });
+  }
+
+  const btnHeaderJob = document.getElementById('btnJobPortal');
+  if (btnHeaderJob) {
+    btnHeaderJob.addEventListener('click', (e) => {
+      if (state.isAuthenticated) {
+        e.preventDefault();
+        window.location.hash = '#jobs';
+        switchTab('jobs');
+      }
+    });
+  }
 
   // Avatar / Signout Click
   function handleSignOut() {
@@ -3304,20 +3344,49 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
     announceWelcome() {
       this.clearWelcomeTimer();
+      // Safe non-triggering welcome prompt that NEVER feeds trigger phrases back to speech recognition
       this.welcomeTimer = setTimeout(() => {
         if (!this.isEnabled) return;
         if (state.isAuthenticated) return; // Never announce login prompt if already logged in!
         const isLoginPage = !state.isAuthenticated || (pageLogin && pageLogin.classList.contains('active'));
         if (isLoginPage) {
           const onboardingPrompts = {
-            am: "እንኳን ወደ ኤ ኤል ኤክስ በደህና መጡ! ለመግባት 'ግባ' ይበሉ።",
-            en: "Welcome to ALX Learning! Say 'Log in' to enter your dashboard.",
-            om: "Baga nagaan dhuftan! Seenuuf 'Seeni' jedhaa.",
-            ti: "እንቋዕ ብደሓን መጻእኹም! ንምእታው 'እቶ' በሉ፤"
+            am: "እንኳን ወደ ኤ ኤል ኤክስ በደህና መጡ። የመግቢያ መረጃዎን በማስገባት ወይም መለያ በመምረጥ ይግቡ።",
+            en: "Welcome to ALX Learning portal. Select a profile or enter credentials to sign in.",
+            om: "Baga nagaan gara ALX Learning dhuftan. Seenuuf piroofaayilii filadhaa.",
+            ti: "እንቋዕ ናብ ኤ ኤል ኤክስ ብደሓን መጻእኹም። ንምእታው ፕሮፋይልኩም ይምረጹ።"
           };
           this.speak(onboardingPrompts[currentLang] || onboardingPrompts.en);
         }
-      }, 1000);
+      }, 1500);
+    }
+
+    speakInstant(text, targetLang) {
+      if (!text || !text.trim()) return;
+      if (state.isAuthenticated && (/log in|sign in|welcome to alx|authenticate|ይግቡ|ግባ|seeni|እቶ/i.test(text))) {
+        return;
+      }
+      this.stopSpeaking();
+      const currentSeq = ++this.speakSeq;
+      this.isSpeaking = true;
+      this.currentSpokenText = text.toLowerCase().trim();
+      this.lastSpokenText = this.currentSpokenText;
+      if (this.botVoiceRing) this.botVoiceRing.classList.add('pulse');
+      if (this.hudState) {
+        this.hudState.textContent = (currentLang === 'am' ? 'እየተናገረ ነው' : 'SPEAKING');
+      }
+
+      const speechTextEl = document.getElementById('voiceAssistantSpeechText');
+      if (speechTextEl) {
+        speechTextEl.textContent = text;
+        speechTextEl.style.display = 'block';
+      }
+      if (this.hudHeard) {
+        this.hudHeard.textContent = `"${text.length > 28 ? text.substring(0, 28) + '...' : text}"`;
+      }
+
+      const lang = targetLang || currentLang || 'en';
+      this.fallbackSpeak(text, lang, currentSeq);
     }
 
     playChime(type = 'success') {
@@ -3626,17 +3695,23 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.recognition.onresult = (event) => {
           let interimText = '';
           let finalUtterance = '';
+          const candidatePhrases = [];
 
           for (let i = event.resultIndex; i < event.results.length; ++i) {
             const res = event.results[i];
-            if (!res || !res[0]) continue;
-            const transcript = res[0].transcript || '';
-            if (!transcript) continue;
-
-            if (res.isFinal) {
-              finalUtterance += transcript + ' ';
-            } else {
-              interimText += transcript + ' ';
+            if (!res) continue;
+            for (let j = 0; j < res.length; ++j) {
+              if (res[j] && res[j].transcript) {
+                const tr = res[j].transcript.trim();
+                if (tr && !candidatePhrases.includes(tr)) candidatePhrases.push(tr);
+              }
+            }
+            if (res[0] && res[0].transcript) {
+              if (res.isFinal) {
+                finalUtterance += res[0].transcript + ' ';
+              } else {
+                interimText += res[0].transcript + ' ';
+              }
             }
           }
 
@@ -3645,17 +3720,18 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
           const now = Date.now();
           const normRaw = rawText.toLowerCase().replace(/[.,!?;:'"\\-_/\\()]/g, ' ').trim();
-          const isBargeInCommand = /^(login|log in|sign in|ግባ|seeni|እቶ|stop|ዝም|dhaabi|job portal|jobs|career|apply|reject|pass|planning|home|learning|projects)/i.test(normRaw);
-
-          // If user speaks a command during assistant speech, immediately silence and execute
-          if (isBargeInCommand && this.isSpeaking) {
-            this.stopSpeaking();
-          } else if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 250) {
+          // STRICT ECHO SUPPRESSION:
+          // Never process recognition while assistant is speaking or right after (< 300ms)
+          // This completely prevents the system's own spoken output from auto-triggering login or commands.
+          if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 300) {
+            if (/^(stop|quiet|silence|ዝም|ቆም)/i.test(normRaw)) {
+              this.stopSpeaking();
+            }
             return;
           }
 
           // Strict Echo Rejection: If the recognized phrase contains parts of what was recently spoken, drop it!
-          if (!isBargeInCommand && this.lastSpokenText) {
+          if (this.lastSpokenText) {
             if (this.lastSpokenText.includes(normRaw) || (normRaw.length > 3 && this.lastSpokenText.includes(normRaw.substring(0, 8)))) {
               return;
             }
@@ -3666,27 +3742,23 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
             this.hudHeard.textContent = `"${rawText.length > 28 ? rawText.substring(0, 28) + '...' : rawText}"`;
           }
 
-          // ZERO-LAG INSTANT EXECUTION:
-          // Immediately try to dispatch if the spoken phrase (interim or final) matches a command!
-          const executed = this.dispatchCommand(rawText);
-          if (executed) {
-            clearTimeout(this.interimDebounceTimer);
-            return;
+          // Try matching candidate phrases in order of confidence
+          for (const cand of candidatePhrases) {
+            const executed = this.dispatchCommand(cand);
+            if (executed) {
+              clearTimeout(this.interimDebounceTimer);
+              return;
+            }
           }
 
-          // If final utterance received and not yet executed:
-          if (finalUtterance.trim()) {
-            clearTimeout(this.interimDebounceTimer);
-            this.dispatchCommand(finalUtterance.trim());
-            return;
-          }
-
-          // If interim text received, debounce by 200ms
+          // Debounce remainder if unexecuted
           if (interimText.trim()) {
             clearTimeout(this.interimDebounceTimer);
             this.interimDebounceTimer = setTimeout(() => {
-              this.dispatchCommand(interimText.trim());
-            }, 200);
+              if (!this.isSpeaking) {
+                this.dispatchCommand(interimText.trim());
+              }
+            }, 120);
           }
         };
 
@@ -3820,18 +3892,15 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
       const now = Date.now();
 
-      // Dynamic acoustic isolation (allow immediate barge-in for commands)
+      // Dynamic acoustic isolation (prevent echo or self-feedback loops)
       if (!isExplicitUserAction) {
-        const isBargeIn = /^(login|log in|sign in|ግባ|seeni|እቶ|stop|ዝም|dhaabi|job portal|jobs|career|apply|reject|pass)/i.test(text);
-        if (isBargeIn && this.isSpeaking) {
-          this.stopSpeaking();
-        } else if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 250) {
+        if (this.isSpeaking || (now - (this.lastSpeakingEndedTime || 0)) < 250) {
           return false;
         }
-        if (!isBargeIn && (now - (this.lastSuccessfulCommandTime || 0)) < 400) {
+        if ((now - (this.lastSuccessfulCommandTime || 0)) < 250) {
           return false;
         }
-        if (text === this.lastCommand && (now - this.lastCommandTime) < 1500) {
+        if (text === this.lastCommand && (now - this.lastCommandTime) < 600) {
           return false;
         }
       }
@@ -3879,20 +3948,24 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       const isLoginContext = !state.isAuthenticated || (pageLogin && pageLogin.classList.contains('active'));
 
       // 00-JOB-PORTAL. OPEN ALX JOB PORTAL / EMPLOYMENT PLATFORM
-      if (/(?<![\p{L}\p{N}])(job portal|jobs portal|job|jobs|career|careers|employment|open job portal|open jobs|open portal|go to job portal|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|hojii|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||
-          text.includes('job portal') || text.includes('open jobs') || text.includes('open job portal') || text.includes('የስራ መድረክ') || text.includes('ስራዎች')) {
+      if (/(?<![\p{L}\p{N}])(job portal|jobs portal|job|jobs|career|careers|employment|open job portal|open jobs|open portal|go to job portal|show jobs|view jobs|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|hojii|ቦታ ስራ)(?![\p{L}\p{N}])/iu.test(text) ||
+          (text.includes('job') && (text.includes('portal') || text.includes('open') || text.includes('go to') || text.includes('show'))) ||
+          text.includes('የስራ መድረክ') || text.includes('የስራ እድል')) {
         this.stopSpeaking();
         this.lastCommand = text;
         this.lastCommandTime = now;
         this.playChime('success');
         if (this.hudHeard) this.hudHeard.textContent = (currentLang === 'am' ? 'የስራ መድረክ' : 'ALX Job Portal');
-        this.speak(currentLang === 'am' ? 'የስራ መድረክን በመክፈት ላይ...' :
-                   currentLang === 'om' ? 'Poortaalii hojii banuutti jira...' :
-                   currentLang === 'ti' ? 'ናይ ስራሕ መድረኽ ይኸፍት ኣሎ...' :
-                   'Opening ALX Job Portal...');
-        setTimeout(() => {
-          window.location.href = '/job-portal';
-        }, 300);
+        
+        // Immediate local UI automation
+        if (!state.isAuthenticated) {
+          state.isAuthenticated = true;
+          showPage('learning');
+        }
+        window.location.hash = '#jobs';
+        switchTab('jobs');
+        
+        this.speakInstant(currentLang === 'am' ? 'የስራ መድረክ ተከፍቷል።' : 'Opened ALX Job Portal.');
         return true;
       }
 
@@ -3926,9 +3999,13 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         return true;
       }
 
-      // 00-LOGIN. SIGN IN / LOG IN (Instant hands-free login)
-      if (/(?<![\\p{L}\\p{N}])(sign in|log in|login|submit login|enter|sign up|signup|ተመዝገብ|ግባ|ግባ በል|seeni|እቶ|ሎጊን|ሎግ ኢን)(?![\\p{L}\\p{N}])/iu.test(text) ||
-          text.includes('login') || text.includes('log in') || text.includes('sign in') || text.includes('sign up') || text.includes('signup') || text.includes('ተመዝገብ') || text.includes('ግባ') || text.includes('ሎጊን') || text.includes('seeni') || text.includes('እቶ')) {
+      // 00-LOGIN. EXPLICIT HANDS-FREE LOGIN ONLY (NEVER LOOSE SUBSTRINGS OR AUTO-LOGIN)
+      const isExplicitLoginCmd = isLoginContext && (
+        /^(log in|sign in|login|log me in|sign me in|please log in|submit login|ተመዝገብ|ግባ|ግባ በል|seeni|እቶ)$/i.test(text) ||
+        /^click\s+(sign in|log in)$/i.test(text)
+      );
+      if (isExplicitLoginCmd) {
+        if (this.isSpeaking) return false;
         this.stopSpeaking();
         this.clearWelcomeTimer();
         this.lastCommand = text;
