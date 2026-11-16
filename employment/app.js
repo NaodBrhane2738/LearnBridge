@@ -447,6 +447,37 @@ class EmploymentApp {
     }
   }
 
+  // -------------------------------------------------------------
+  // ALX PROFILE & SETTINGS MODAL
+  // -------------------------------------------------------------
+  openProfileSettingsModal() {
+    const modal = document.getElementById('modal-profile-settings');
+    if (!modal) return;
+    if (window.a11y) {
+      window.a11y.playChime('neutral');
+      const msg = this.currentLang === 'am' ? 'የALX ፕሮፋይል እና ቅንብሮች ተከፍቷል' :
+                  this.currentLang === 'om' ? 'Qindaa\'ina piroofaayilii ALX banameera' :
+                  this.currentLang === 'ti' ? 'ቅጥዕታት ፕሮፋይል ALX ተኸፊቱ ኣሎ' : 'Opened ALX Profile & Settings';
+      window.a11y.showVisualToast(msg);
+      window.a11y.speak(msg);
+    }
+    if (typeof modal.showModal === 'function') {
+      modal.showModal();
+    } else {
+      modal.setAttribute('open', '');
+    }
+  }
+
+  closeProfileSettingsModal() {
+    const modal = document.getElementById('modal-profile-settings');
+    if (!modal) return;
+    if (typeof modal.close === 'function') {
+      modal.close();
+    } else {
+      modal.removeAttribute('open');
+    }
+  }
+
   async loadRecommendationsForCandidate(profile) {
     try {
       const res = await fetch('/api/v1/employment/jobs/recommendations', {
@@ -773,11 +804,23 @@ class EmploymentApp {
     const words = clean.split(/\s+/);
     console.log("[EmploymentApp] Voice command heard:", raw, "clean:", clean);
 
-    // Multilingual command keywords
+    // Multilingual command keywords for Apply (English, Amharic, Afaan Oromoo, Tigrinya)
     const isApply = words.includes('apply') || words.includes('right') || words.includes('yes') ||
-                    words.includes('submit') || words.includes('accept') ||
-                    clean.includes('apply') || clean.includes('አመልክት') || clean.includes('አመልክቺ') ||
-                    clean.includes('iyyadhu') || clean.includes('ኣመልክት');
+                    words.includes('submit') || words.includes('accept') || words.includes('send') ||
+                    words.includes('approve') || clean.includes('apply') || clean.includes('submit') ||
+                    clean.includes('accept') ||
+                    // Amharic (አማርኛ)
+                    clean.includes('አመልክት') || clean.includes('አመልክቺ') || clean.includes('አመልክትልኝ') ||
+                    clean.includes('አቅርብ') || clean.includes('ተግብር') || clean.includes('ማመልከቻ') ||
+                    clean.includes('መዝግብ') || clean.includes('አስገባ') || clean.includes('አዎ') ||
+                    clean.includes('amelkit') || clean.includes('mamelkecha') || clean.includes('tegibir') || clean.includes('asgeba') ||
+                    // Afaan Oromoo
+                    clean.includes('iyyadhu') || clean.includes('iyyannoo') || clean.includes('galchi') ||
+                    clean.includes('fudhadhu') || clean.includes('eeyyee') || clean.includes('mirga') ||
+                    clean.includes('ergi') || clean.includes('milkeessi') ||
+                    // Tigrinya (ትግርኛ)
+                    clean.includes('ኣመልክት') || clean.includes('ተወከስ') || clean.includes('እወ') ||
+                    clean.includes('የማን') || clean.includes('ኣቕርብ');
 
     if (isApply) {
       if (window.a11y) {
@@ -785,7 +828,9 @@ class EmploymentApp {
         window.a11y.playChime('success');
       }
       this.handleCardApply();
-      const ack = this.currentLang === 'am' ? 'በALX ፕሮፋይል አመልክተዋል' : 'Applied with your verified ALX profile';
+      const ack = this.currentLang === 'am' ? 'በALX ፕሮፋይልዎ አመልክተዋል' :
+                  this.currentLang === 'om' ? 'Piroofaayilii ALX keessaniin milkiin iyyattaniittu' :
+                  this.currentLang === 'ti' ? 'ብALX ፕሮፋይልኩም ብዓወት ኣመልክትኩም ኣለኹም' : 'Applied with your verified ALX profile';
       if (window.a11y) {
         window.a11y.showVisualToast(`Voice: ${ack}`);
         window.a11y.speak(ack);
@@ -793,12 +838,26 @@ class EmploymentApp {
       return true;
     }
 
+    // Multilingual command keywords for Reject / Pass (English, Amharic, Afaan Oromoo, Tigrinya)
     const isPass = words.includes('pass') || words.includes('skip') || words.includes('left') ||
                    words.includes('no') || words.includes('next') || words.includes('reject') ||
+                   words.includes('decline') || words.includes('dismiss') || words.includes('drop') ||
                    clean.includes('reject') || clean.includes('pass') || clean.includes('skip') ||
-                   clean.includes('ለፍ') || clean.includes('ውድቅ') || clean.includes('አትቀበል') ||
-                   clean.includes('ቀጣይ') || clean.includes('didii') || clean.includes('ሕለፍ') ||
-                   clean.includes('ንጸግ');
+                   clean.includes('decline') || clean.includes('dismiss') ||
+                   // Amharic (አማርኛ)
+                   clean.includes('ውድቅ') || clean.includes('እለፍ') || clean.includes('ለፍ') ||
+                   clean.includes('አትቀበል') || clean.includes('አትፈልግም') || clean.includes('ተው') ||
+                   clean.includes('ተወው') || clean.includes('አይሆንም') || clean.includes('ዝለል') ||
+                   clean.includes('ግራ') || clean.includes('አልፈልግም') || clean.includes('ቀጣይ') ||
+                   clean.includes('widik') || clean.includes('ilef') || clean.includes('tew') || clean.includes('atikebel') ||
+                   // Afaan Oromoo
+                   clean.includes('didi') || clean.includes('didii') || clean.includes('diduu') ||
+                   clean.includes('dhiisi') || clean.includes('darbi') || clean.includes('hin barbaadu') ||
+                   clean.includes('lakki') || clean.includes('bitaa') || clean.includes('kufisi') ||
+                   // Tigrinya (ትግርኛ)
+                   clean.includes('ንጸግ') || clean.includes('ሕለፍ') || clean.includes('ሕደግ') ||
+                   clean.includes('ኣይደልን') || clean.includes('ኣይፋልን') || clean.includes('ጸጋም') ||
+                   clean.includes('ንዓቕ') || clean.includes('nitseg') || clean.includes('hilef') || clean.includes('hideg');
 
     if (isPass) {
       if (window.a11y) {
@@ -806,11 +865,29 @@ class EmploymentApp {
         window.a11y.playChime('neutral');
       }
       this.handleCardPass();
-      const ack = this.currentLang === 'am' ? 'ቀጣይ እድል' : 'Passed to next opportunity';
+      const ack = this.currentLang === 'am' ? 'ይህ የስራ እድል ታክቷል፡ ወደ ቀጣይ አልፈናል' :
+                  this.currentLang === 'om' ? 'Carraan kun dhiifameera, gara isa itti aanutti darbine' :
+                  this.currentLang === 'ti' ? 'እዚ ዕድል ስራሕ ሓሊፉ፡ ናብ ዝቕጽል ሓሊፍና' : 'Passed to next opportunity';
       if (window.a11y) {
         window.a11y.showVisualToast(`Voice: ${ack}`);
         window.a11y.speak(ack);
       }
+      return true;
+    }
+
+    // Profile Settings modal command (English, Amharic, Oromiffa, Tigrinya)
+    const isProfile = words.includes('profile') || words.includes('settings') || words.includes('account') ||
+                      clean.includes('profile') || clean.includes('settings') || clean.includes('account') ||
+                      // Amharic (አማርኛ)
+                      clean.includes('ፕሮፋይል') || clean.includes('መገለጫ') || clean.includes('ቅንብሮች') ||
+                      clean.includes('የኔ ፕሮፋይል') || clean.includes('አካውንት') ||
+                      // Afaan Oromoo
+                      clean.includes('piroofaayilii') || clean.includes('qindaa') || clean.includes('piroofaayilii koo') ||
+                      // Tigrinya (ትግርኛ)
+                      clean.includes('መለለዪ') || clean.includes('ቅጥዕታት') || clean.includes('ፕሮፋይለይ');
+    if (isProfile) {
+      if (window.a11y) window.a11y.stopSpeech();
+      this.openProfileSettingsModal();
       return true;
     }
 
@@ -1526,6 +1603,57 @@ class EmploymentApp {
     if (modalArchive) {
       modalArchive.addEventListener('click', (e) => {
         if (e.target === modalArchive) this.closeArchiveModal();
+      });
+    }
+
+    // Profile Settings Modal Triggers & Actions
+    const bannerProfile = document.getElementById('active-alx-profile-banner');
+    if (bannerProfile) {
+      bannerProfile.addEventListener('click', (e) => {
+        if (e.target && e.target.closest && e.target.closest('#btn-open-archive-banner')) return;
+        this.openProfileSettingsModal();
+      });
+      bannerProfile.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.openProfileSettingsModal();
+        }
+      });
+    }
+
+    const btnOpenProfileBanner = document.getElementById('btn-open-profile-banner');
+    if (btnOpenProfileBanner) {
+      btnOpenProfileBanner.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openProfileSettingsModal();
+      });
+    }
+
+    const btnOpenProfileTop = document.getElementById('btn-open-profile-top');
+    if (btnOpenProfileTop) {
+      btnOpenProfileTop.addEventListener('click', () => this.openProfileSettingsModal());
+    }
+
+    const btnCloseProfileModal = document.getElementById('btn-close-profile-modal');
+    if (btnCloseProfileModal) {
+      btnCloseProfileModal.addEventListener('click', () => this.closeProfileSettingsModal());
+    }
+
+    const btnSaveProfileSettings = document.getElementById('btn-save-profile-settings');
+    if (btnSaveProfileSettings) {
+      btnSaveProfileSettings.addEventListener('click', () => {
+        this.closeProfileSettingsModal();
+        if (window.a11y) {
+          window.a11y.playChime('success');
+          window.a11y.showVisualToast('Profile settings saved');
+        }
+      });
+    }
+
+    const modalProfileSettings = document.getElementById('modal-profile-settings');
+    if (modalProfileSettings) {
+      modalProfileSettings.addEventListener('click', (e) => {
+        if (e.target === modalProfileSettings) this.closeProfileSettingsModal();
       });
     }
 

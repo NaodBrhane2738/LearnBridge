@@ -794,12 +794,24 @@ class AccessibilityManager {
       };
 
       this.recognition.onresult = (event) => {
-        // Allow instant barge-in for commands like apply, reject, pass, stop
+        // Allow instant barge-in for commands like apply, reject, pass, stop, profile in all languages
         if (this.isSpeaking) {
           let hasCommand = false;
           for (let i = event.resultIndex; i < event.results.length; ++i) {
             const tr = (event.results[i][0]?.transcript || '').toLowerCase();
-            if (tr.includes('apply') || tr.includes('reject') || tr.includes('pass') || tr.includes('stop') || tr.includes('dashboard') || tr.includes('አመልክት') || tr.includes('ውድቅ') || tr.includes('ቀጣይ')) {
+            if (tr.includes('apply') || tr.includes('reject') || tr.includes('pass') || tr.includes('stop') ||
+                tr.includes('dashboard') || tr.includes('profile') || tr.includes('settings') || tr.includes('archive') ||
+                // Amharic (አማርኛ)
+                tr.includes('አመልክት') || tr.includes('አመልክቺ') || tr.includes('ማመልከቻ') || tr.includes('ውድቅ') ||
+                tr.includes('ቀጣይ') || tr.includes('እለፍ') || tr.includes('ለፍ') || tr.includes('ተው') ||
+                tr.includes('ፕሮፋይል') || tr.includes('አርካይቭ') || tr.includes('ተመለስ') || tr.includes('ዝም') ||
+                tr.includes('amelkit') || tr.includes('widik') || tr.includes('ilef') ||
+                // Afaan Oromoo
+                tr.includes('iyyadhu') || tr.includes('didi') || tr.includes('didii') || tr.includes('darbi') ||
+                tr.includes('dhaabi') || tr.includes('piroofaayilii') || tr.includes('arkaa') ||
+                // Tigrinya (ትግርኛ)
+                tr.includes('ኣመልክት') || tr.includes('ንጸግ') || tr.includes('ሕለፍ') || tr.includes('መለለዪ') ||
+                tr.includes('nitseg') || tr.includes('hilef')) {
               hasCommand = true;
               break;
             }
