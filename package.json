@@ -8,7 +8,12 @@
   },
   "scripts": {
     "start": "node server/server.js",
-    "test": "node qa/api-verification.js",
+    "start:alx": "node server/server.js",
+    "dev": "node server/server.js",
+    "serve": "node server/server.js",
+    "test": "node qa/voice-verification.js && node qa/offline-verification.js",
+    "test:voice": "node qa/voice-verification.js",
+    "test:offline": "node qa/offline-verification.js",
     "test:api": "node qa/api-verification.js",
     "test:e2e": "node qa/e2e-verification.js"
   },
