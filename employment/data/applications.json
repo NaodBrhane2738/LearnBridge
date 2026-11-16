@@ -1,5 +1,39 @@
 [
   {
+    "id": "app-1794816375770",
+    "appliedAt": "2026-11-16T08:06:15.770Z",
+    "updatedAt": "2026-11-16T08:06:15.770Z",
+    "status": "applied",
+    "timeline": [
+      {
+        "status": "applied",
+        "date": "2026-11-16T08:06:15.770Z",
+        "note": "Application submitted successfully."
+      }
+    ],
+    "messages": [],
+    "jobId": "job-emp-1794745870715",
+    "jobTitle": "Junior Cloud Infrastructure Specialist",
+    "employerId": "emp-alx-africa",
+    "employerName": "ALX Africa / The ROOM",
+    "candidateId": "ethio-candidate-01",
+    "candidateName": "Yohannes Bekele",
+    "candidateEmail": "yohannes.bekele@learnbridge.et",
+    "resumeId": "res-yohannes-master",
+    "resumeFileName": "Yohannes_Bekele_Accessibility_CV_2026.pdf",
+    "coverNote": "Direct application submitted via LearnBridge CV Smart Match (80% match).",
+    "employerAnswers": [],
+    "accommodationsSnapshot": {
+      "shared": true,
+      "format": "screen_reader_friendly_remote",
+      "items": [
+        "Screen-reader compatible digital assessment forms and coding platforms",
+        "No image-based CAPTCHAs or non-semantic flowchart assessments",
+        "Advance distribution of interview materials in accessible text / HTML format"
+      ]
+    }
+  },
+  {
     "id": "app-1794746222245",
     "appliedAt": "2026-11-15T12:37:02.245Z",
     "updatedAt": "2026-11-15T12:37:02.245Z",

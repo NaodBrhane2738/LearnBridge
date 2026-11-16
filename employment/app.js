@@ -425,10 +425,12 @@ class EmploymentApp {
     const cardNode = this.getPreRenderedCardElement(this.currentCardIndex);
     wrapper.replaceChildren(cardNode);
 
-    // Auto-focus the active card for immediate keyboard accessibility
-    const activeCard = cardNode.querySelector('.swipe-card');
-    if (activeCard) {
-      activeCard.focus({ preventScroll: true });
+    // Auto-focus the active card for immediate keyboard accessibility (standalone only)
+    if (window.self === window.top) {
+      const activeCard = cardNode.querySelector('.swipe-card');
+      if (activeCard) {
+        activeCard.focus({ preventScroll: true });
+      }
     }
 
     // Accessible announcements for screen readers & TTS
@@ -437,7 +439,7 @@ class EmploymentApp {
     const spokenSummary = `Opportunity ${this.currentCardIndex + 1} of ${this.cardDeck.length}: ${job.title} at ${job.employerName}. ${currentItem.matchScore}% Match. Press Right Arrow to apply with CV, Left Arrow to pass, or M for full details.`;
     if (window.a11y) {
       window.a11y.announceLive(spokenSummary, false);
-      if (window.a11y.currentMode === 'blind') {
+      if (window.self === window.top && window.a11y.currentMode === 'blind') {
         window.a11y.speak(spokenSummary);
       }
     }

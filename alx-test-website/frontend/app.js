@@ -3478,8 +3478,6 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       this.initRecognition();
       this.setupDomEvents();
       this.checkAndInstallDependencies();
-      this.autoStartListening();
-      this.announceWelcome();
     }
 
     clearWelcomeTimer() {
@@ -3507,7 +3505,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
           if (this.hudHeard) this.hudHeard.textContent = prompt;
           this.speak(prompt);
         }
-      }, 750);
+      }, 400);
     }
 
     announceDashboardWelcome() {
@@ -3532,7 +3530,32 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     }
 
     async checkAndInstallDependencies() {
+      const depBox = document.getElementById('dependencyCheckerBox');
+      const depFill = document.getElementById('depProgressFill');
+      const depLabel = document.getElementById('depStatusLabel');
+      const depSub = document.getElementById('depStatusSub');
+      const depPct = document.getElementById('depPercentageLabel');
+      const depIcon = document.getElementById('depStatusIcon');
+      const depTrack = document.getElementById('depProgressBar');
+
+      const setProgress = (percent, label, subtext, icon = '⚙️', complete = false) => {
+        if (depFill) depFill.style.width = `${percent}%`;
+        if (depTrack) depTrack.setAttribute('aria-valuenow', percent);
+        if (depPct) depPct.textContent = `${percent}%`;
+        if (depLabel) depLabel.textContent = label;
+        if (depSub) depSub.textContent = subtext;
+        if (depIcon) depIcon.textContent = icon;
+        if (depBox) {
+          if (complete) depBox.classList.add('dep-complete');
+          else depBox.classList.remove('dep-complete');
+        }
+      };
+
       try {
+        // Step 1: Checking dependencies (25%)
+        setProgress(25, 'Checking dependencies...', 'Verifying Service Worker cache & speech engines...', '⚙️');
+        await new Promise(r => setTimeout(r, 260));
+
         // 1. Silent Service Worker cache verification & installation
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
@@ -3548,6 +3571,10 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
             }
           }
         } catch (_) {}
+
+        // Step 2: Installing & Pre-warming assets (65%)
+        setProgress(65, 'Installing & pre-warming assets...', 'Preloading synthesis voices and neural audio streams...', '📦');
+        await new Promise(r => setTimeout(r, 280));
 
         // 3. Pre-warm SpeechSynthesis & preload voices
         if ('speechSynthesis' in window) {
@@ -3577,8 +3604,23 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
             }).catch(() => {});
           });
         } catch (_) {}
+
+        // Step 3: Activating speech recognition (90%)
+        setProgress(90, 'Activating speech recognition...', 'Connecting microphone for hands-free navigation...', '🎙️');
+        await new Promise(r => setTimeout(r, 220));
+
+        this.autoStartListening();
+
+        // Step 4: Done! (100%)
+        setProgress(100, 'Done — System Ready', 'Ready! Say "login" or click Log in below.', '✓', true);
+
+        // Announce welcome aloud
+        this.announceWelcome();
       } catch (err) {
-        console.warn('[Dependencies] Background check completed:', err);
+        console.warn('[Dependencies] Background check error:', err);
+        setProgress(100, 'Done — System Ready', 'Ready! Say "login" or click Log in below.', '✓', true);
+        this.autoStartListening();
+        this.announceWelcome();
       }
     }
 

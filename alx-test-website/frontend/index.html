@@ -57,6 +57,21 @@
             <p id="loginWelcomeSub">Inclusive Learning Platform</p>
           </header>
 
+          <!-- Dependency Checker & Installation Progress Bar -->
+          <div class="dependency-checker-box" id="dependencyCheckerBox" role="status" aria-live="polite">
+            <div class="dep-header">
+              <div class="dep-title-wrap">
+                <span class="dep-icon" id="depStatusIcon">⚙️</span>
+                <span class="dep-label" id="depStatusLabel">Checking dependencies...</span>
+              </div>
+              <span class="dep-percentage" id="depPercentageLabel">0%</span>
+            </div>
+            <div class="dep-progress-track" role="progressbar" id="depProgressBar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              <div class="dep-progress-fill" id="depProgressFill" style="width: 0%;"></div>
+            </div>
+            <div class="dep-subtext" id="depStatusSub">Verifying offline cache &amp; speech synthesis engines...</div>
+          </div>
+
           <!-- Single Direct Login Action Button -->
           <div class="login-action-box" style="margin-top: 2rem;">
             <button type="button" class="btn-signin" id="btn-login-submit" style="width: 100%; padding: 16px 24px; font-size: 1.15rem; font-weight: 700; border-radius: 8px; background: #e02b20; color: #ffffff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.2s ease;" title="Log in to Dashboard">
@@ -1207,7 +1222,7 @@
         <section id="tab-jobs" class="tab-pane">
           <!-- Embedded Seamless Job Portal -->
           <div class="job-portal-embed-wrapper" style="width: 100%; height: calc(100vh - 120px); border-radius: 14px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); background: #071311;">
-            <iframe id="jobPortalIframe" src="/job-portal/" title="ALX Job Portal" style="width: 100%; height: 100%; border: none; display: block;" allow="microphone; autoplay; clipboard-write"></iframe>
+            <iframe id="jobPortalIframe" src="about:blank" data-src="/job-portal/" title="ALX Job Portal" style="width: 100%; height: 100%; border: none; display: block;" allow="microphone; autoplay; clipboard-write"></iframe>
           </div>
         </section>
 

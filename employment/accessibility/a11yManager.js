@@ -39,6 +39,12 @@ class AccessibilityManager {
     this.setupSpeechRecognition();
     this.initGateway();
 
+    // If embedded inside an iframe, suppress any automatic speech or onboarding popups
+    if (window.self !== window.top) {
+      console.log('[A11yManager] Running embedded in iframe; auto-speech suppressed.');
+      return;
+    }
+
     // Check saved mode or launch Gateway on first load (interoperable with Player)
     const savedMode = localStorage.getItem('lb_emp_mode') || localStorage.getItem('learnbridge_user_profile');
     const savedLang = localStorage.getItem('lb_emp_lang') || localStorage.getItem('learnbridge_lang');
@@ -565,6 +571,7 @@ class AccessibilityManager {
   }
 
   speak(text, lang = null) {
+    if (window.self !== window.top) return; // Suppress all speech synthesis when inside an iframe
     if (!this.synth) return;
     try {
       this.synth.cancel();
