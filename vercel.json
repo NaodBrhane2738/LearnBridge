@@ -54,6 +54,14 @@
     {
       "source": "/anime-assistant/(.*)",
       "destination": "/alx-test-website/anime-assistant/$1"
+    },
+    {
+      "source": "/studio",
+      "destination": "/studio/index.html"
+    },
+    {
+      "source": "/studio/(.*)",
+      "destination": "/studio/$1"
     }
   ],
   "headers": [

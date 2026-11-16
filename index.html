@@ -1,896 +1,1485 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b3e3b">
-  <meta name="description" content="LearnBridge — an inclusive, accessible educational media studio for ALX Savanna.">
-  <title>LearnBridge — Inclusive Learning Studio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
-  <script type="module" src="./dist/learnbridge.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALX Learning</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to lesson content</a>
-  <!-- Global Onboarding ARIA Live Announcer -->
-  <div id="onboardingAriaLive" class="sr-only" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;"></div>
 
-  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
-    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M4 5.5v13A2.5 2.5 0 0 1 6.5 16H20M8 7h8M8 10h7"/></symbol>
-    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.8 8.2-2.2 5.4-5.4 2.2 2.2-5.4z"/></symbol>
-    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"/></symbol>
-    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></symbol>
-    <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></symbol>
-    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.4 1.6c-.9 1-2 1.2-2 2.9M12 17h.01"/></symbol>
-    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="m19.4 15 .1.1 1.1.9-1.5 2.6-1.4-.5a7.9 7.9 0 0 1-1.4.8l-.2 1.5h-3l-.3-1.5a7.9 7.9 0 0 1-1.4-.8l-1.4.5-1.5-2.6 1.1-.9a7.4 7.4 0 0 1 0-1.6l-1.1-.9 1.5-2.6 1.4.5a7.9 7.9 0 0 1 1.4-.8l.3-1.5h3l.2 1.5a7.9 7.9 0 0 1 1.4.8l1.4-.5 1.5 2.6-1.1.9a7.4 7.4 0 0 1 0 1.6Z" transform="translate(-1 -1)"/></symbol>
-    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z" fill="currentColor" stroke="none"/></symbol>
-    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/></symbol>
-    <symbol id="i-back" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.6L4 8.8M4 4v5h5"/><path d="M12 8v4l3 2"/></symbol>
-    <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6l-5 4zM17 9a5 5 0 0 1 0 6M19 6a9 9 0 0 1 0 12"/></symbol>
-    <symbol id="i-captions" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10H8a2 2 0 0 0 0 4h2M17 10h-2a2 2 0 0 0 0 4h2"/></symbol>
-    <symbol id="i-maximize" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></symbol>
-    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4z"/></symbol>
-    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.2M8.6 13.4l6.8 4.2"/></symbol>
-    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 18v3h16v-3"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
-    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
-    <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 13v-1a9 9 0 0 1 18 0v1M3 13h4v7H5a2 2 0 0 1-2-2zM21 13h-4v7h2a2 2 0 0 0 2-2z"/></symbol>
-    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 12V5a1.5 1.5 0 0 1 3 0v6-8a1.5 1.5 0 0 1 3 0v8-6a1.5 1.5 0 0 1 3 0v8-4a1.5 1.5 0 0 1 3 0v7c0 4-2.5 6-6 6h-2c-2 0-3.2-.9-4.4-2.4L4.5 15a1.7 1.7 0 0 1 2.5-2.2L8 14"/></symbol>
-    <symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
-    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
-    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
-    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
-    <symbol id="i-signal" viewBox="0 0 24 24"><path d="M3 9a13 13 0 0 1 18 0M6 12a9 9 0 0 1 12 0M9 15a5 5 0 0 1 6 0M12 19h.01"/></symbol>
-  </svg>
-
-  <!-- Full-Screen Accessible Gateway Experience (Step 1: 7 Languages + Step 2: Disability Identification) -->
-  <aside class="gateway-screen" id="gatewayScreen" role="dialog" aria-modal="true" aria-labelledby="gatewayTitle" aria-describedby="gatewaySubtitle">
-    <div class="gateway-container">
-      <div class="gateway-header">
-        <div class="gateway-brand">
-          <span class="gateway-logo-icon" aria-hidden="true">⚡</span>
-          <span class="gateway-brand-text">LearnBridge</span>
-          <span class="gateway-badge">UNIVERSAL ACCESS GATEWAY</span>
-        </div>
-        <h1 class="gateway-title" id="gatewayTitle" data-i18n="gateway_welcome">Welcome to LearnBridge</h1>
-        <p class="gateway-subtitle" id="gatewaySubtitle" data-i18n="hero_subheadline">Accessible learning without barriers. Let's personalize your experience.</p>
+  <!-- ========================================================
+       PAGE 1: SIGN IN / LANDING PAGE
+       ======================================================== -->
+  <div id="page-login" class="app-page active">
+    <div class="login-page">
+      <!-- Left Hero Column with Skyline Silhouette Image -->
+      <div class="login-hero-col">
+        <img src="assets/login-hero.jpg" alt="Team by tall skyscraper glass window at dusk" class="login-hero-img">
       </div>
 
-      <!-- STEP 1: LANGUAGE SELECTION -->
-      <section class="gateway-step" id="gatewayStep1" aria-labelledby="step1Title">
-        <div class="step-indicator-row">
-          <span class="step-num-pill">STEP 1 OF 2</span>
-          <h2 class="step-title" id="step1Title" data-i18n="gateway_step1_title">Choose Your Preferred Language</h2>
-        </div>
-        <p class="step-instruction" id="step1Instruction">
-          <span class="audio-wave-icon" aria-hidden="true">🔊</span>
-          <span data-i18n="gateway_step1_spoken">Press the shortcut key or click any language card below.</span>
-        </p>
-
-        <div class="lang-grid" role="group" aria-label="Available platform languages">
-          <button type="button" class="lang-card" data-lang="en" data-key="E" aria-keyshortcuts="E">
-            <span class="lang-flag" aria-hidden="true">🇺🇸</span>
-            <div class="lang-info">
-              <strong class="lang-name">English</strong>
-              <small class="lang-native">English</small>
+      <!-- Right Sign In Form Column -->
+      <div class="login-form-col">
+        <div class="login-card">
+          <header class="login-header">
+            <div class="login-header-top-row">
+              <span class="login-badge-secure">ALX LEARNING PORTAL</span>
+              <!-- Login Page Language Switcher -->
+              <div class="lang-selector-box login-lang-box" id="loginLangSelectorBox">
+                <button type="button" class="btn-lang-toggle btn-lang-toggle-sm" id="btnLoginLangToggle" title="Change Language / ቋንቋ ቀይር / Afaan jijjiiri" aria-expanded="false" aria-label="Change Language">
+                  <span class="lang-globe-icon" aria-hidden="true">🌐</span>
+                  <span class="lang-current-code" id="loginLangCurrentLabel">English</span>
+                  <svg class="dropdown-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="lang-dropdown-menu" id="loginLangDropdownMenu" hidden>
+                  <button type="button" class="lang-option-btn active" data-lang="en">
+                    <span class="lang-flag">🇬🇧</span>
+                    <span class="lang-name">English</span>
+                  </button>
+                  <button type="button" class="lang-option-btn" data-lang="am">
+                    <span class="lang-flag">🇪🇹</span>
+                    <span class="lang-name">አማርኛ</span>
+                  </button>
+                  <button type="button" class="lang-option-btn" data-lang="om">
+                    <span class="lang-flag">🌳</span>
+                    <span class="lang-name">Afaan Oromoo</span>
+                  </button>
+                  <button type="button" class="lang-option-btn" data-lang="ti">
+                    <span class="lang-flag">🇪🇹</span>
+                    <span class="lang-name">ትግርኛ</span>
+                  </button>
+                </div>
+              </div>
             </div>
-            <kbd class="kbd-badge" aria-label="Shortcut E">E</kbd>
-          </button>
+            <h1 id="loginWelcomeHeading">Welcome back!</h1>
+            <p id="loginWelcomeSub">Please enter your details.</p>
+          </header>
 
-          <button type="button" class="lang-card" data-lang="am" data-key="A" aria-keyshortcuts="A">
-            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
-            <div class="lang-info">
-              <strong class="lang-name">Amharic</strong>
-              <small class="lang-native">አማርኛ</small>
-            </div>
-            <kbd class="kbd-badge" aria-label="Shortcut A">A</kbd>
-          </button>
-
-          <button type="button" class="lang-card" data-lang="om" data-key="O" aria-keyshortcuts="O">
-            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
-            <div class="lang-info">
-              <strong class="lang-name">Afaan Oromoo</strong>
-              <small class="lang-native">Afaan Oromoo</small>
-            </div>
-            <kbd class="kbd-badge" aria-label="Shortcut O">O</kbd>
-          </button>
-
-          <button type="button" class="lang-card" data-lang="ti" data-key="T" aria-keyshortcuts="T">
-            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
-            <div class="lang-info">
-              <strong class="lang-name">Tigrinya</strong>
-              <small class="lang-native">ትግርኛ</small>
-            </div>
-            <kbd class="kbd-badge" aria-label="Shortcut T">T</kbd>
-          </button>
-
-          <button type="button" class="lang-card" data-lang="so" data-key="S" aria-keyshortcuts="S">
-            <span class="lang-flag" aria-hidden="true">🇸🇴</span>
-            <div class="lang-info">
-              <strong class="lang-name">Somali</strong>
-              <small class="lang-native">Af-Soomaali</small>
-            </div>
-            <kbd class="kbd-badge" aria-label="Shortcut S">S</kbd>
-          </button>
-
-          <button type="button" class="lang-card" data-lang="aa" data-key="F" aria-keyshortcuts="F">
-            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
-            <div class="lang-info">
-              <strong class="lang-name">Afar</strong>
-              <small class="lang-native">Qafár af</small>
-            </div>
-            <kbd class="kbd-badge" aria-label="Shortcut F">F</kbd>
-          </button>
-
-          <button type="button" class="lang-card" data-lang="har" data-key="H" aria-keyshortcuts="H">
-            <span class="lang-flag" aria-hidden="true">🇪🇹</span>
-            <div class="lang-info">
-              <strong class="lang-name">Harari</strong>
-              <small class="lang-native">ጌይ ሲናን</small>
-            </div>
-            <kbd class="kbd-badge" aria-label="Shortcut H">H</kbd>
-          </button>
-        </div>
-      </section>
-
-      <!-- STEP 2: DISABILITY IDENTIFICATION -->
-      <section class="gateway-step" id="gatewayStep2" aria-labelledby="step2Title" hidden>
-        <div class="step-indicator-row">
-          <span class="step-num-pill">STEP 2 OF 2</span>
-          <h2 class="step-title" id="step2Title" data-i18n="gateway_step2_title">Personalize Your Access Experience</h2>
-        </div>
-
-        <!-- 10-Second Countdown Alert Bar -->
-        <div class="gateway-countdown-box" id="gatewayCountdownBox" role="status" aria-live="polite">
-          <div class="countdown-text-row">
-            <span id="gatewayCountdownLabel">
-              <span data-i18n="gateway_timer_label">Activating Vision-Assisted mode in</span>
-              <strong id="gatewayCountdownSeconds">10</strong>
-              <span data-i18n="gateway_timer_unit">seconds. Press Space to pause.</span>
-            </span>
-            <button type="button" class="btn-pause-countdown" id="gatewayPauseTimerBtn" data-i18n="btn_pause_timer">Pause Timer (Space)</button>
+          <!-- Social Sign In Section -->
+          <div class="social-divider" role="separator">
+            <span id="socialDividerLabel">Social sign in options</span>
           </div>
-          <div class="countdown-progress-track" aria-hidden="true">
-            <div class="countdown-progress-bar" id="gatewayProgressBar" style="width:100%;"></div>
-          </div>
-        </div>
-
-        <div class="disability-cards-grid" role="group" aria-label="Accessibility Profiles">
-          <!-- Option 1: Blind / Vision Difficulties -->
-          <button type="button" class="disability-card card-blind" id="btnChooseBlind" data-profile="blind" data-key="B" aria-keyshortcuts="B">
-            <div class="disability-card-head">
-              <span class="disability-icon" aria-hidden="true">👁️</span>
-              <kbd class="kbd-action-badge">Press B or wait 10s</kbd>
-            </div>
-            <h3 class="disability-title" data-i18n="disability_blind_title">1. I am blind or have vision difficulties</h3>
-            <p class="disability-desc" data-i18n="disability_blind_desc">Spoken audio guide, full keyboard navigation, screen reader support, sign language video excluded.</p>
-            <ul class="disability-perks">
-              <li>🔊 Guided TTS audio instructions automatically active</li>
-              <li>⌨️ Single-key navigation (L to Learn, D for Dashboard)</li>
-              <li>📑 Braille format (.brf) and Spoken MP3 downloads</li>
-              <li>🚫 Sign language overlay excluded to preserve focus</li>
-            </ul>
-          </button>
-
-          <!-- Option 2: Deaf / Hearing Difficulties -->
-          <button type="button" class="disability-card card-deaf" id="btnChooseDeaf" data-profile="deaf" data-key="D" aria-keyshortcuts="D">
-            <div class="disability-card-head">
-              <span class="disability-icon" aria-hidden="true">🤟</span>
-              <kbd class="kbd-action-badge">Press D or Click</kbd>
-            </div>
-            <h3 class="disability-title" data-i18n="disability_deaf_title">2. I am deaf or hard of hearing</h3>
-            <p class="disability-desc" data-i18n="disability_deaf_desc">Bilingual captions, synchronized Ethiopian Sign Language window, visual guide popup, visual downloads.</p>
-            <ul class="disability-perks">
-              <li>👋 Ethiopian Sign Language (ETSL) window docked by default</li>
-              <li>💬 Synchronized bilingual closed captions auto-enabled</li>
-              <li>📋 Visual instructions popup and full transcripts</li>
-              <li>🚫 Audio and Braille formats removed from downloads</li>
-            </ul>
-          </button>
-        </div>
-
-        <!-- Option 3: Standard Learner (Subtle) -->
-        <div class="standard-option-wrap">
-          <button type="button" class="btn-standard-mode" id="btnChooseStandard" data-profile="standard" data-key="S" aria-keyshortcuts="S">
-            <span aria-hidden="true">🎓</span>
-            <span data-i18n="disability_standard_title">Explore Standard Experience (General Learner)</span>
-            <kbd class="kbd-subtle">Press S</kbd>
-          </button>
-        </div>
-      </section>
-
-      <!-- Step Navigation / Voice Control Status -->
-      <div class="gateway-footer">
-        <div class="tts-live-status" id="ttsLiveStatus" role="status" aria-live="polite">
-          <span class="status-pulse" aria-hidden="true"></span>
-          <span id="ttsStatusText">Speaking instructions out loud... Press M to mute audio.</span>
-        </div>
-        <button type="button" class="btn-gateway-back" id="btnGatewayBack" hidden>← Change Language</button>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Slim Vertical Quick-Navigation Rail -->
-  <nav class="rail-glass" id="navRail" aria-label="Quick navigation rail">
-    <a href="#floatingHeader" id="nav-home" class="rail-button" aria-label="Home page"><svg><use href="#i-grid"/></svg></a>
-    <a href="#lesson-workspace" id="nav-learn" class="rail-button active" aria-label="My learning studio" aria-current="page"><svg><use href="#i-book"/></svg></a>
-    <a href="#resources-section" id="nav-resources" class="rail-button" aria-label="Accessible resources and documents"><svg><use href="#i-file-text"/></svg></a>
-    <a href="#career" id="nav-career" class="rail-button" aria-label="Accessible career opportunities"><svg><use href="#i-briefcase"/></svg></a>
-    <a href="#certificates-section" id="nav-certs" class="rail-button" aria-label="Verified learning credentials"><svg><use href="#i-award"/></svg></a>
-    <button class="rail-button" id="assistSettingsButton" aria-label="Accessibility preferences"><svg><use href="#i-settings"/></svg></button>
-  </nav>
-
-  <!-- Main Application Experience Shell -->
-  <main class="experience-shell" id="main-content">
-    
-    <!-- Floating Frosted Glass Header -->
-    <header class="floating-header" id="floatingHeader">
-      <span id="top" style="position:absolute;top:0;"></span>
-      <div class="header-leading">
-        <a href="#main-content" class="back-button" aria-label="Back to courses"><svg><use href="#i-back"/></svg></a>
-        <div class="header-course">
-          <span class="header-kicker" data-i18n="kicker">ALX SAVANNA · TRACK 2 ACCESSIBLE MEDIA & REST API</span>
-          <strong data-i18n="course_title">Design for Every Mind</strong>
-        </div>
-      </div>
-      <div class="header-actions">
-        <!-- 7-Language Switcher -->
-        <select id="langSelect" class="header-lang-select" aria-label="Select language / ቋንቋ ይምረጡ">
-          <option value="en">English (US)</option>
-          <option value="am">አማርኛ (Amharic)</option>
-          <option value="om">Afaan Oromoo</option>
-          <option value="ti">ትግርኛ (Tigrinya)</option>
-          <option value="so">Af-Soomaali</option>
-          <option value="aa">Qafár af (Afar)</option>
-          <option value="har">ጌይ ሲናን (Harari)</option>
-        </select>
-
-        <!-- Persistent Top Accessibility Status & Quick-Bar -->
-        <div class="accessibility-quick-bar" id="accessibilityQuickBar" role="region" aria-label="Accessibility mode and shortcuts">
-          <div class="active-mode-chip" id="activeModeChip">
-            <span class="mode-icon" id="modeIcon" aria-hidden="true">⚡</span>
-            <span class="mode-label" id="modeLabel">Standard</span>
-          </div>
-          <div class="quick-bar-buttons">
-            <button type="button" class="btn-quick-bar" id="quickChangeModeBtn" aria-label="Personalize mode (O)" title="Reopen Onboarding Gateway (O)">
-              <span aria-hidden="true">⚙️</span> Mode (O)
+          
+          <div class="social-buttons-grid">
+            <button type="button" class="btn-social" id="btnGoogleAuth" data-provider="Google" aria-label="Sign in with Google" title="Sign in with Google (Voice: 'Log in with Google')">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="social-icon">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span class="btn-social-label">Google</span>
             </button>
-            <button type="button" class="btn-quick-bar" id="quickShortcutsBtn" aria-label="Keyboard shortcuts guide (?)" title="Keyboard shortcuts guide (?)">
-              <span aria-hidden="true">⌨️</span> Guide (?)
+
+            <button type="button" class="btn-social" id="btnLinkedinAuth" data-provider="LinkedIn" aria-label="Sign in with LinkedIn" title="Sign in with LinkedIn (Voice: 'Log in with LinkedIn')">
+              <svg viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true" class="social-icon">
+                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+              </svg>
+              <span class="btn-social-label">LinkedIn</span>
+            </button>
+
+            <button type="button" class="btn-social" id="btnFacebookAuth" data-provider="Facebook" aria-label="Sign in with Facebook" title="Sign in with Facebook (Voice: 'Log in with Facebook')">
+              <svg viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true" class="social-icon">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              <span class="btn-social-label">Facebook</span>
             </button>
           </div>
-        </div>
 
-        <a href="/alx/" class="header-demo-link" title="Open ALX Learning Platform & Hands-Free Assistant">
-          <span>🚀</span> <span>ALX Learning</span>
-        </a>
-        <a href="./integrations/savanna-lms/" class="header-demo-link" title="Open Savanna LMS Integration Demo">
-          <span>🎓</span> <span data-i18n="btn_lms_demo">Savanna LMS</span>
-        </a>
-        <a href="./integrations/job-portal/" class="header-demo-link" title="Open EthioCareers Job Portal Demo">
-          <span>💼</span> <span data-i18n="btn_job_demo">Job Portal</span>
-        </a>
-        <a href="./api/v1/docs" class="header-demo-link" title="Open Interactive OpenAPI Docs">
-          <span>⚡</span> <span data-i18n="btn_api_docs">API Docs</span>
-        </a>
-
-        <div class="network-state" id="networkState"><span class="signal-dot"></span><span id="networkLabel">Online</span></div>
-        <button class="header-quiet" id="onboardingTriggerBtn" aria-label="Setup accessible onboarding preferences">Setup</button>
-        <button class="header-icon" id="searchButton" aria-label="Find in transcript (press slash)"><svg><use href="#i-search"/></svg></button>
-        <button class="header-icon" id="settingsButton" aria-label="Accessibility preferences"><svg><use href="#i-settings"/></svg></button>
-        <button class="header-primary" id="nextClassButton">Next class <svg><use href="#i-chevron-right"/></svg></button>
-      </div>
-    </header>
-
-    <!-- Hero Platform Banner: API-First Universal Accessibility -->
-    <section class="hero-platform-section" aria-labelledby="heroHeadline">
-      <div class="hero-kicker-tag">
-        <span aria-hidden="true">⚡</span>
-        <span>Universal Accessibility Infrastructure · ALX Hackathon Track 2</span>
-      </div>
-      <h1 id="heroHeadline" data-i18n="hero_headline">Accessibility Without Boundaries</h1>
-      <p data-i18n="hero_subheadline">
-        One unified REST API providing reusable, universal accessibility infrastructure for education, employment, and digital platforms across Ethiopia and the world.
-      </p>
-      <div class="hero-cta-group">
-        <a href="./integrations/savanna-lms/" class="hero-primary-btn" data-i18n="btn_lms_demo">Savanna LMS Integration Demo</a>
-        <a href="./integrations/job-portal/" class="hero-secondary-btn" data-i18n="btn_job_demo">EthioCareers Job Portal Demo</a>
-        <a href="./api/v1/docs" class="hero-secondary-btn" data-i18n="btn_api_docs">Explore REST API Docs</a>
-        <button type="button" class="hero-secondary-btn" id="heroOnboardingBtn" style="cursor:pointer;">Accessible Onboarding Wizard</button>
-      </div>
-    </section>
-
-    <!-- Blind Mode Audio & Keyboard Guide Banner (Persistent when Vision-Assisted mode is active) -->
-    <div class="blind-keyboard-banner" id="blindKeyboardBanner" role="region" aria-label="Keyboard navigation guide" hidden>
-      <div class="banner-content">
-        <div class="banner-title-row">
-          <span class="banner-badge" aria-hidden="true">🔊 VISION-ASSISTED MODE ACTIVE</span>
-          <strong data-i18n="blind_guide_title">Keyboard Navigation Quick Guide</strong>
-        </div>
-        <div class="banner-keys-grid">
-          <div class="key-pill"><kbd>L</kbd> <span>Start Learning / Play Video</span></div>
-          <div class="key-pill"><kbd>P</kbd> <span>Pause / Resume</span></div>
-          <div class="key-pill"><kbd>D</kbd> <span>Jump to Dashboard</span></div>
-          <div class="key-pill"><kbd>T</kbd> <span>Hear Transcript Aloud</span></div>
-          <div class="key-pill"><kbd>M</kbd> <span>Toggle Mute</span></div>
-          <div class="key-pill"><kbd>?</kbd> <span>Repeat Audio Guide</span></div>
-          <div class="key-pill"><kbd>O</kbd> <span>Reset Onboarding / Language</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Deaf & Hard-of-Hearing Visual Instructions Guide Modal -->
-    <dialog class="deaf-guide-dialog" id="deafGuideModal" aria-labelledby="deafGuideTitle" aria-describedby="deafGuideSubtitle">
-      <div class="deaf-guide-content">
-        <div class="deaf-guide-header">
-          <span class="guide-icon" aria-hidden="true">🤟</span>
-          <div>
-            <h2 id="deafGuideTitle" data-i18n="deaf_guide_title">Welcome to LearnBridge for Deaf Learners</h2>
-            <p id="deafGuideSubtitle" data-i18n="deaf_guide_subtitle">Your learning workspace is tailored with visual-first accessibility.</p>
-          </div>
-        </div>
-        <div class="deaf-guide-steps">
-          <div class="guide-step-card">
-            <span class="step-bullet">1</span>
-            <div>
-              <strong>Ethiopian Sign Language Window Active</strong>
-              <p data-i18n="deaf_guide_point1">An interpreter window is docked directly on the video player with synchronous translation.</p>
-            </div>
-          </div>
-          <div class="guide-step-card">
-            <span class="step-bullet">2</span>
-            <div>
-              <strong>Synchronized Bilingual Captions</strong>
-              <p data-i18n="deaf_guide_point2">Closed captions are automatically enabled for all spoken dialogue in your chosen language.</p>
-            </div>
-          </div>
-          <div class="guide-step-card">
-            <span class="step-bullet">3</span>
-            <div>
-              <strong>Visual Learning Documents</strong>
-              <p data-i18n="deaf_guide_point3">Timestamped PDF transcripts, signed videos, and visual slides are ready for download (audio and Braille files excluded).</p>
-            </div>
-          </div>
-        </div>
-        <div class="deaf-guide-actions">
-          <button type="button" class="btn-deaf-close" id="closeDeafGuideBtn" data-i18n="deaf_guide_close">Got It — Start Learning (Enter)</button>
-        </div>
-      </div>
-    </dialog>
-
-    <!-- Main Workspace Grid (Video Stage + Course Classes Panel) -->
-    <section class="workspace-grid" id="lesson-workspace" aria-label="Lesson workspace">
-      <div class="player-shell glass-panel">
-        <div class="player-shell-head">
-          <div class="lesson-title-group">
-            <div class="lesson-overline"><i></i><span>LESSON 04.02</span><span>FOUNDATIONS</span></div>
-            <h1>Inclusive Design: <em>Build for Every Learner</em></h1>
-            <p>Learn how multi-modal media—captions, audio descriptions, and Ethiopian Sign Language—transforms educational access.</p>
-          </div>
-          <div class="player-head-actions">
-            <a href="./savanna-embed-demo.html" class="progress-chip" style="text-decoration:none;" title="View standalone embed demo">
-              <span class="progress-ring" aria-hidden="true">
-                <svg viewBox="0 0 36 36"><path class="ring-track" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><path class="ring-value" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/></svg>
-                <b>Demo</b>
-              </span>
-              <span>
-                <small>SAVANNA</small>
-                <strong>Embed Sandbox</strong>
-              </span>
-            </a>
-          </div>
-        </div>
-
-        <!-- The Media Stage (HTML5 Video + Video.js 10 Architecture) -->
-        <div class="video-stage paused" id="videoStage" tabindex="0" role="group" aria-label="Lesson video and media controls">
-          <video id="lessonVideo" class="lesson-video" playsinline preload="metadata" poster="./media/poster.jpg" aria-label="Sample lesson video: Design for every mind">
-            <source src="./media/sample-lesson.mp4" type="video/mp4">
-            <track kind="captions" src="./media/captions-en.vtt" srclang="en" label="English">
-            <track kind="captions" src="./media/captions-am.vtt" srclang="am" label="አማርኛ">
-            Your browser does not support HTML video. <a href="./media/sample-lesson.mp4">Download the lesson video</a>.
-          </video>
-          
-          <div class="video-vignette" aria-hidden="true"></div>
-          
-          <div class="video-top-overlay">
-            <span class="video-source-pill"><i></i> NOW LEARNING · LESSON 04.02</span>
-            <button class="video-expand" id="fullscreenButton" aria-label="Enter fullscreen (F)"><svg><use href="#i-maximize"/></svg></button>
+          <!-- Manual Sign In Form -->
+          <div class="social-divider" role="separator">
+            <span id="manualDividerLabel">Or enter email and password</span>
           </div>
 
-          <!-- Dynamic Caption Overlay (High Contrast & Sizing Ready) -->
-          <div class="video-caption" id="captionOverlay" lang="en" hidden aria-live="off">Good design starts by removing barriers.</div>
-
-          <!-- Integrated Ethiopian Sign Language Interpreter Web Component -->
-          <learnbridge-interpreter id="interpreterOverlay"></learnbridge-interpreter>
-
-          <!-- Big Center Play Button -->
-          <button class="big-play" id="bigPlayButton" aria-label="Play lesson (Space)">
-            <span><svg><use href="#i-play"/></svg></span>
-            <small>PLAY LESSON</small>
-          </button>
-
-          <!-- Bottom Glass Controls Bar -->
-          <div class="player-bottom-glass">
-            <div class="seek-wrap">
-              <input id="seekBar" class="seek-bar" type="range" min="0" max="18" value="0" step="0.1" 
-                     aria-label="Seek through lesson timeline"
-                     aria-valuemin="0" aria-valuemax="18" aria-valuenow="0" aria-valuetext="00:00 of 00:18">
-              <div class="seek-markers" aria-hidden="true"><i style="left:25%"></i><i style="left:47%"></i><i style="left:70%"></i></div>
-            </div>
-            <div class="control-row">
-              <div class="control-left">
-                <button class="player-control primary-control" id="playButton" aria-label="Play lesson (Space)"><svg><use href="#i-play"/></svg></button>
-                <button class="player-control" id="backButton" aria-label="Go back 10 seconds (J)"><svg><use href="#i-back"/></svg><span class="control-small">10</span></button>
-                <span class="time-readout"><strong id="currentTime">00:00</strong><span>/</span><span id="durationTime">00:18</span></span>
-              </div>
-              <div class="control-right">
-                <label class="volume-control" aria-label="Volume"><svg><use href="#i-volume"/></svg><input id="volumeBar" type="range" min="0" max="1" value="0.82" step="0.01" aria-label="Volume level"></label>
-                <button class="player-control" id="captionsButton" aria-label="CC: Turn captions on (C)" aria-pressed="false"><svg><use href="#i-captions"/></svg><span class="control-label">CC</span></button>
-                <button class="player-control" id="descriptionButton" aria-label="AD: Turn audio description on (D)" aria-pressed="false"><svg><use href="#i-headphones"/></svg><span class="control-label">AD</span></button>
-                <button class="player-control" id="interpreterButton" aria-label="Show Ethiopian Sign Language window (H)" aria-pressed="false"><svg><use href="#i-hand"/></svg></button>
+          <form id="login-form" novalidate>
+            <div class="form-group">
+              <label for="email" class="form-label">Email *</label>
+              <div class="input-wrapper">
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  class="form-input" 
+                  placeholder="Enter your email" 
+                  autocomplete="username" 
+                  spellcheck="false" 
+                  value="">
+                <span class="input-icon-static" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="16" rx="2"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                </span>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- 4 Selectable Chapters Strip (Timeline Synchronized) -->
-        <div class="chapter-strip-wrap">
-          <div class="chapter-strip-heading"><span>IN THIS LESSON</span><span>4 CHAPTERS <b>·</b> 18 MIN</span></div>
-          <div class="chapter-strip" role="group" aria-label="Lesson chapters">
-            <button class="chapter-row active" data-time="0.6" type="button"><span class="chapter-index">01</span><span class="chapter-name">Introduction of the class</span><span class="chapter-time">00:00 – 01:24</span></button>
-            <button class="chapter-row" data-time="4.3" type="button"><span class="chapter-index">02</span><span class="chapter-name">What is project management?</span><span class="chapter-time">01:24 – 02:13</span></button>
-            <button class="chapter-row" data-time="8.3" type="button"><span class="chapter-index">03</span><span class="chapter-name">Why it matters</span><span class="chapter-time">02:13 – 03:42</span></button>
-            <button class="chapter-row" data-time="12.4" type="button"><span class="chapter-index">04</span><span class="chapter-name">Benefits of inclusive learning</span><span class="chapter-time">03:42 – 05:03</span></button>
-          </div>
-        </div>
+            <div class="form-group">
+              <label for="password" class="form-label">Password *</label>
+              <div class="input-wrapper">
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="password" 
+                  class="form-input" 
+                  placeholder="Enter your password" 
+                  autocomplete="current-password" 
+                  value="">
+                <button type="button" id="btn-toggle-password" class="input-icon-btn" aria-label="Toggle password visibility">
+                  <svg id="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
 
-        <div class="player-footline">
-          <span><svg><use href="#i-check"/></svg> WCAG 2.2 AA Accessible Media Stage</span>
-          <span><kbd>Space</kbd> play/pause <b>·</b> <kbd>←</kbd><kbd>→</kbd> seek <b>·</b> <kbd>C</kbd> captions <b>·</b> <kbd>D</kbd> audio desc <b>·</b> <kbd>H</kbd> sign language</span>
+            <div class="form-options">
+              <a href="#forgot-password" class="forgot-password-link" id="linkForgotPassword" data-mockup="forgot-password">Forgot password</a>
+            </div>
+
+            <button type="submit" class="btn-signin" id="btn-login-submit" title="Sign In to ALX Learning">Sign in</button>
+          </form>
+
+          <footer class="login-footer-links">
+            <p>Need help logging in? <a href="#contact" class="link-blue" id="linkContactUs" data-mockup="contact">Click here</a> to contact support</p>
+          </footer>
         </div>
       </div>
-
-      <!-- Right-Side Floating Glass Course Panel -->
-      <aside class="course-panel glass-panel" aria-label="Course curriculum and study tabs">
-        <div class="course-panel-top">
-          <div><span class="course-panel-kicker">YOUR COURSE</span><h2>Course Classes</h2><p>ALX Inclusive Curriculum</p></div>
-          <span class="course-count">04<span> / 12</span></span>
-        </div>
-        <div class="course-progress" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" aria-label="Course completion progress"><span style="width:68%"></span></div>
-        
-        <div class="study-tabs" role="tablist" aria-label="Course tabs">
-          <button class="study-tab active" id="tab-chapters" role="tab" aria-selected="true" aria-controls="panel-chapters" data-tab="chapters">Classes</button>
-          <button class="study-tab" id="tab-transcript" role="tab" aria-selected="false" aria-controls="panel-transcript" data-tab="transcript" tabindex="-1">Transcript</button>
-          <button class="study-tab" id="tab-resources" role="tab" aria-selected="false" aria-controls="panel-resources" data-tab="resources" tabindex="-1">Files</button>
-        </div>
-
-        <!-- Tab 1: Expandable Curriculum Classes -->
-        <div class="tab-panel chapter-list course-classes" id="panel-chapters" role="tabpanel" aria-labelledby="tab-chapters">
-          <div class="course-group expanded">
-            <button class="course-group-toggle" aria-expanded="true" type="button"><span><strong>Class Introduction</strong><small>2 classes · 33 min</small></span><svg><use href="#i-chevron"/></svg></button>
-            <div class="course-group-lessons">
-              <button class="course-lesson" type="button"><span class="lesson-play"><svg><use href="#i-play"/></svg></span><span><strong>Meet your mentor</strong><small>15 minutes</small></span><span class="lesson-check"><svg><use href="#i-check"/></svg></span></button>
-              <button class="course-lesson current" type="button"><span class="lesson-play"><svg><use href="#i-play"/></svg></span><span><strong>Design for every mind</strong><small>18 minutes · Now learning</small></span><span class="lesson-current-dot"></span></button>
-            </div>
-          </div>
-          <div class="course-group expanded">
-            <button class="course-group-toggle" aria-expanded="true" type="button"><span><strong>Foundations of Accessibility</strong><small>3 classes · 59 min</small></span><svg><use href="#i-chevron"/></svg></button>
-            <div class="course-group-lessons">
-              <button class="course-lesson" type="button"><span class="lesson-play"><svg><use href="#i-play"/></svg></span><span><strong>Perceivable & operable</strong><small>23 minutes</small></span></button>
-              <button class="course-lesson" type="button"><span class="lesson-play"><svg><use href="#i-play"/></svg></span><span><strong>Understandable design</strong><small>19 minutes</small></span></button>
-              <button class="course-lesson" type="button"><span class="lesson-play"><svg><use href="#i-play"/></svg></span><span><strong>Build for assistive tech</strong><small>17 minutes</small></span></button>
-            </div>
-          </div>
-          <div class="course-group">
-            <button class="course-group-toggle" aria-expanded="false" type="button"><span><strong>Inclusive Media Engineering</strong><small>2 classes · 41 min</small></span><svg><use href="#i-chevron"/></svg></button>
-            <div class="course-group-lessons" hidden>
-              <button class="course-lesson" type="button"><span class="lesson-play"><svg><use href="#i-play"/></svg></span><span><strong>Captions and transcripts</strong><small>21 minutes</small></span></button>
-              <button class="course-lesson" type="button"><span class="lesson-play"><svg><use href="#i-play"/></svg></span><span><strong>Audio and sign language</strong><small>20 minutes</small></span></button>
-            </div>
-          </div>
-          <div class="course-group">
-            <button class="course-group-toggle" aria-expanded="false" type="button"><span><strong>Career & Digital Bridge</strong><small>5 classes · 1 hr 20 min</small></span><svg><use href="#i-chevron"/></svg></button>
-            <div class="course-group-lessons" hidden>
-              <button class="course-lesson" type="button"><span class="lesson-play"><svg><use href="#i-play"/></svg></span><span><strong>Accessible portfolios</strong><small>16 minutes</small></span></button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 2: Synchronized Interactive Transcript Web Component -->
-        <div class="tab-panel transcript-list" id="panel-transcript" role="tabpanel" aria-labelledby="tab-transcript" hidden>
-          <learnbridge-transcript id="mainTranscript" src="./media/transcript.json" language="en"></learnbridge-transcript>
-        </div>
-
-        <!-- Tab 3: Accessible Resources & Document Downloads -->
-        <div class="tab-panel resources-list" id="panel-resources" role="tabpanel" aria-labelledby="tab-resources" hidden>
-          <learnbridge-resource-list id="mainResources"></learnbridge-resource-list>
-        </div>
-
-        <div class="course-panel-foot">
-          <span><i></i> PROGRESS SAVED LOCALLY</span>
-          <button class="support-link" id="helpButtonSecondary" type="button">Need help? <svg><use href="#i-arrow"/></svg></button>
-        </div>
-      </aside>
-    </section>
-
-    <!-- Below Workspace: Offline Card, Principles, Resources, Career & Certificates -->
-    <section class="below-workspace" aria-label="More learning features">
-      <!-- Offline Learning Pack Card -->
-      <article class="offline-card glass-panel" aria-labelledby="offlineTitle">
-        <div class="offline-card-top"><div class="offline-icon"><svg><use href="#i-download"/></svg></div><span class="offline-ready"><i></i> READY TO SAVE</span></div>
-        <div class="offline-title"><h3 id="offlineTitle">Take learning offline.</h3><p>Keep this lesson, captions and transcript close—even when the connection isn't.</p></div>
-        <div class="offline-meta"><span><svg><use href="#i-file"/></svg> Complete lesson bundle</span><strong>~0.9 MB</strong></div>
-        <button id="downloadPackButton" class="download-pack" type="button"><span><svg><use href="#i-download"/></svg> Download for offline</span><svg class="download-arrow"><use href="#i-arrow"/></svg></button>
-        <div class="offline-footnote"><svg><use href="#i-signal"/></svg> Built for low-bandwidth learning in Ethiopia</div>
-      </article>
-
-      <!-- Accessibility Principles Card -->
-      <article class="lesson-details glass-panel" aria-labelledby="principlesTitle">
-        <div class="lesson-details-main">
-          <div class="section-kicker">CORE METHODOLOGY</div>
-          <h2 id="principlesTitle">Accessibility is a design decision.</h2>
-          <p>Great learning experiences adapt to the ways people see, hear, move, think and connect.</p>
-        </div>
-        <div class="principle-grid">
-          <div class="principle-item"><span class="principle-number">01</span><strong>Perceivable</strong><small>Offer multiple formats (captions, transcript, sign language, audio).</small></div>
-          <div class="principle-item"><span class="principle-number">02</span><strong>Operable</strong><small>Make every action reachable via keyboard, switch, or touch.</small></div>
-          <div class="principle-item"><span class="principle-number">03</span><strong>Understandable</strong><small>Clear Amharic and English language, predictable UI.</small></div>
-          <div class="principle-item"><span class="principle-number">04</span><strong>Robust</strong><small>Works with NVDA, TalkBack, and standards-compliant browsers.</small></div>
-        </div>
-      </article>
-
-      <!-- Accessible Documents & Resources Section -->
-      <section class="glass-panel section-card" id="resources-section" style="grid-column: 1 / -1;" aria-labelledby="resourcesHeading">
-        <div class="section-heading-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <div>
-            <div class="section-kicker">LEARNING MATERIALS</div>
-            <h2 id="resourcesHeading" style="margin:4px 0; font-size:20px; color:#ffffff;">Accessible Documents & Media Alternatives</h2>
-          </div>
-          <span style="font-size:12px; color:var(--seafoam);">Tagged & Verified</span>
-        </div>
-        <learnbridge-resource-list></learnbridge-resource-list>
-      </section>
-
-      <!-- Accessible Career & Job Opportunities Section -->
-      <section style="grid-column: 1 / -1;" id="career" aria-labelledby="careerHeading">
-        <div class="section-heading-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding: 0 4px;">
-          <div>
-            <div class="section-kicker">INCLUSIVE EMPLOYMENT</div>
-            <h2 id="careerHeading" style="margin:4px 0; font-size:20px; color:#ffffff;">Accessible Career Opportunities</h2>
-          </div>
-          <span style="font-size:12px; color:var(--seafoam);">Ethiopian Digital Bridge Network</span>
-        </div>
-        <learnbridge-job-card
-          role-title="Junior Accessibility QA Engineer"
-          organization="ALX Digital Bridge Ethiopian Partner"
-          location="Addis Ababa · Hybrid"
-          level="Entry level"
-          description="Test and verify inclusive web applications, screen reader flows, and Ethiopian Sign Language media integrations across Ethiopian digital platforms.">
-        </learnbridge-job-card>
-      </section>
-
-      <!-- Verified Learning Credentials Section -->
-      <section style="grid-column: 1 / -1;" id="certificates-section" aria-labelledby="certHeading">
-        <div class="section-heading-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding: 0 4px;">
-          <div>
-            <div class="section-kicker">CREDENTIAL VERIFICATION</div>
-            <h2 id="certHeading" style="margin:4px 0; font-size:20px; color:#ffffff;">Verified Learning Credentials</h2>
-          </div>
-          <span style="font-size:12px; color:var(--seafoam);">ALX Savanna Verified</span>
-        </div>
-        <learnbridge-certificate
-          learner-name="Selamawit Tadesse"
-          course-title="Inclusive Learning & Digital Accessibility Studio"
-          certificate-id="ALX-ETH-LB-2026-9842"
-          issue-date="November 2026">
-        </learnbridge-certificate>
-      </section>
-
-      <!-- Universal Integrations Showcase -->
-      <section style="grid-column: 1 / -1; margin-top: 24px;" id="integrations-section" aria-labelledby="integrationsHeading">
-        <div class="section-heading-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding: 0 4px;">
-          <div>
-            <div class="section-kicker" data-i18n="how_it_works_title">HOW ORGANIZATIONS INTEGRATE LEARNBRIDGE</div>
-            <h2 id="integrationsHeading" style="margin:4px 0; font-size:22px; color:#ffffff;">Working Third-Party Client Integrations</h2>
-          </div>
-          <span style="font-size:12px; color:var(--seafoam);">REST API Reusability</span>
-        </div>
-
-        <div class="integrations-grid">
-          <!-- Integration A Card -->
-          <article class="integration-card">
-            <div>
-              <div class="integration-card-header">
-                <span style="background: rgba(211, 47, 47, 0.2); color: #ff8a80; border: 1px solid rgba(211, 47, 47, 0.4); padding: 3px 10px; border-radius: 999px; font-size: 10px; font-weight: 700;">Integration A · EdTech / LMS</span>
-                <span style="font-size: 11px; color: #4ade80; font-weight: 600;">● Live API</span>
-              </div>
-              <h3>ALX Savanna LMS Course Experience</h3>
-              <p>
-                An authentic LMS course interface consuming <code>GET /api/v1/accessibility/preferences</code> for learner <code>savanna-student-1</code>. Automatically adjusts contrast, typography scaling, Ethiopian Sign Language overlays, and captions in real-time.
-              </p>
-            </div>
-            <div class="integration-card-footer">
-              <span style="font-size: 11px; font-family: monospace; color: #94a3b8;">x-api-key: lb_live_savanna_...</span>
-              <a href="./integrations/savanna-lms/" class="hero-primary-btn" style="padding: 6px 14px; font-size: 11px; text-decoration: none;">Launch LMS Demo →</a>
-            </div>
-          </article>
-
-          <!-- Integration B Card -->
-          <article class="integration-card">
-            <div>
-              <div class="integration-card-header">
-                <span style="background: rgba(2, 132, 199, 0.2); color: #7dd3fc; border: 1px solid rgba(2, 132, 199, 0.4); padding: 3px 10px; border-radius: 999px; font-size: 10px; font-weight: 700;">Integration B · Inclusive Employment</span>
-                <span style="font-size: 11px; color: #4ade80; font-weight: 600;">● Live API</span>
-              </div>
-              <h3>EthioCareers Job Portal</h3>
-              <p>
-                An inclusive recruitment platform consuming the same REST API for applicant <code>ethio-applicant-42</code>. Features Web Speech API text-to-speech audio readouts, high-contrast themes, and bidirectional sync via <code>PATCH /api/v1/accessibility/preferences/me</code>.
-              </p>
-            </div>
-            <div class="integration-card-footer">
-              <span style="font-size: 11px; font-family: monospace; color: #94a3b8;">x-api-key: lb_live_ethiojobs_...</span>
-              <a href="./integrations/job-portal/" class="hero-primary-btn" style="background: linear-gradient(135deg, #0284c7, #0369a1); padding: 6px 14px; font-size: 11px; text-decoration: none;">Launch Job Portal →</a>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- Live REST API Sandbox / Interactive Explorer -->
-      <section style="grid-column: 1 / -1; margin-top: 24px;" id="api-sandbox-section" aria-labelledby="sandboxHeading">
-        <div class="api-sandbox-card">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <div>
-              <div class="section-kicker" data-i18n="api_explorer_title">LIVE REST API SANDBOX</div>
-              <h2 id="sandboxHeading" style="margin:4px 0; font-size:20px; color:#ffffff;">Test LearnBridge Universal API Endpoints</h2>
-            </div>
-            <a href="./api/v1/docs" class="hero-secondary-btn" style="font-size:11px; padding:6px 14px;">Open Swagger UI Explorer ↗</a>
-          </div>
-          <p style="font-size:12px; color:rgba(255,255,255,0.8); margin:8px 0 14px;" data-i18n="api_explorer_desc">
-            Execute real HTTP requests against the local LearnBridge REST API engine (running on http://127.0.0.1:4173).
-          </p>
-
-          <div class="sandbox-controls">
-            <label for="sandboxEndpointSelect" class="sr-only">Choose API Endpoint to Test</label>
-            <select id="sandboxEndpointSelect" class="sandbox-select">
-              <option value="/api/v1/health">GET /api/v1/health (System Health & Uptime)</option>
-              <option value="/api/v1/localization/languages">GET /api/v1/localization/languages (5 Priority Languages)</option>
-              <option value="/api/v1/localization/translations/am">GET /api/v1/localization/translations/am (Amharic Translations)</option>
-              <option value="/api/v1/localization/translations/om">GET /api/v1/localization/translations/om (Afaan Oromo Translations)</option>
-              <option value="/api/v1/accessibility/profiles">GET /api/v1/accessibility/profiles (6 Standard Profiles)</option>
-              <option value="/api/v1/accessibility/profiles/screen_reader">GET /api/v1/accessibility/profiles/screen_reader</option>
-              <option value="/api/v1/accessibility/preferences?userId=savanna-student-1">GET /api/v1/accessibility/preferences?userId=savanna-student-1</option>
-              <option value="/api/v1/integrations">GET /api/v1/integrations (Registered Platform Tenants)</option>
-            </select>
-            <button type="button" id="sandboxExecuteBtn" class="sandbox-exec-btn">Execute Request</button>
-            <span id="sandboxLatency" style="font-size:11px; font-family:monospace; color:#86efac;"></span>
-          </div>
-
-          <div style="font-size:11px; color:#94a3b8; margin-bottom:6px;">
-            <span>cURL Command:</span> <code id="sandboxCurlCmd" style="color:#e2e8f0; font-family:monospace; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:4px;">curl -H "x-api-key: lb_live_savanna_9842a1b7c" http://127.0.0.1:4173/api/v1/health</code>
-          </div>
-          <pre class="sandbox-response-pre" id="sandboxResponsePre">// Click 'Execute Request' to fetch live data from LearnBridge REST API...</pre>
-        </div>
-      </section>
-    </section>
-
-    <!-- Page Footer -->
-    <footer class="page-footer">
-      <span>LEARNBRIDGE <b>·</b> ACCESS IS A DESIGN DECISION</span>
-      <span>ALX ETHIOPIA DIGITAL BRIDGE HACKATHON · TRACK 2 ACCESSIBLE LEARNING MEDIA</span>
-    </footer>
-  </main>
-
-  <!-- Accessible Toast Feedback Region -->
-  <div class="toast-region" aria-live="polite" aria-atomic="true">
-    <div id="toast" class="toast">
-      <span class="toast-icon"><svg><use href="#i-check"/></svg></span>
-      <span id="toastText">Preferences applied</span>
     </div>
   </div>
 
-  <!-- Accessibility Preferences Dialog Modal -->
-  <dialog class="preferences-dialog" id="preferencesDialog" aria-labelledby="preferencesTitle">
-    <form method="dialog" class="dialog-shell">
-      <div class="dialog-header">
-        <div>
-          <span class="section-kicker">MAKE IT YOURS</span>
-          <h2 id="preferencesTitle">Accessibility Preferences</h2>
-          <p>Adjust the learning studio to suit the way you perceive and navigate content.</p>
-        </div>
-        <button class="icon-btn" value="cancel" aria-label="Close accessibility preferences dialog" type="submit">
-          <svg><use href="#i-close"/></svg>
+
+  <!-- ========================================================
+       PAGE 2: ALX LEARNING DASHBOARD (LIGHT THEME LMS)
+       ======================================================== -->
+  <div id="page-learning" class="app-page">
+    
+    <!-- Top Navigation Header -->
+    <header class="lms-header">
+      <div class="header-left">
+        <button type="button" class="btn-hamburger" id="btn-hamburger" aria-label="Toggle navigation menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
         </button>
+        <div class="lms-logo-group">
+          <span class="alx-brand">alx</span>
+          <span class="learning-brand">Learning</span>
+        </div>
       </div>
+
+      <div class="header-center">
+        <!-- Course Dropdown Selector -->
+        <div class="course-selector-box">
+          <div class="course-selector-title">
+            <span class="course-name">Professional Foundations</span>
+            <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="18 15 12 9 6 15"/>
+            </svg>
+          </div>
+          <div class="course-score-row">
+            <span class="score-label">Average: <strong>92.74%</strong></span>
+            <span class="badge-validated">Validated</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- LearnBridge Studio & Job Portal Integration Buttons -->
+        <a href="/" class="btn-job-portal" id="btnStudioPortal" title="LearnBridge Inclusive Learning Studio" aria-label="Open LearnBridge Inclusive Studio" style="background: rgba(11, 62, 59, 0.9); color: #85d7bb; border-color: rgba(133, 215, 187, 0.4); text-decoration: none;">
+          <span class="job-portal-icon" aria-hidden="true">🎧</span>
+          <span class="job-portal-text">Studio</span>
+        </a>
+
+        <!-- Job Portal Integration Button (Beside Language Selector) -->
+        <a href="/job-portal" target="_blank" class="btn-job-portal" id="btnJobPortal" title="ALX Job Portal — Match & Apply for Opportunities" aria-label="Open ALX Job Portal">
+          <span class="job-portal-icon" aria-hidden="true">💼</span>
+          <span class="job-portal-text">Job Portal</span>
+          <span class="job-portal-badge">NEW</span>
+        </a>
+
+        <!-- Multi-Language Selector Dropdown -->
+        <div class="lang-selector-box" id="lmsLangSelectorBox">
+          <button type="button" class="btn-lang-toggle" id="btnLmsLangToggle" title="Change Language / ቋንቋ ቀይር / Afaan jijjiiri" aria-expanded="false" aria-label="Change Language">
+            <span class="lang-globe-icon" aria-hidden="true">🌐</span>
+            <span class="lang-current-label" id="lmsLangCurrentLabel">English</span>
+            <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-dropdown-menu" id="lmsLangDropdownMenu" hidden>
+            <button type="button" class="lang-option-btn active" data-lang="en">
+              <span class="lang-flag">🇬🇧</span>
+              <span class="lang-name">English</span>
+            </button>
+            <button type="button" class="lang-option-btn" data-lang="am">
+              <span class="lang-flag">🇪🇹</span>
+              <span class="lang-name">አማርኛ (Amharic)</span>
+            </button>
+            <button type="button" class="lang-option-btn" data-lang="om">
+              <span class="lang-flag">🌳</span>
+              <span class="lang-name">Afaan Oromoo (Oromiffa)</span>
+            </button>
+            <button type="button" class="lang-option-btn" data-lang="ti">
+              <span class="lang-flag">🇪🇹</span>
+              <span class="lang-name">ትግርኛ (Tigrinya)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Points Pill Badge -->
+        <div class="points-pill-badge" title="1140 total learning points">
+          <svg class="coin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="4"/>
+            <path d="M12 6v12M8 10h8M8 14h6"/>
+          </svg>
+          <span id="headerPointsText">1140 points</span>
+        </div>
+
+        <!-- User Profile Avatar -->
+        <div class="user-avatar-pill" id="user-avatar-btn" title="Abenezer (Click to log out)">AH</div>
+      </div>
+    </header>
+
+    <!-- App Body: Sidebar + Main Content -->
+    <div class="lms-body-layout">
+
+      <!-- Left Sidebar -->
+      <aside class="lms-sidebar" id="lms-sidebar">
+        <nav class="sidebar-nav">
+          <ul class="nav-list">
+            <!-- Home -->
+            <li class="nav-item">
+              <a href="#home" class="nav-link active" data-tab="home">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span data-i18n="nav-home">Home</span>
+              </a>
+            </li>
+
+            <!-- Access my learning -->
+            <li class="nav-item">
+              <a href="#access-learning" class="nav-link" data-tab="access-learning">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+                <span data-i18n="nav-access-learning">Access my learning</span>
+              </a>
+            </li>
+
+            <!-- My Planning -->
+            <li class="nav-item">
+              <a href="#planning" class="nav-link" data-tab="planning">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span data-i18n="nav-planning">My Planning</span>
+              </a>
+            </li>
+
+            <!-- Projects -->
+            <li class="nav-item">
+              <a href="#projects" class="nav-link" data-tab="projects">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                  <polyline points="2 17 12 22 22 17"/>
+                  <polyline points="2 12 12 17 22 12"/>
+                </svg>
+                <span data-i18n="nav-projects">Projects</span>
+              </a>
+            </li>
+
+            <!-- Evaluation quizzes -->
+            <li class="nav-item">
+              <a href="#quizzes" class="nav-link" data-tab="quizzes">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span data-i18n="nav-quizzes">Evaluation quizzes</span>
+              </a>
+            </li>
+
+            <li class="nav-divider"></li>
+
+            <!-- My courses -->
+            <li class="nav-item">
+              <a href="#courses" class="nav-link" data-tab="courses">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                  <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+                <span data-i18n="nav-courses">My courses</span>
+              </a>
+            </li>
+
+            <!-- Concepts -->
+            <li class="nav-item">
+              <a href="#concepts" class="nav-link" data-tab="concepts">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                <span data-i18n="nav-concepts">Concepts</span>
+              </a>
+            </li>
+
+            <!-- Video on demand -->
+            <li class="nav-item">
+              <a href="#vod" class="nav-link" data-tab="vod">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                  <line x1="7" y1="2" x2="7" y2="22"/>
+                  <line x1="17" y1="2" x2="17" y2="22"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <line x1="2" y1="7" x2="7" y2="7"/>
+                  <line x1="2" y1="17" x2="7" y2="17"/>
+                  <line x1="17" y1="17" x2="22" y2="17"/>
+                  <line x1="17" y1="7" x2="22" y2="7"/>
+                </svg>
+                <span data-i18n="nav-vod">Video on demand</span>
+              </a>
+            </li>
+
+            <!-- Job Portal (Integrated Employment Platform) -->
+            <li class="nav-item">
+              <a href="#jobs" class="nav-link nav-link-job-portal" data-tab="jobs" title="ALX Job Portal — Match & Apply for Opportunities" style="border: 1px solid rgba(211, 47, 47, 0.25); background: rgba(211, 47, 47, 0.04); border-radius: 8px;">
+                <span class="nav-icon" style="font-size: 1.15rem; display: inline-flex; align-items: center; justify-content: center;" aria-hidden="true">💼</span>
+                <span data-i18n="nav-jobs" style="font-weight: 700; color: var(--primary-red, #D32F2F);">Job Portal</span>
+                <span class="nav-badge-pill" style="background: var(--primary-red, #D32F2F); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; font-weight: 800; margin-left: auto;">NEW</span>
+              </a>
+            </li>
+          </ul>
+
+          <!-- Bottom Profile Nav Link -->
+          <div class="sidebar-bottom">
+            <a href="#profile" class="nav-link" data-tab="profile">
+              <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <span data-i18n="nav-profile">My Profile</span>
+            </a>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Main Dynamic Content Canvas -->
+      <main class="lms-main-content">
+        
+        <!-- ==============================================
+             MOCKUP 1: HOME (EXACT MATCH TO USER SLIDE)
+             ============================================== -->
+        <section id="tab-home" class="tab-pane active">
+          <!-- Greeting Header -->
+          <div class="lms-greeting-header">
+            <h1 class="greeting-title">Good evening, Abenezer <span class="wave-hand">👋</span></h1>
+          </div>
+
+          <!-- 12-Week Status Bar -->
+          <div class="weeks-scroll-track">
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 1</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 2</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 3</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 4</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 5</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 6</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 7</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 8</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 9</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 10</div>
+            <div class="week-pill completed"><span class="check-icon">✓</span> Week 11</div>
+            <div class="week-pill completed active"><span class="check-icon">✓</span> Week 12</div>
+          </div>
+
+          <!-- Middle Row: Continue where you left off & Immediate Deliverables -->
+          <div class="dashboard-middle-grid">
+            
+            <!-- Left Card: Continue where you left off -->
+            <article class="card-continue-learning">
+              <span class="sub-label-red">Continue where you left off</span>
+              <h2 class="card-course-title">Portfolio Requirements - SWE</h2>
+              
+              <div class="portfolio-banner-box">
+                <img src="assets/portfolio-banner.jpg" alt="Portfolio Requirements - SWE banner" class="portfolio-banner-img">
+              </div>
+
+              <button type="button" class="btn-resume-red" id="btnResumeHomeSWE" title="Resume Course Workspace">Resume</button>
+            </article>
+
+            <!-- Right Card: Your immediate deliverables -->
+            <article class="card-immediate-deliverables">
+              <span class="sub-label-red">Your immediate deliverables</span>
+              
+              <div class="deliverables-list">
+                <!-- Deliverable 1 -->
+                <div class="deliverable-item">
+                  <div class="circle-progress-ring">
+                    <span class="pct-num">100%</span>
+                    <span class="pct-label">Completed</span>
+                  </div>
+                  <div class="deliverable-info">
+                    <h3>Week 12 Milestone</h3>
+                    <p>All tasks completed! Great job 🎉</p>
+                  </div>
+                  <button type="button" class="btn-outline-red" id="btnViewMilestoneWeek12" data-mockup="milestone" title="View Week 12 Milestone">View</button>
+                </div>
+
+                <!-- Deliverable 2 -->
+                <div class="deliverable-item">
+                  <div class="circle-progress-ring">
+                    <span class="pct-num">100%</span>
+                    <span class="pct-label">Completed</span>
+                  </div>
+                  <div class="deliverable-info">
+                    <h3>Week 12 Test</h3>
+                    <p>All questions answered! Great job 🎉</p>
+                  </div>
+                  <button type="button" class="btn-outline-red" id="btnViewTestWeek12" data-mockup="test" title="View Week 12 Test Results">View</button>
+                </div>
+              </div>
+            </article>
+
+          </div>
+
+          <!-- Featured Row: ALX Job Portal & Career Opportunities -->
+          <div class="dashboard-job-portal-banner" style="margin-top: 1.5rem; margin-bottom: 1.5rem; background: linear-gradient(135deg, #0b2420 0%, #071311 100%); border: 1.5px solid rgba(133, 215, 187, 0.35); border-radius: 14px; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem; color: #fff; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);">
+            <div style="flex: 1; min-width: 280px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background: rgba(197, 241, 142, 0.2); color: #c5f18e; border: 1px solid rgba(197, 241, 142, 0.4); font-size: 0.70rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">CAREER ACCELERATION</span>
+                <span style="color: #85d7bb; font-size: 0.8rem; font-weight: 600;">ALX Integrated Employment Platform</span>
+              </div>
+              <h2 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin: 0 0 6px 0; display: flex; align-items: center; gap: 10px;">
+                <span>💼</span> Match with 12+ Tech Employers &amp; Remote Roles
+              </h2>
+              <p style="font-size: 0.88rem; color: #9bb5a4; margin: 0; line-height: 1.5;">
+                Explore verified software engineering, data analytics, and cloud opportunities with 3D Tinder card swiping, voice-guided applications, and Ethiopian Sign Language assistance.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <button type="button" class="btn-dashboard-job-portal" id="btnOpenDashboardJobPortal" style="background: #c5f18e; color: #071311; font-weight: 800; font-size: 0.90rem; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.15s ease;" title="Open Integrated Job Portal">
+                <span>Explore Job Portal</span>
+                <span>→</span>
+              </button>
+              <a href="/job-portal" target="_blank" style="background: rgba(255, 255, 255, 0.1); color: #fff; text-decoration: none; font-size: 0.85rem; font-weight: 600; padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); display: inline-flex; align-items: center; gap: 6px;" title="Open in new window">
+                <span>New Tab</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Bottom Row: 3 Status Cards Grid -->
+          <div class="dashboard-bottom-grid">
+            
+            <!-- Card 1: You were busy with -->
+            <article class="bottom-card">
+              <span class="sub-label-red">You were busy with</span>
+              <h3 class="bottom-card-title">Week 12</h3>
+              <div class="date-row">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>21 - 29 Jul 2025</span>
+              </div>
+              <div class="status-row">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>This period has ended</span>
+              </div>
+              <div class="progress-footer">
+                <div class="progress-footer-label">Tasks completed for this period: <strong>100%</strong></div>
+                <div class="red-progress-line"><div class="fill" style="width: 100%;"></div></div>
+              </div>
+            </article>
+
+            <!-- Card 2: Your overall progress -->
+            <article class="bottom-card">
+              <span class="sub-label-red">Your overall progress</span>
+              <h3 class="bottom-card-title">Score: 92.74%</h3>
+              <div class="date-row">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>05 May - 05 Aug 2025</span>
+              </div>
+              <div class="progress-footer">
+                <div class="progress-footer-label">Overall Progress: <strong>100.0%</strong> You're on track</div>
+                <div class="red-progress-line"><div class="fill" style="width: 100%;"></div></div>
+              </div>
+              <button type="button" class="btn-card-outline-action" id="btnSeeScoreDetails" data-mockup="score-details" title="See detailed score breakdown">See score details</button>
+            </article>
+
+            <!-- Card 3: Your upcoming events -->
+            <article class="bottom-card">
+              <span class="sub-label-red">Your upcoming events</span>
+              <h3 class="bottom-card-title">Events</h3>
+              <p class="empty-state-text">No upcoming events for now. Keep an eye on this space in the coming weeks.</p>
+              <button type="button" class="btn-card-outline-action" id="btnSeeAllEvents" data-mockup="all-events" style="margin-top: auto;" title="View all calendar events and workshops">See all my events</button>
+            </article>
+
+          </div>
+        </section>
+
+
+        <!-- ==============================================
+             MOCKUP 2: ACCESS MY LEARNING
+             ============================================== -->
+        <section id="tab-access-learning" class="tab-pane">
+          
+          <!-- View A: Sprints Overview List -->
+          <div id="learningSprintsView">
+            <div class="lms-greeting-header">
+              <h1 class="greeting-title">Access My Learning</h1>
+              <p class="pane-subtitle">Curriculum modules, sprint roadmaps, and technical learning paths.</p>
+            </div>
+
+            <div class="mockup-cards-grid">
+              <!-- Sprint Card: 1 Module Left! -->
+              <article class="lms-panel-card sprint-active-card">
+                <div class="panel-card-header">
+                  <span class="badge-active-track">Current Sprint</span>
+                  <span class="panel-date">Due in 4 days</span>
+                </div>
+                <h2 class="panel-title">Full-Stack Portfolio Project Implementation</h2>
+                <p class="panel-desc">Build and deploy a scalable web platform architecture utilizing modern databases, CI/CD automated deployments, and REST endpoints.</p>
+                <div class="panel-meta-row">
+                  <span>Modules: <strong id="moduleCountLabel">7 of 8 Completed</strong></span>
+                  <span class="status-warning" id="moduleStatusBadge" style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; font-size:11px; padding:3px 8px; border-radius:999px; font-weight:700;">● 1 Module Left</span>
+                </div>
+                <div class="sprint-progress-bar-wrap" style="height:8px; background:#f1f5f9; border-radius:999px; margin:0.85rem 0 1.25rem; overflow:hidden;">
+                  <div class="sprint-progress-bar-fill" id="sprintProgressFill" style="width: 87.5%; height:100%; background:linear-gradient(90deg, #059669, #10b981); border-radius:999px; transition:width 0.4s ease;"></div>
+                </div>
+                <button type="button" class="btn-resume-red" id="btnContinueSprint">Continue Sprint (Open Course &amp; Video)</button>
+              </article>
+
+              <article class="lms-panel-card">
+                <div class="panel-card-header">
+                  <span class="badge-upcoming">Next Sprint</span>
+                  <span class="panel-date">Starts next Monday</span>
+                </div>
+                <h2 class="panel-title">Systems Engineering &amp; DevOps Orchestration</h2>
+                <p class="panel-desc">Advanced container orchestration, load balancing, SSL certificate automation, and production observability telemetry.</p>
+                <div class="panel-meta-row">
+                  <span>Modules: <strong>0 of 6 Completed</strong></span>
+                  <span>Pre-requisites met</span>
+                </div>
+                <button type="button" class="btn-outline-red" id="btnPreviewSyllabus" data-mockup="preview-syllabus" title="Preview Upcoming Syllabus">Preview Syllabus</button>
+              </article>
+            </div>
+          </div>
+
+          <!-- View B: Course Syllabus & Video Player Workspace -->
+          <div id="learningCourseView" hidden>
+            <div class="course-view-header">
+              <button type="button" class="btn-back-sprints" id="btnBackToSprints">
+                ← Back to All Sprints
+              </button>
+              <div class="course-breadcrumb-text">
+                Access My Learning / <strong>Full-Stack Portfolio Project Implementation</strong> / Module 8: Live Demo
+              </div>
+            </div>
+
+            <!-- TOP COURSE SYLLABUS STEPPER & PROGRESS TRACKER (Eye-Friendly, Sleek, Creative) -->
+            <section class="course-syllabus-top-card" aria-label="Course Syllabus and Progress">
+              <div class="syllabus-top-header">
+                <div class="syllabus-title-group">
+                  <div class="syllabus-heading-row">
+                    <span class="syllabus-curriculum-icon" aria-hidden="true">📋</span>
+                    <h3 class="syllabus-title">Course Syllabus</h3>
+                    <span class="syllabus-counter" id="syllabusCounter"><span class="badge-pulse-dot"></span> 7 of 8 Completed</span>
+                  </div>
+                  <span class="syllabus-sep" aria-hidden="true">•</span>
+                  <p class="syllabus-subtitle">Full-Stack Portfolio Project Implementation · 1 Module Left</p>
+                </div>
+
+                <div class="syllabus-top-meta">
+                  <div class="syllabus-progress-stat">
+                    <div class="syllabus-track-bar">
+                      <div class="syllabus-track-fill" id="topSyllabusProgressFill" style="width: 87.5%;"></div>
+                    </div>
+                    <span class="syllabus-pct" id="topSyllabusPct">87.5% Done</span>
+                  </div>
+                  <div class="syllabus-nav-buttons">
+                    <button type="button" class="btn-syllabus-arrow" id="btnSyllabusPrev" title="Scroll left" aria-label="Scroll modules left">‹</button>
+                    <button type="button" class="btn-syllabus-arrow" id="btnSyllabusNext" title="Scroll right" aria-label="Scroll modules right">›</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Horizontal Interactive Module Stepper Ribbon -->
+              <div class="syllabus-module-track-wrap">
+                <ol class="syllabus-module-track" id="syllabusModuleList">
+                  
+                  <li class="syllabus-item completed" data-mod="1" tabindex="0">
+                    <div class="item-head">
+                      <span class="mod-pill">MOD 01</span>
+                      <span class="item-status-icon">✓</span>
+                    </div>
+                    <div class="item-text">
+                      <strong class="mod-title">01. System Architecture &amp; Requirements</strong>
+                      <small class="mod-meta">Completed · Validated</small>
+                    </div>
+                  </li>
+
+                  <li class="syllabus-item completed" data-mod="2" tabindex="0">
+                    <div class="item-head">
+                      <span class="mod-pill">MOD 02</span>
+                      <span class="item-status-icon">✓</span>
+                    </div>
+                    <div class="item-text">
+                      <strong class="mod-title">02. Multi-Tenant REST API Design</strong>
+                      <small class="mod-meta">Completed · Validated</small>
+                    </div>
+                  </li>
+
+                  <li class="syllabus-item completed" data-mod="3" tabindex="0">
+                    <div class="item-head">
+                      <span class="mod-pill">MOD 03</span>
+                      <span class="item-status-icon">✓</span>
+                    </div>
+                    <div class="item-text">
+                      <strong class="mod-title">03. Database Schema &amp; Migration Runner</strong>
+                      <small class="mod-meta">Completed · Validated</small>
+                    </div>
+                  </li>
+
+                  <li class="syllabus-item completed" data-mod="4" tabindex="0">
+                    <div class="item-head">
+                      <span class="mod-pill">MOD 04</span>
+                      <span class="item-status-icon">✓</span>
+                    </div>
+                    <div class="item-text">
+                      <strong class="mod-title">04. Role-Based Auth &amp; Session Security</strong>
+                      <small class="mod-meta">Completed · Validated</small>
+                    </div>
+                  </li>
+
+                  <li class="syllabus-item completed" data-mod="5" tabindex="0">
+                    <div class="item-head">
+                      <span class="mod-pill">MOD 05</span>
+                      <span class="item-status-icon">✓</span>
+                    </div>
+                    <div class="item-text">
+                      <strong class="mod-title">05. Accessible Voice &amp; Hands-Free Engine</strong>
+                      <small class="mod-meta">Completed · Validated</small>
+                    </div>
+                  </li>
+
+                  <li class="syllabus-item completed" data-mod="6" tabindex="0">
+                    <div class="item-head">
+                      <span class="mod-pill">MOD 06</span>
+                      <span class="item-status-icon">✓</span>
+                    </div>
+                    <div class="item-text">
+                      <strong class="mod-title">06. Automated axe-core &amp; WCAG Auditing</strong>
+                      <small class="mod-meta">Completed · Validated</small>
+                    </div>
+                  </li>
+
+                  <li class="syllabus-item completed" data-mod="7" tabindex="0">
+                    <div class="item-head">
+                      <span class="mod-pill">MOD 07</span>
+                      <span class="item-status-icon">✓</span>
+                    </div>
+                    <div class="item-text">
+                      <strong class="mod-title">07. CI/CD Pipeline &amp; Docker Automation</strong>
+                      <small class="mod-meta">Completed · Validated</small>
+                    </div>
+                  </li>
+
+                  <li class="syllabus-item active-current" id="moduleItem8" data-mod="8" tabindex="0">
+                    <div class="item-head">
+                      <span class="mod-pill mod-pill-active">MOD 08 · CURRENT</span>
+                      <span class="item-status-icon current-dot">▶</span>
+                    </div>
+                    <div class="item-text">
+                      <strong id="mod8Title" class="mod-title">08. Final Portfolio Integration &amp; Live Demo</strong>
+                      <small id="mod8Status" class="mod-meta-active"><span class="badge-pulse-rose"></span> In Progress (Current · 1 Left)</small>
+                    </div>
+                  </li>
+
+                </ol>
+              </div>
+            </section>
+
+            <!-- Main Workspace: Video Player & Lesson Details -->
+            <div class="course-workspace-main">
+              <div class="course-video-card">
+                <div class="video-container" id="mainVideoContainer" tabindex="0" aria-label="Accessible Media Player (Press ? for keyboard shortcuts)">
+                  <!-- MAIN VIDEO (FULL SCREEN LEADER) -->
+                  <video id="courseLessonVideo" src="assets/wwa.mp4" poster="assets/lesson-poster.jpg" playsinline preload="metadata" style="width:100%; border-radius:12px; max-height:520px; background:#000; display:block; cursor:pointer;"></video>
+                  
+                  <!-- BIG CENTER PLAY/PAUSE SPLASH BUTTON -->
+                  <button type="button" class="btn-video-center-splash" id="btnVideoCenterSplash" aria-label="Play or Pause Video" title="Click or Press Space to Play">
+                    <span class="center-splash-icon" id="centerSplashIcon">▶</span>
+                  </button>
+
+                  <!-- COOL SIGN LANGUAGE BADGE (PLAYER OVERLAY) -->
+                  <button type="button" class="btn-video-sl-overlay" id="btnToggleSLOverlay" title="Toggle Sign Language & Full Screen Mode">
+                    <span class="sl-hand-icon" aria-hidden="true">🤟</span>
+                    <span class="sl-btn-label">Sign Language &amp; Captions</span>
+                    <span class="sl-live-dot" id="slOverlayDot" aria-hidden="true"></span>
+                  </button>
+
+                  <!-- SIGN LANGUAGE SCREEN: SMALLEST WINDOW (PIP) -->
+                  <div class="sl-pip-window" id="slPipWindow" hidden aria-label="Sign Language Interpreter Window">
+                    <video id="signLanguageVideo" src="assets/wwa_sign.mp4" playsinline muted loop style="width:100%; height:100%; object-fit:contain; background:#000; display:block;"></video>
+                    
+                    <!-- Clean Badge & Minimal Close -->
+                    <div class="sl-pip-badge-overlay">
+                      <span class="sl-pip-tag">🤟 EthSL</span>
+                      <button type="button" class="btn-sl-mini-close" id="btnSlPipClose" title="Hide Sign Language">✕</button>
+                    </div>
+                  </div>
+
+                  <!-- SYNCHRONIZED CLOSED CAPTIONS / SUBTITLES BAR -->
+                  <div class="video-subtitles-bar" id="videoSubtitlesBar" hidden aria-live="polite">
+                    <span class="video-subtitle-text" id="videoSubtitleText">Welcome to Module 8: Final Portfolio Integration &amp; Live Demo.</span>
+                  </div>
+
+                  <!-- THEATER FULL SCREEN TOP BAR (EXIT & CONTROLS) -->
+                  <div class="theater-fullscreen-topbar" id="theaterFullscreenTopbar" hidden>
+                    <div class="theater-top-left">
+                      <span class="theater-pill">🤟 Sign Language &amp; Subtitles Active</span>
+                      <span class="theater-lesson-label">Module 8: Final Portfolio Integration &amp; Live Demo</span>
+                    </div>
+                    <div class="theater-top-right">
+                      <button type="button" class="btn-theater-ctrl" id="btnToggleSubtitles" title="Toggle Subtitles ON/OFF">💬 Subtitles: ON</button>
+                      <button type="button" class="btn-exit-theater" id="btnExitTheaterFullscreen">✕ Exit Full Screen</button>
+                    </div>
+                  </div>
+
+                  <!-- FULL-FEATURED ACCESSIBLE MEDIA PLAYER CONTROLS BAR -->
+                  <div class="custom-media-controls" id="customMediaControls" role="toolbar" aria-label="Media Player Controls">
+                    <!-- 1. Seek / Scrubber Timeline -->
+                    <div class="media-timeline-wrap" id="mediaTimelineWrap">
+                      <div class="timeline-hover-tooltip" id="timelineHoverTooltip" hidden>00:00</div>
+                      <div class="media-progress-track" id="mediaProgressTrack" role="slider" tabindex="0" aria-label="Seek Video Timeline (Left/Right arrow)" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0:00">
+                        <div class="track-buffer" id="trackBuffer"></div>
+                        <div class="track-progress" id="trackProgress"></div>
+                        <div class="track-thumb" id="trackThumb"></div>
+                      </div>
+                    </div>
+
+                    <!-- 2. Action Controls Row -->
+                    <div class="media-controls-row">
+                      <!-- Left Controls: Play, Rewind 10s, Forward 10s, Volume, Time -->
+                      <div class="media-row-left">
+                        <button type="button" class="player-ctrl-btn" id="btnMediaPlay" aria-label="Play (Space or K)" title="Play / Pause (Space or K)">
+                          <span class="player-icon" id="mediaPlayIcon">▶</span>
+                        </button>
+
+                        <button type="button" class="player-ctrl-btn" id="btnMediaRewind10" aria-label="Rewind 10 seconds (Left Arrow or J)" title="Rewind 10s (Left Arrow or J)">
+                          <span class="player-icon-text">↺ 10s</span>
+                        </button>
+
+                        <button type="button" class="player-ctrl-btn" id="btnMediaForward10" aria-label="Forward 10 seconds (Right Arrow or L)" title="Forward 10s (Right Arrow or L)">
+                          <span class="player-icon-text">10s ↻</span>
+                        </button>
+
+                        <!-- Volume Group: Mute Button & Volume Slider -->
+                        <div class="player-volume-group" id="playerVolumeGroup">
+                          <button type="button" class="player-ctrl-btn" id="btnMediaMute" aria-label="Mute (M)" title="Mute / Unmute (M)">
+                            <span class="player-icon" id="mediaVolumeIcon">🔊</span>
+                          </button>
+                          <div class="volume-slider-wrap">
+                            <input type="range" class="media-volume-slider" id="mediaVolumeSlider" min="0" max="1" step="0.05" value="1" aria-label="Volume Slider (Up/Down Arrow)" title="Volume Slider (Up/Down Arrow)">
+                            <span class="volume-pct-label" id="volumePctLabel">100%</span>
+                          </div>
+                        </div>
+
+                        <!-- Current Time / Total Duration -->
+                        <div class="player-time-display" aria-live="off">
+                          <span id="playerCurrentTime">00:00</span>
+                          <span class="time-sep">/</span>
+                          <span id="playerTotalDuration">00:52</span>
+                        </div>
+                      </div>
+
+                      <!-- Right Controls: Speed Selector, Subtitles CC, Sign Language, Keyboard Help, Full Screen -->
+                      <div class="media-row-right">
+                        <!-- Playback Speed Menu -->
+                        <div class="player-speed-wrapper">
+                          <button type="button" class="player-ctrl-btn player-speed-btn" id="btnMediaSpeed" aria-label="Playback Speed (< or >)" title="Playback Speed (< or >)" aria-haspopup="true" aria-expanded="false">
+                            <span id="mediaSpeedText">1x</span>
+                          </button>
+                          <div class="player-speed-menu" id="playerSpeedMenu" hidden role="menu">
+                            <button type="button" class="speed-menu-item" data-speed="0.5">0.5x</button>
+                            <button type="button" class="speed-menu-item" data-speed="0.75">0.75x</button>
+                            <button type="button" class="speed-menu-item active" data-speed="1">1x (Normal)</button>
+                            <button type="button" class="speed-menu-item" data-speed="1.25">1.25x</button>
+                            <button type="button" class="speed-menu-item" data-speed="1.5">1.5x</button>
+                            <button type="button" class="speed-menu-item" data-speed="2">2x</button>
+                          </div>
+                        </div>
+
+                        <!-- Subtitles CC Button -->
+                        <button type="button" class="player-ctrl-btn" id="btnMediaCC" aria-label="Toggle Subtitles / Captions (C)" title="Subtitles (C)">
+                          <span class="player-cc-badge" id="playerCcBadge">CC</span>
+                        </button>
+
+                        <!-- Sign Language Mini Button -->
+                        <button type="button" class="player-ctrl-btn player-sl-btn" id="btnMediaSL" aria-label="Toggle Sign Language (S)" title="Sign Language (S)">
+                          <span>🤟 EthSL</span>
+                        </button>
+
+                        <!-- Keyboard Shortcuts Guide Button -->
+                        <button type="button" class="player-ctrl-btn" id="btnMediaShortcutsHelp" aria-label="Keyboard Shortcuts (?)" title="Keyboard Shortcuts (?)">
+                          <span class="player-icon">⌨️</span>
+                        </button>
+
+                        <!-- Full Screen Toggle Button -->
+                        <button type="button" class="player-ctrl-btn" id="btnMediaFullscreen" aria-label="Full Screen (F)" title="Full Screen (F)">
+                          <span class="player-icon" id="mediaFsIcon">⛶</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ACCESSIBLE KEYBOARD SHORTCUTS MODAL -->
+                  <div class="player-shortcuts-modal" id="playerShortcutsModal" hidden role="dialog" aria-modal="true" aria-label="Keyboard Shortcuts Guide">
+                    <div class="player-shortcuts-dialog">
+                      <div class="player-shortcuts-header">
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                          <span style="font-size:1.2rem;">⌨️</span>
+                          <h4 style="margin:0; font-size:1.05rem; color:#ffffff;">Media Player Keyboard Shortcuts</h4>
+                        </div>
+                        <button type="button" class="btn-shortcuts-close" id="btnCloseShortcuts" aria-label="Close shortcuts guide">✕</button>
+                      </div>
+                      <div class="shortcuts-table-grid">
+                        <div class="sc-row"><kbd>Space</kbd> / <kbd>K</kbd> <span>Play / Pause Video</span></div>
+                        <div class="sc-row"><kbd>M</kbd> <span>Mute / Unmute Audio</span></div>
+                        <div class="sc-row"><kbd>↑</kbd> / <kbd>↓</kbd> <span>Volume Up (+10%) / Down (-10%)</span></div>
+                        <div class="sc-row"><kbd>←</kbd> / <kbd>→</kbd> <span>Seek Backward (-5s) / Forward (+5s)</span></div>
+                        <div class="sc-row"><kbd>J</kbd> / <kbd>L</kbd> <span>Seek Backward (-10s) / Forward (+10s)</span></div>
+                        <div class="sc-row"><kbd>F</kbd> <span>Toggle Full Screen Mode</span></div>
+                        <div class="sc-row"><kbd>C</kbd> <span>Toggle Closed Captions (Subtitles)</span></div>
+                        <div class="sc-row"><kbd>S</kbd> <span>Toggle Sign Language Window</span></div>
+                        <div class="sc-row"><kbd>&lt;</kbd> / <kbd>&gt;</kbd> <span>Speed Down / Speed Up</span></div>
+                        <div class="sc-row"><kbd>0 - 9</kbd> <span>Jump to 0% - 90% Duration</span></div>
+                        <div class="sc-row"><kbd>?</kbd> <span>Show / Hide this Shortcuts Guide</span></div>
+                        <div class="sc-row"><kbd>Esc</kbd> <span>Exit Full Screen / Close Modal</span></div>
+                      </div>
+                      <div class="sc-accessibility-note">
+                        ♿ <strong>Universal Accessibility:</strong> Every button has keyboard focus indicators (<kbd>Tab</kbd> / <kbd>Shift+Tab</kbd>) and can be triggered with <kbd>Enter</kbd> or <kbd>Space</kbd>.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="video-action-bar">
+                  <div class="video-title-col">
+                    <span class="lesson-kicker">MODULE 08 · CURRENT LESSON</span>
+                    <h2 class="lesson-main-title" id="activeLessonTitle">08. Final Portfolio Integration &amp; Live Demo</h2>
+                  </div>
+                  <div class="video-controls-btns">
+                    <!-- COOL SIGN LANGUAGE INTEGRATION BUTTON -->
+                    <button type="button" class="btn-cool-sl" id="btnToggleSignLanguage" title="Launch Full Screen Sign Language & Subtitles">
+                      <span class="sl-hand-icon" aria-hidden="true">🤟</span>
+                      <span class="sl-btn-text" id="slBtnText">Sign Language (Auto Full Screen)</span>
+                      <span class="sl-status-pill" id="slBtnStatusPill">Off</span>
+                    </button>
+
+                    <!-- DEDICATED SUBTITLES (CC) TOGGLE BUTTON -->
+                    <button type="button" class="btn-subtitles-toggle" id="btnSubtitlesToggle" title="Toggle Closed Captions">
+                      <span aria-hidden="true">💬</span> Subtitles (CC)
+                    </button>
+
+                    <!-- BRAILLE PRINT & EMBOSSER BUTTON -->
+                    <button type="button" class="btn-braille-action" id="btnOpenBraille" title="Braille Transcript & Embosser Print Mode">
+                      <span class="braille-glyph" aria-hidden="true">⠃⠗⠁⠊⠇⠇⠑</span>
+                      <span>Braille</span>
+                    </button>
+                    
+                    <button type="button" class="btn-outline-red" id="btnToggleVideoVoice">Play / Pause (Voice)</button>
+                    <button type="button" class="btn-resume-red" id="btnCompleteModule">Mark as Complete (Finish Sprint)</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lesson Notes & Details -->
+              <div class="lesson-details-card">
+                <div class="lesson-details-header">
+                  <h3>Lesson Objectives &amp; Guide</h3>
+                  <div class="lesson-meta-chips">
+                    <span class="meta-chip">⏱️ Duration: 18 mins</span>
+                    <span class="meta-chip">🎙️ Voice Controlled</span>
+                    <span class="meta-chip">✅ Capstone Deliverable</span>
+                    <!-- Braille Meta Chip -->
+                    <button type="button" class="meta-chip btn-braille-chip" id="btnOpenBrailleChip" title="Print Lesson Transcript in Braille Mode">
+                      <span class="braille-chip-dots" aria-hidden="true">⠃⠗</span>
+                      <span>Braille Transcript</span>
+                    </button>
+                  </div>
+                </div>
+                <p>
+                  In this final capstone module, complete end-to-end integration of your platform: verify accessibility features (screen readers and hands-free voice operations), execute automated test suites, and launch your live demonstration.
+                </p>
+              </div>
+            </div>
+
+            <!-- BRAILLE TRANSCRIPT & EMBOSSER PRINT MODAL -->
+            <div class="braille-modal-backdrop" id="brailleModal" hidden role="dialog" aria-modal="true" aria-labelledby="brailleModalTitle">
+              <div class="braille-modal-box">
+                <!-- Modal Header -->
+                <div class="braille-modal-header">
+                  <div class="braille-header-left">
+                    <span class="braille-mode-pill">⠃⠗⠁⠊⠇⠇⠑ TACTILE EMBOSSER READY</span>
+                    <h2 class="braille-modal-title" id="brailleModalTitle">Braille Transcript: Module 08</h2>
+                    <p class="braille-modal-sub">Module 8: Final Portfolio Integration &amp; Live Demo · Formatted for Braille Displays &amp; Tactile Paper Printing</p>
+                  </div>
+                  <button type="button" class="btn-close-braille-modal" id="btnCloseBrailleModal" title="Close Braille Window" aria-label="Close Braille Window">✕</button>
+                </div>
+
+                <!-- Modal Action Toolbar -->
+                <div class="braille-toolbar">
+                  <div class="braille-tools-left">
+                    <button type="button" class="btn-braille-tool btn-braille-print" id="btnPrintBraille" title="Print in Braille Embosser Format">
+                      <span>🖨️ Print Braille (Embosser Mode)</span>
+                    </button>
+                    <button type="button" class="btn-braille-tool btn-braille-download" id="btnDownloadBRF" title="Download Braille Ready Format (.BRF) file">
+                      <span>💾 Download .BRF File</span>
+                    </button>
+                    <button type="button" class="btn-braille-tool btn-braille-speak" id="btnSpeechBraille" title="Read Transcript Aloud">
+                      <span>🔊 Read Aloud</span>
+                    </button>
+                  </div>
+                  <div class="braille-tools-right">
+                    <span class="braille-zoom-label">Cell Size:</span>
+                    <button type="button" class="btn-braille-zoom" id="btnBrailleZoomNormal">Standard</button>
+                    <button type="button" class="btn-braille-zoom active" id="btnBrailleZoomLarge">Large Tactile</button>
+                  </div>
+                </div>
+
+                <!-- Printable Braille Content Area -->
+                <div class="braille-content-container" id="braillePrintArea">
+                  <!-- Header for physical print sheet -->
+                  <div class="braille-print-sheet-header">
+                    <div class="braille-print-title">⠠⠁⠇⠭ ⠠⠇⠑⠁⠗⠝⠊⠝⠛ ⠤ ⠠⠍⠕⠙⠥⠇⠑ ⠼⠓</div>
+                    <div class="braille-print-meta">ALX LEARNING · MODULE 8 TRANSCRIPT · BRAILLE GRADE 1 EMBOSSER FORMAT</div>
+                  </div>
+
+                  <!-- Two-Column / Synchronized Layout -->
+                  <div class="braille-sync-grid">
+                    <!-- Column 1: Genuine Braille Unicode Cells -->
+                    <div class="braille-dots-column">
+                      <div class="column-badge">⠃⠗⠁⠊⠇⠇⠑ TACTILE BRAILLE DISPLAY</div>
+                      <pre class="braille-text-output" id="brailleDotsOutput" tabindex="0" aria-label="Tactile Braille Dot Text"></pre>
+                    </div>
+
+                    <!-- Column 2: Standard English Text Companion -->
+                    <div class="braille-english-column">
+                      <div class="column-badge">ENGLISH TRANSCRIPT TEXT</div>
+                      <div class="english-transcript-text" id="brailleEnglishOutput">
+                        <section class="transcript-section">
+                          <span class="transcript-time">[00:00 - 03:20]</span>
+                          <h4>Lesson Introduction &amp; Objectives</h4>
+                          <p>Welcome to Module 8: Final Portfolio Integration and Live Demonstration. In this capstone module, learners consolidate full-stack architecture, deployment automation, and universal accessibility.</p>
+                        </section>
+                        <section class="transcript-section">
+                          <span class="transcript-time">[03:20 - 07:00]</span>
+                          <h4>Architecture &amp; System Integration</h4>
+                          <p>Reviewing our multi-tenant REST API design and relational database schema migration engine. Verify all secure session storage and role-based access controllers.</p>
+                        </section>
+                        <section class="transcript-section">
+                          <span class="transcript-time">[07:00 - 11:20]</span>
+                          <h4>Accessibility &amp; Hands-Free Verification</h4>
+                          <p>Ensuring complete compliance with Web Content Accessibility Guidelines 2.2 AA. Verify screen reader tree navigation, full keyboard focus trap isolation, and active voice navigation engine.</p>
+                        </section>
+                        <section class="transcript-section">
+                          <span class="transcript-time">[11:20 - 15:00]</span>
+                          <h4>Live Interpreter &amp; Embosser Formats</h4>
+                          <p>Synchronized Ethiopian Sign Language (EthSL) video stream, real-time closed captioning, and printable Braille transcript mode are now fully integrated.</p>
+                        </section>
+                        <section class="transcript-section">
+                          <span class="transcript-time">[15:00 - 18:00]</span>
+                          <h4>Capstone Milestone Submission</h4>
+                          <p>Execute automated CI/CD container tests and submit your verified portfolio project for technical mentor evaluation and graduation validation.</p>
+                        </section>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="braille-modal-footer">
+                  <span class="braille-footer-note">💡 Braille embosser standard: 40 cells per line, 25 lines per page. Formatted for Refreshable Braille Displays and Index/ViewPlus embossers.</span>
+                  <button type="button" class="btn-resume-red" id="btnCloseBrailleModalBottom">Done Reading</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==============================================
+             MOCKUP 3: MY PLANNING
+             ============================================== -->
+        <section id="tab-planning" class="tab-pane">
+          <div class="lms-greeting-header">
+            <h1 class="greeting-title">My Planning &amp; Schedule</h1>
+            <p class="pane-subtitle">Weekly deadlines, peer reviews, technical mentor office hours, and project milestones.</p>
+          </div>
+
+          <div class="schedule-timeline-container">
+            <div class="schedule-item completed">
+              <div class="schedule-marker">✓</div>
+              <div class="schedule-content">
+                <span class="schedule-date">Monday, 21 Jul</span>
+                <h3>Week 12 Kickoff &amp; Portfolio Submission Open</h3>
+                <p>Reviewed project requirements and sprint grading rubrics.</p>
+              </div>
+            </div>
+
+            <div class="schedule-item completed">
+              <div class="schedule-marker">✓</div>
+              <div class="schedule-content">
+                <span class="schedule-date">Thursday, 24 Jul</span>
+                <h3>Peer Code Review &amp; QA Testing Milestone</h3>
+                <p>Cross-team code reviews completed with 100% passing test matrix.</p>
+              </div>
+            </div>
+
+            <div class="schedule-item active">
+              <div class="schedule-marker">●</div>
+              <div class="schedule-content">
+                <span class="schedule-date">Today, 29 Jul</span>
+                <h3>Final Portfolio Project Evaluation &amp; Demo Defense</h3>
+                <p>Scheduled presentation for ALX Technical Review Board.</p>
+                <button type="button" class="btn-resume-red" id="btnJoinDefenseCall" data-mockup="defense-call" style="margin-top: 0.6rem;" title="Join Live Defense Room">Join Defense Call</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ==============================================
+             MOCKUP 4: PROJECTS
+             ============================================== -->
+        <section id="tab-projects" class="tab-pane">
+          <div class="lms-greeting-header">
+            <h1 class="greeting-title">Projects Portfolio</h1>
+            <p class="pane-subtitle">All assigned engineering projects, automated checker scores, and repository links.</p>
+          </div>
+
+          <div class="projects-table-box">
+            <table class="lms-table">
+              <thead>
+                <tr>
+                  <th>Project Name</th>
+                  <th>Track</th>
+                  <th>Score</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Portfolio Project - SWE</strong></td>
+                  <td>Software Engineering</td>
+                  <td><strong style="color: #059669;">100%</strong></td>
+                  <td><span class="badge-validated">Validated</span></td>
+                  <td><button type="button" class="btn-outline-red" id="btnInspectPortfolio" data-mockup="inspect-project" data-project="Portfolio Project - SWE" title="Inspect Portfolio Project">Inspect</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Simple Shell - Unix CLI Interpreter</strong></td>
+                  <td>C Programming</td>
+                  <td><strong style="color: #059669;">98.4%</strong></td>
+                  <td><span class="badge-validated">Validated</span></td>
+                  <td><button type="button" class="btn-outline-red" id="btnInspectShell" data-mockup="inspect-project" data-project="Simple Shell - Unix CLI Interpreter" title="Inspect Simple Shell Project">Inspect</button></td>
+                </tr>
+                <tr>
+                  <td><strong>AirBnB Clone - The Console &amp; REST API</strong></td>
+                  <td>Python / Flask</td>
+                  <td><strong style="color: #059669;">95.2%</strong></td>
+                  <td><span class="badge-validated">Validated</span></td>
+                  <td><button type="button" class="btn-outline-red" id="btnInspectAirbnb" data-mockup="inspect-project" data-project="AirBnB Clone - The Console & REST API" title="Inspect AirBnB Clone Project">Inspect</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Web Stack Debugging #4</strong></td>
+                  <td>DevOps &amp; Nginx</td>
+                  <td><strong style="color: #059669;">100%</strong></td>
+                  <td><span class="badge-validated">Validated</span></td>
+                  <td><button type="button" class="btn-outline-red" id="btnInspectWebstack" data-mockup="inspect-project" data-project="Web Stack Debugging #4" title="Inspect Web Stack Debugging Project">Inspect</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+        <!-- ==============================================
+             MOCKUP 5: EVALUATION QUIZZES
+             ============================================== -->
+        <section id="tab-quizzes" class="tab-pane">
+          <div class="lms-greeting-header">
+            <h1 class="greeting-title">Evaluation Quizzes</h1>
+            <p class="pane-subtitle">Knowledge checks, test attempts, score validations, and answer reviews.</p>
+          </div>
+
+          <div class="mockup-cards-grid">
+            <article class="lms-panel-card">
+              <div class="panel-card-header">
+                <span class="badge-validated">Passed</span>
+                <span class="panel-date">Completed on 25 Jul</span>
+              </div>
+              <h2 class="panel-title">Week 12 Comprehensive Engineering Test</h2>
+              <p class="panel-desc">Evaluates systems design, algorithmic complexity, API rate limiting, and web security principles.</p>
+              <div class="panel-meta-row">
+                <span>Score: <strong style="color: #059669;">100% (20 / 20)</strong></span>
+                <span>Attempts: 1 of 2</span>
+              </div>
+              <button type="button" class="btn-card-outline-action" id="btnReviewQuizWeek12" data-mockup="review-quiz" data-quiz="Week 12 Comprehensive Engineering Test" title="Review Week 12 Quiz Answers">Review Answers</button>
+            </article>
+
+            <article class="lms-panel-card">
+              <div class="panel-card-header">
+                <span class="badge-validated">Passed</span>
+                <span class="panel-date">Completed on 18 Jul</span>
+              </div>
+              <h2 class="panel-title">Week 11 Distributed Databases &amp; Caching Quiz</h2>
+              <p class="panel-desc">Evaluates Redis caching, sharding strategies, indexing, and ACID transaction guarantees.</p>
+              <div class="panel-meta-row">
+                <span>Score: <strong style="color: #059669;">95% (19 / 20)</strong></span>
+                <span>Attempts: 1 of 2</span>
+              </div>
+              <button type="button" class="btn-card-outline-action" id="btnReviewQuizWeek11" data-mockup="review-quiz" data-quiz="Week 11 Distributed Databases & Caching Quiz" title="Review Week 11 Quiz Answers">Review Answers</button>
+            </article>
+          </div>
+        </section>
+
+
+        <!-- ==============================================
+             MOCKUP 6: MY COURSES
+             ============================================== -->
+        <section id="tab-courses" class="tab-pane">
+          <div class="lms-greeting-header">
+            <h1 class="greeting-title">My Courses &amp; Enrolled Programs</h1>
+            <p class="pane-subtitle">Active cohort specializations, certificates, and learning tracks.</p>
+          </div>
+
+          <div class="mockup-cards-grid">
+            <article class="lms-panel-card">
+              <div class="panel-card-header">
+                <span class="badge-validated">Active Cohort</span>
+                <span class="panel-date">Cohort 2025</span>
+              </div>
+              <h2 class="panel-title">Software Engineering Specialization</h2>
+              <p class="panel-desc">12-month intensive engineering program covering C, Python, Unix, Systems Architecture, and full-stack development.</p>
+              <div class="panel-meta-row">
+                <span>Progress: <strong>100% (Week 12 of 12)</strong></span>
+                <span class="status-green">Grade: 92.74%</span>
+              </div>
+              <button type="button" class="btn-resume-red" id="btnOpenSWEWorkspace" title="Open Course Workspace">Open Course Workspace</button>
+            </article>
+
+            <article class="lms-panel-card">
+              <div class="panel-card-header">
+                <span class="badge-validated">Certified</span>
+                <span class="panel-date">Completed</span>
+              </div>
+              <h2 class="panel-title">Professional Foundations</h2>
+              <p class="panel-desc">Master leadership, communication, strategic problem solving, and workplace ethics.</p>
+              <div class="panel-meta-row">
+                <span>Status: <strong>Completed</strong></span>
+                <span class="status-green">Certificate Issued</span>
+              </div>
+              <button type="button" class="btn-outline-red" id="btnViewFoundationsCert" data-mockup="certificate" title="View Official Certificate of Completion">View Certificate</button>
+            </article>
+          </div>
+        </section>
+
+
+        <!-- ==============================================
+             MOCKUP 7: CONCEPTS
+             ============================================== -->
+        <section id="tab-concepts" class="tab-pane">
+          <div class="lms-greeting-header">
+            <h1 class="greeting-title">Concepts &amp; Reference Library</h1>
+            <p class="pane-subtitle">Official ALX knowledge documents, design patterns, and engineering cheat sheets.</p>
+          </div>
+
+          <div class="mockup-cards-grid">
+            <article class="lms-panel-card">
+              <h2 class="panel-title">Data Structures &amp; Pointer Arithmetic in C</h2>
+              <p class="panel-desc">Linked lists, doubly linked lists, binary trees, stack/heap memory allocation, and valgrind debugging.</p>
+              <div class="panel-meta-row">
+                <span>Read Time: <strong>15 mins</strong></span>
+                <span>Tags: C, Memory, Systems</span>
+              </div>
+              <button type="button" class="btn-card-outline-action" id="btnReadConceptC" data-mockup="read-concept" data-concept="Data Structures & Pointer Arithmetic in C" title="Read Concept: Data Structures & Pointer Arithmetic in C">Read Concept</button>
+            </article>
+
+            <article class="lms-panel-card">
+              <h2 class="panel-title">Building Resilient Web Architectures</h2>
+              <p class="panel-desc">Load balancers, reverse proxies, database replication, and high-availability zero-downtime deployments.</p>
+              <div class="panel-meta-row">
+                <span>Read Time: <strong>20 mins</strong></span>
+                <span>Tags: Nginx, Cloud, Architecture</span>
+              </div>
+              <button type="button" class="btn-card-outline-action" id="btnReadConceptArch" data-mockup="read-concept" data-concept="Building Resilient Web Architectures" title="Read Concept: Building Resilient Web Architectures">Read Concept</button>
+            </article>
+          </div>
+        </section>
+
+
+        <!-- ==============================================
+             MOCKUP 8: VIDEO ON DEMAND
+             ============================================== -->
+        <section id="tab-vod" class="tab-pane">
+          <div class="lms-greeting-header">
+            <h1 class="greeting-title">Video On Demand &amp; Masterclasses</h1>
+            <p class="pane-subtitle">Recorded technical workshops, live guest speaker masterclasses, and code walkthroughs.</p>
+          </div>
+
+          <div class="mockup-cards-grid">
+            <article class="lms-panel-card">
+              <div class="vod-thumbnail-sim">
+                <span class="vod-play-icon">▶</span>
+                <span class="vod-duration">54:20</span>
+              </div>
+              <h2 class="panel-title" style="margin-top: 0.75rem;">Portfolio Defense Workshop with Lead Mentors</h2>
+              <p class="panel-desc">Step-by-step guidance on structuring your technical pitch, system architecture diagrams, and live demos.</p>
+              <button type="button" class="btn-resume-red" id="btnWatchVodDefense" data-mockup="watch-recording" data-recording="Portfolio Defense Workshop with Lead Mentors" style="margin-top: 1rem;" title="Watch Recording: Portfolio Defense Workshop">Watch Recording</button>
+            </article>
+
+            <article class="lms-panel-card">
+              <div class="vod-thumbnail-sim">
+                <span class="vod-play-icon">▶</span>
+                <span class="vod-duration">42:15</span>
+              </div>
+              <h2 class="panel-title" style="margin-top: 0.75rem;">Technical Interview Mastery: Algorithms &amp; System Design</h2>
+              <p class="panel-desc">Live coding interview walkthroughs with global engineering managers from top tech companies.</p>
+              <button type="button" class="btn-resume-red" id="btnWatchVodInterview" data-mockup="watch-recording" data-recording="Technical Interview Mastery: Algorithms & System Design" style="margin-top: 1rem;" title="Watch Recording: Technical Interview Mastery">Watch Recording</button>
+            </article>
+          </div>
+        </section>
+
+
+        <!-- ==============================================
+             MOCKUP 9: MY PROFILE
+             ============================================== -->
+        <section id="tab-profile" class="tab-pane">
+          <div class="lms-greeting-header">
+            <h1 class="greeting-title">My Learner Profile</h1>
+            <p class="pane-subtitle">Manage personal information, learning preferences, and credentials.</p>
+          </div>
+
+          <div class="profile-card-wrapper">
+            <div class="profile-header-banner">
+              <div class="profile-avatar-large">AH</div>
+              <div class="profile-header-info">
+                <h2>Abenezer Habtamu</h2>
+                <p>Software Engineering Fellow • Cohort 2025</p>
+                <span class="badge-validated">Active Fellow</span>
+              </div>
+            </div>
+
+            <div class="profile-details-grid">
+              <div class="detail-box">
+                <label>Email Address</label>
+                <div>abenezer@alx.app</div>
+              </div>
+              <div class="detail-box">
+                <label>Points Earned</label>
+                <div style="color: #eab308; font-weight: 700;">1140 points</div>
+              </div>
+              <div class="detail-box">
+                <label>Cumulative GPA</label>
+                <div style="color: #059669; font-weight: 700;">92.74% (Validated)</div>
+              </div>
+              <div class="detail-box">
+                <label>Current Status</label>
+                <div>Week 12 Completed</div>
+              </div>
+            </div>
+
+            <!-- Language Setting Card in Profile -->
+            <div class="profile-pref-row" style="margin-top: 1.25rem; padding: 1.1rem 1.25rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+              <div>
+                <strong style="color: #0f172a; font-size: 0.95rem; display: block;" id="profileLangHeading">Platform Language / ቋንቋ / Afaan</strong>
+                <span style="font-size: 0.82rem; color: #64748b;" id="profileLangSub">Select user interface and voice assistant language</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <select class="form-input" id="profileLangSelect" style="width: auto; min-width: 200px; padding: 0.5rem 0.85rem; font-weight: 600; cursor:pointer;" aria-label="Select Platform Language">
+                  <option value="en">English (Default)</option>
+                  <option value="am">አማርኛ (Amharic)</option>
+                  <option value="om">Afaan Oromoo (Oromiffa)</option>
+                  <option value="ti">ትግርኛ (Tigrinya)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="profile-actions-row">
+              <button type="button" class="btn-resume-red" id="btnSaveProfilePrefs" data-mockup="save-preferences" title="Save Learner Preferences">Save Preferences</button>
+              <button type="button" class="btn-outline-red" id="btn-signout" title="Sign Out of ALX Learning">Sign Out to Landing Page</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================
+             MOCKUP 10: ALX JOB PORTAL & EMPLOYMENT PLATFORM
+             ============================================== -->
+        <section id="tab-jobs" class="tab-pane">
+          <div class="job-portal-tab-header" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.5rem;">💼</span>
+                <h1 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0;">ALX Job Portal &amp; Employment Platform</h1>
+                <span style="background: #fee2e2; color: #dc2626; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">INTEGRATED</span>
+              </div>
+              <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 0 0;">
+                AI-powered match recommendations, 3D swipeable card deck, voice-assisted application, and Ethiopian Sign Language (ESL).
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <a href="/job-portal" target="_blank" class="btn-card-outline-action" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; padding: 8px 14px; font-weight: 600;" title="Open full standalone page in new window">
+                <span>Open in New Tab</span>
+                <span>↗</span>
+              </a>
+              <button type="button" class="btn-card-outline-action" id="btnReloadJobPortalFrame" style="padding: 8px 12px;" title="Reload Job Portal">
+                🔄 Refresh
+              </button>
+            </div>
+          </div>
+
+          <!-- Embedded Seamless Job Portal -->
+          <div class="job-portal-embed-wrapper" style="width: 100%; height: 820px; border-radius: 14px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); background: #071311;">
+            <iframe id="jobPortalIframe" src="/job-portal/" title="ALX Job Portal" style="width: 100%; height: 100%; border: none; display: block;" allow="microphone; autoplay; clipboard-write"></iframe>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       UNIVERSAL INTERACTIVE MOCKUP MODAL & VIEW DRAWER
+       Provides interactive simulated views for every button/link
+       ========================================================== -->
+  <div class="universal-mockup-backdrop" id="universalMockupModal" hidden role="dialog" aria-modal="true" aria-labelledby="universalModalTitle">
+    <div class="universal-mockup-box" id="universalMockupBox">
       
-      <div class="preference-group">
-        <div class="pref-copy">
-          <strong>Caption Appearance</strong>
-          <small>Scale spoken subtitle text size.</small>
+      <!-- Header -->
+      <div class="mockup-modal-header">
+        <div class="mockup-header-info">
+          <span class="mockup-category-badge" id="mockupCategoryBadge">ALX LMS FEATURE</span>
+          <h2 class="mockup-title" id="universalModalTitle">Feature View</h2>
+          <p class="mockup-subtitle" id="universalModalSub">Interactive simulated view</p>
         </div>
-        <label class="pref-select-label">
-          Text size
-          <select id="captionSize">
-            <option value="100">Default (100%)</option>
-            <option value="115">Large (115%)</option>
-            <option value="130">Extra Large (130%)</option>
-            <option value="150">Largest (150%)</option>
-          </select>
-        </label>
+        <button type="button" class="btn-close-mockup" id="btnCloseUniversalModal" title="Close window" aria-label="Close">✕</button>
       </div>
 
-      <div class="preference-group">
-        <div class="pref-copy">
-          <strong>High-Contrast Captions</strong>
-          <small>Use solid opaque background with bright yellow text for maximum legibility.</small>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="highContrastToggle">
-          <span></span>
-        </label>
+      <!-- Body / Content Area -->
+      <div class="mockup-modal-body" id="universalModalBody">
+        <!-- Dynamically injected mockup HTML -->
       </div>
 
-      <div class="preference-group">
-        <div class="pref-copy">
-          <strong>Reduce Motion</strong>
-          <small>Disable decorative transitions, pulses, and smooth scrolling.</small>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="reduceMotionToggle">
-          <span></span>
-        </label>
+      <!-- Footer -->
+      <div class="mockup-modal-footer" id="universalModalFooter">
+        <button type="button" class="btn-outline-red" id="btnUniversalModalSecondary">Close</button>
+        <button type="button" class="btn-resume-red" id="btnUniversalModalPrimary">Confirm Action</button>
       </div>
 
-      <div class="preference-group">
-        <div class="pref-copy">
-          <strong>Reduce Transparency</strong>
-          <small>Replace frosted glass textures with solid dark high-contrast panels.</small>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="reduceTransparencyToggle">
-          <span></span>
-        </label>
-      </div>
+    </div>
+  </div>
 
-      <div class="preference-group">
-        <div class="pref-copy">
-          <strong>Keep Sign Language Window Visible</strong>
-          <small>Automatically show the Ethiopian Sign Language viewport when playback begins.</small>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="interpreterDefaultToggle">
-          <span></span>
-        </label>
-      </div>
-
-      <div class="dialog-footer">
-        <span class="dialog-note"><svg><use href="#i-check"/></svg> Preferences stay saved on this device.</span>
-        <button type="button" id="savePreferencesButton" class="dialog-primary">Apply preferences</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- Local Notes Dialog Modal -->
-  <dialog class="note-dialog" id="noteDialog" aria-labelledby="noteTitle">
-    <form method="dialog" class="dialog-shell note-shell">
-      <div class="dialog-header">
-        <div>
-          <span class="section-kicker">YOUR NOTES</span>
-          <h2 id="noteTitle">Save a Thought</h2>
-          <p>Keep a private note linked to this lesson on this device.</p>
-        </div>
-        <button class="icon-btn" value="cancel" aria-label="Close note dialog" type="submit">
-          <svg><use href="#i-close"/></svg>
-        </button>
-      </div>
-      <label class="note-label" for="noteText">Lesson note</label>
-      <textarea id="noteText" rows="5" placeholder="What would you like to remember about inclusive design?"></textarea>
-      <div class="dialog-footer">
-        <span class="dialog-note">Stored locally in your browser.</span>
-        <button class="header-primary" id="saveNoteButton" value="save" type="button">Save note</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- Accessible Onboarding Dialog Modal (with 6-Second Automatic Fallback) -->
-  <dialog class="onboarding-dialog" id="onboardingDialog" aria-labelledby="onboardingTitle" aria-describedby="onboardingDesc">
-    <form method="dialog" class="onboarding-content">
-      <div class="onboarding-header">
-        <h2 id="onboardingTitle" data-i18n="onboarding_title">Welcome to LearnBridge</h2>
-        <p id="onboardingDesc" data-i18n="onboarding_question">How would you prefer to experience this platform?</p>
-      </div>
-
-      <!-- 6-Second Countdown Alert Bar -->
-      <div class="countdown-box" id="countdownBox" role="status">
-        <div class="countdown-text-row">
-          <span id="countdownLabel">
-            <span data-i18n="onboarding_fallback_alert">Automatically activating accessibility defaults in</span>
-            <strong id="countdownSeconds">6</strong>
-            <span data-i18n="onboarding_seconds">seconds... Press any key or interact to pause.</span>
-          </span>
-          <button type="button" class="btn-pause-countdown" id="pauseCountdownBtn">Pause Timer</button>
-        </div>
-        <div class="countdown-progress-track" aria-hidden="true">
-          <div class="countdown-progress-bar" id="onboardingProgressBar"></div>
-        </div>
-      </div>
-
-      <!-- 7 Functional Choices -->
-      <div class="options-list" role="radiogroup" aria-labelledby="onboardingDesc">
-        <!-- 1. Screen Reader -->
-        <label class="option-tile">
-          <input type="radio" name="onboardingChoice" value="screen_reader">
-          <div class="option-info">
-            <span class="option-title" data-i18n="opt_screen_reader_title">1. I use a screen reader</span>
-            <span class="option-desc" data-i18n="opt_screen_reader_desc">Optimized semantic tree, ARIA live regions, and screen reader announcements.</span>
+  <!-- Modern Floating Mini Chat AI Voice Assistant -->
+  <aside class="assistant-corner-widget" id="assistantCornerWidget" role="region" aria-live="polite" aria-label="ALX AI Voice Assistant">
+    
+    <!-- Modern Floating Mini Chat Panel -->
+    <div class="assistant-chat-panel" id="assistantChatPanel" role="dialog" aria-label="ALX AI Assistant Chat" aria-hidden="false">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <div class="chat-bot-avatar">
+            <svg class="bot-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="#1e293b" aria-hidden="true">
+              <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/>
+            </svg>
+            <span class="chat-online-dot" id="chatOnlineDot" aria-hidden="true"></span>
           </div>
-        </label>
-
-        <!-- 2. Low Vision -->
-        <label class="option-tile">
-          <input type="radio" name="onboardingChoice" value="low_vision">
-          <div class="option-info">
-            <span class="option-title" data-i18n="opt_low_vision_title">2. I have difficulty seeing (Low Vision)</span>
-            <span class="option-desc" data-i18n="opt_low_vision_desc">High contrast, enlarged text, and clear yellow focus indicators.</span>
+          <div class="chat-title-group">
+            <h4 class="chat-title">ALX AI Assistant</h4>
+            <span class="chat-status-sub" id="chatStatusSub">Listening 🎙️ · Hands-Free Active</span>
           </div>
-        </label>
-
-        <!-- 3. Deaf / Hard of Hearing -->
-        <label class="option-tile">
-          <input type="radio" name="onboardingChoice" value="deaf_hard_of_hearing">
-          <div class="option-info">
-            <span class="option-title" data-i18n="opt_deaf_title">3. I am deaf or hard of hearing</span>
-            <span class="option-desc" data-i18n="opt_deaf_desc">Bilingual captions, synchronized transcripts, and Ethiopian Sign Language window.</span>
-          </div>
-        </label>
-
-        <!-- 4. Motor Accessible -->
-        <label class="option-tile">
-          <input type="radio" name="onboardingChoice" value="motor_accessible">
-          <div class="option-info">
-            <span class="option-title" data-i18n="opt_motor_title">4. I have difficulty using a mouse (Motor / Keyboard)</span>
-            <span class="option-desc" data-i18n="opt_motor_desc">Full keyboard navigation, non-drag controls, and expanded touch targets.</span>
-          </div>
-        </label>
-
-        <!-- 5. Cognitive Accessible -->
-        <label class="option-tile">
-          <input type="radio" name="onboardingChoice" value="cognitive_accessible">
-          <div class="option-info">
-            <span class="option-title" data-i18n="opt_cognitive_title">5. I prefer a simpler experience (Cognitive)</span>
-            <span class="option-desc" data-i18n="opt_cognitive_desc">Simplified visual hierarchy, distraction-free reading, and reduced motion.</span>
-          </div>
-        </label>
-
-        <!-- 6. Standard Baseline -->
-        <label class="option-tile">
-          <input type="radio" name="onboardingChoice" value="default" checked>
-          <div class="option-info">
-            <span class="option-title" data-i18n="opt_default_title">6. Continue with standard accessible defaults</span>
-            <span class="option-desc" data-i18n="opt_default_desc">WCAG 2.2 AA compliant baseline with all standard assistive layers available.</span>
-          </div>
-        </label>
-
-        <!-- 7. Custom Configuration -->
-        <label class="option-tile">
-          <input type="radio" name="onboardingChoice" value="custom">
-          <div class="option-info">
-            <span class="option-title" data-i18n="opt_custom_title">7. I want to fine-tune custom preferences</span>
-            <span class="option-desc" data-i18n="opt_custom_desc">Custom tuning for contrast, captions, audio descriptions, and display settings.</span>
-          </div>
-        </label>
+        </div>
+        <div class="chat-header-actions">
+          <button type="button" class="chat-header-btn chat-mic-toggle" id="btnChatMicToggle" title="Toggle Live Voice Microphone (or press V)">
+            <span id="chatMicIcon">🎙️</span>
+            <span class="chat-mic-label" id="chatMicLabel">Mic ON</span>
+          </button>
+          <button type="button" class="chat-header-btn chat-help-btn" id="btnChatHelp" title="View all available commands">
+            <span>❓ Help</span>
+          </button>
+          <button type="button" class="chat-header-btn chat-minimize-btn" id="btnChatMinimize" title="Minimize Assistant" aria-label="Minimize Assistant">
+            <span>✕</span>
+          </button>
+        </div>
       </div>
 
-      <div class="onboarding-actions">
-        <button type="button" class="btn-pause-countdown" id="dismissOnboardingBtn" data-i18n="btn_cancel">Dismiss</button>
-        <button type="button" class="btn-submit-onboarding" id="submitOnboardingBtn" data-i18n="btn_apply">Apply Experience</button>
+      <!-- Live Dialogue & Messages Stream -->
+      <div class="chat-dialogue-feed" id="chatDialogueFeed" role="log" aria-live="polite">
+        <!-- Welcome Dialogue Message -->
+        <div class="chat-msg chat-msg-bot">
+          <div class="chat-msg-avatar">🤖</div>
+          <div class="chat-msg-content">
+            <div class="chat-msg-bubble">
+              <div class="msg-status-tag tag-ready">● AI Ready</div>
+              <p><strong>Welcome to ALX Learning!</strong> I'm your hands-free voice & dialogue assistant. Every command you speak or type is tracked right here.</p>
+              <p class="chat-msg-tip">💡 <em>Try saying "Where am I?", "Job Portal", "Planning", or tap any quick action below.</em></p>
+            </div>
+            <span class="chat-msg-time">Just now</span>
+          </div>
+        </div>
       </div>
-    </form>
-  </dialog>
 
-  <script src="./app.js" defer></script>
+      <!-- Quick Action Chips Bar (Directly Above Input Bar) -->
+      <div class="chat-quick-actions-bar">
+        <div class="quick-chips-scroll" id="quickChipsScroll">
+          <button type="button" class="chat-quick-chip chip-help" data-cmd="help">❓ All Commands</button>
+          <button type="button" class="chat-quick-chip chip-job" data-cmd="job portal">💼 Job Portal</button>
+          <button type="button" class="chat-quick-chip" data-cmd="where am i">📍 Where am I?</button>
+          <button type="button" class="chat-quick-chip" data-cmd="planning">📅 Planning</button>
+          <button type="button" class="chat-quick-chip" data-cmd="access learning">📚 Learning</button>
+          <button type="button" class="chat-quick-chip" data-cmd="projects">🚀 Projects</button>
+          <button type="button" class="chat-quick-chip" data-cmd="quizzes">📝 Quizzes</button>
+          <button type="button" class="chat-quick-chip" data-cmd="switch to amharic">🇪🇹 አማርኛ</button>
+          <button type="button" class="chat-quick-chip" data-cmd="switch to oromiffa">Afaan Oromoo</button>
+          <button type="button" class="chat-quick-chip" data-cmd="switch to tigrinya">ትግርኛ</button>
+          <button type="button" class="chat-quick-chip" data-cmd="switch to english">English</button>
+        </div>
+      </div>
+
+      <!-- Modern Input Bar -->
+      <div class="chat-input-area">
+        <form class="chat-input-form" id="chatInputForm" action="javascript:void(0);">
+          <input type="text" class="chat-text-input" id="chatTextInput" placeholder="Type command (e.g. 'planning', 'job portal', 'የት ነኝ')..." aria-label="Type or speak a command" />
+          <button type="submit" class="chat-send-btn" id="btnChatSend" title="Run Command" aria-label="Send Command">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Yellow Assistant Avatar Button with Pulsing Voice Ring -->
+    <button type="button" class="floating-chat-bot voice-active" id="btnAssistantBot" title="ALX AI Voice Assistant (Click to toggle chat · Press V for mic)" aria-label="ALX AI Voice Assistant">
+      <span class="bot-voice-ring" id="botVoiceRing" aria-hidden="true"></span>
+      <span class="bot-mic-indicator" id="botMicIndicator" aria-hidden="true">🎙️</span>
+      <svg class="bot-icon-svg" width="28" height="28" viewBox="0 0 24 24" fill="#1e293b" aria-hidden="true">
+        <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/>
+      </svg>
+    </button>
+  </aside>
+
+  <script src="app.js"></script>
 </body>
 </html>

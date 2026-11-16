@@ -279,6 +279,7 @@ app.use('/employment', express.static(path.join(ROOT_DIR, 'employment')));
 app.use('/alx', express.static(path.join(ROOT_DIR, 'alx-test-website', 'frontend')));
 app.use('/alx-test-website', express.static(path.join(ROOT_DIR, 'alx-test-website', 'frontend')));
 app.use('/anime-assistant', express.static(path.join(ROOT_DIR, 'alx-test-website', 'anime-assistant')));
+app.use('/studio', express.static(path.join(ROOT_DIR, 'studio')));
 
 app.use(express.static(ROOT_DIR, {
   extensions: ['html', 'htm'],
@@ -315,9 +316,9 @@ if (require.main === module) {
     console.log(` Status: Running at http://${HOST}:${PORT}`);
     console.log(` REST API: /api/v1/health`);
     console.log(` OpenAPI Docs: /api/v1/docs`);
-    console.log(` ALX Learning LMS: /alx/`);
+    console.log(` Default UI (ALX Platform): /`);
     console.log(` 3D Job Portal: /job-portal/`);
-    console.log(` Studio UI: /index.html`);
+    console.log(` Studio UI: /studio/`);
     console.log(`=======================================================`);
   });
 }
