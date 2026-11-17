@@ -3705,20 +3705,18 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
     autoStartListening() {
       if (!this.recognition || this.isListening) return;
-      try {
-        this.recognition.start();
-        this.isListening = true;
-        this.updateUiState(true, currentLang === 'am' ? 'እየሰማ ነው 🎙️' : 'Listening 🎙️ · Hands-Free Active');
-      } catch (err) {
-        // Browser gesture requirement fallback: attach transparent listeners to activate on first tap/click/key
-        const engageMic = () => {
-          ['click', 'touchstart', 'keydown'].forEach(evt => window.removeEventListener(evt, engageMic));
-          if (this.isEnabled && !this.isListening) {
-            this.startSafe();
-          }
-        };
-        ['click', 'touchstart', 'keydown'].forEach(evt => window.addEventListener(evt, engageMic, { once: true, passive: true }));
-      }
+      // Always attach a transparent first-gesture listener so if the browser blocks
+      // microphone auto-start before interaction, the very first click/tap/key engages voice.
+      const engageMic = () => {
+        ['click', 'touchstart', 'keydown'].forEach(evt => window.removeEventListener(evt, engageMic));
+        if (this.isEnabled && !this.isListening && !this.isStarting) {
+          this.startSafe();
+        }
+      };
+      ['click', 'touchstart', 'keydown'].forEach(evt => window.addEventListener(evt, engageMic, { once: true, passive: true }));
+
+      // Attempt immediate hands-free start (onstart will set isListening = true when active)
+      this.startSafe();
     }
 
     speakInstant(text, targetLang) {
@@ -3849,17 +3847,27 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     fallbackSpeak(text, lang, expectedSeq) {
       if (expectedSeq && expectedSeq !== this.speakSeq) return;
       if (!('speechSynthesis' in window)) {
-        this.isSpeaking = false;
-        this.currentSpokenText = '';
-        if (this.botVoiceRing) this.botVoiceRing.classList.remove('pulse');
+        this._onSpeakingEnded();
         return;
       }
       try { window.speechSynthesis.cancel(); } catch (_) {}
 
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = lang === 'am' ? 'am-ET' : lang === 'ti' ? 'ti-ET' : lang === 'om' ? 'om-ET' : 'en-US';
-      utter.rate = 1.0;
+      utter.rate = 1.05;
       utter.pitch = 1.0;
+
+      // Retain strong reference so Chromium GC cannot drop onend callback
+      this._activeUtterance = utter;
+
+      // Safety watchdog: guarantees isSpeaking can NEVER get stuck true
+      clearTimeout(this.speakingWatchdog);
+      const maxDurationMs = Math.min(10000, Math.max(2500, text.length * 85));
+      this.speakingWatchdog = setTimeout(() => {
+        if (!expectedSeq || expectedSeq === this.speakSeq) {
+          this._onSpeakingEnded();
+        }
+      }, maxDurationMs);
 
       utter.onend = () => {
         if (!expectedSeq || expectedSeq === this.speakSeq) {
@@ -3873,9 +3881,16 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
       };
       try {
         window.speechSynthesis.speak(utter);
+        // Detect Chrome silent autoplay block (speechSynthesis ignores speak() prior to user gesture)
+        setTimeout(() => {
+          if (this.isSpeaking && (!expectedSeq || expectedSeq === this.speakSeq)) {
+            if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+              this._onSpeakingEnded();
+            }
+          }
+        }, 450);
       } catch (_) {
-        this.isSpeaking = false;
-        this.currentSpokenText = '';
+        this._onSpeakingEnded();
       }
     }
 
@@ -3927,16 +3942,15 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.recognition.onend = () => {
           this.isListening = false;
           this.isStarting = false;
-          // Auto-restart continuous listening unless explicitly disabled or assistant is speaking
-          // Note: Do NOT set UI to inactive on normal silence pause; only set Idle if explicitly disabled.
-          if (this.isEnabled && !this.isSpeaking) {
+          // Always keep continuous listening alive whenever enabled (even during TTS for instant barge-in)
+          if (this.isEnabled) {
             clearTimeout(this.restartTimer);
             this.restartTimer = setTimeout(() => {
-              if (this.isEnabled && !this.isSpeaking && !this.isListening) {
+              if (this.isEnabled && !this.isListening && !this.isStarting) {
                 this.startSafe();
               }
-            }, 400);
-          } else if (!this.isEnabled) {
+            }, 300);
+          } else {
             this.updateUiState(false, 'Idle');
           }
         };
@@ -3944,14 +3958,14 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
         this.recognition.onerror = (e) => {
           this.isStarting = false;
           console.warn('[ALX Voice Navigator] Speech recognition event:', e.error);
-          if (e.error === 'no-speech' || e.error === 'network') {
-            if (this.isEnabled && !this.isSpeaking) {
+          if (e.error === 'no-speech' || e.error === 'network' || e.error === 'aborted') {
+            if (this.isEnabled) {
               clearTimeout(this.restartTimer);
               this.restartTimer = setTimeout(() => {
-                if (this.isEnabled && !this.isSpeaking && !this.isListening) {
+                if (this.isEnabled && !this.isListening && !this.isStarting) {
                   this.startSafe();
                 }
-              }, 400);
+              }, e.error === 'network' ? 1200 : 350);
             }
             return;
           }
@@ -4085,7 +4099,7 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
     }
 
     async toggle() {
-      if (this.isEnabled) {
+      if (this.isEnabled && this.isListening) {
         this.stop();
         this.playChime('neutral');
         this.speak(currentLang === 'am' ? "ማይክሮፎኑ ለጊዜው ቆሟል።" : "Microphone paused. Click Mic to resume.");
@@ -4182,13 +4196,19 @@ Execute automated CI/CD container tests and submit your verified portfolio proje
 
       const now = Date.now();
 
-      // Dynamic acoustic isolation (prevent echo or self-feedback loops)
+      // Dynamic acoustic isolation (prevent echo or self-feedback loops without dropping user commands)
       if (!isExplicitUserAction) {
+        const spokenLower = (this.currentSpokenText || '').toLowerCase();
+        const isSelfEcho = spokenLower && text.length >= 12 && spokenLower.includes(text);
+        if (this.isSpeaking && isSelfEcho) {
+          return false;
+        }
+
         const isBargeInCommand = /^(stop|quiet|silence|shut up|pause|ዝም|ቆም|ደው|dhaabi|ስቕ)/i.test(text) ||
-          /(?<![\p{L}\p{N}])(log in|sign in|login|signin|log me in|sign me in|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|seeni|seensa|እቶ|ምእታው|english|amharic|oromo|afaan oromoo|oromiffa|tigrinya|tigrigna|አማርኛ|ትግርኛ|እንግሊዝኛ|job|jobs|job portal|jobs portal|open job portal|open jobs|open job|go to job portal|career|careers|employment|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|የስራ እድል|ስራ መድረክ|hojii|waltajjii hojii|ስራሕ|ዕድላት ስራሕ|pass|reject|skip|apply)(?![\p{L}\p{N}])/iu.test(text);
+          /(?<![\p{L}\p{N}])(log in|sign in|login|signin|log me in|sign me in|ይግቡ|ግባ|መግቢያ|ሎጊን|ሎግ ኢን|seeni|seensa|እቶ|ምእታው|english|amharic|oromo|afaan oromoo|oromiffa|tigrinya|tigrigna|አማርኛ|ትግርኛ|እንግሊዝኛ|job|jobs|job portal|jobs portal|open job portal|open jobs|open job|go to job portal|career|careers|employment|ስራ|ስራዎች|የስራ መድረክ|የስራ እድሎች|የስራ እድል|ስራ መድረክ|hojii|waltajjii hojii|ስራሕ|ዕድላት ስራሕ|pass|reject|skip|apply|access learning|courses|home|dashboard|calendar|profile|play|pause)(?![\p{L}\p{N}])/iu.test(text);
 
         if (this.isSpeaking) {
-          if (isBargeInCommand) {
+          if (isBargeInCommand || !isSelfEcho) {
             this.stopSpeaking();
             if ('speechSynthesis' in window) {
               try { window.speechSynthesis.cancel(); } catch (_) {}

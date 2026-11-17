@@ -676,11 +676,16 @@ class AccessibilityManager {
       this.recognition.onend = () => {
         this.voiceActive = false;
         if (this.isListeningActive) {
-          try {
-            this.recognition.start();
-          } catch (_) {
-            this.updateVoiceStatusUI(false);
-          }
+          clearTimeout(this._restartTimer);
+          this._restartTimer = setTimeout(() => {
+            if (this.isListeningActive && !this.voiceActive && this.recognition) {
+              try {
+                this.recognition.start();
+              } catch (_) {
+                this.updateVoiceStatusUI(false);
+              }
+            }
+          }, 250);
         } else {
           this.updateVoiceStatusUI(false);
         }
@@ -731,23 +736,21 @@ class AccessibilityManager {
 
   startMicDefault() {
     this.isListeningActive = true;
+    // Always hook first user gesture as backup in case browser blocks auto-start asynchronously
+    const startOnGesture = () => {
+      if (this.isListeningActive && !this.voiceActive && this.recognition) {
+        try {
+          this.recognition.start();
+        } catch (_) {}
+      }
+    };
+    window.addEventListener('click', startOnGesture, { once: true, passive: true });
+    window.addEventListener('keydown', startOnGesture, { once: true, passive: true });
+    window.addEventListener('pointerdown', startOnGesture, { once: true, passive: true });
+
     try {
       this.recognition.start();
-      this.updateVoiceStatusUI(true);
-    } catch (_) {
-      // Browser requires user gesture to start microphone: hook first user interaction
-      const startOnGesture = () => {
-        if (this.isListeningActive && !this.voiceActive && this.recognition) {
-          try {
-            this.recognition.start();
-            this.updateVoiceStatusUI(true);
-          } catch (_) {}
-        }
-      };
-      window.addEventListener('click', startOnGesture, { once: true });
-      window.addEventListener('keydown', startOnGesture, { once: true });
-      window.addEventListener('pointerdown', startOnGesture, { once: true });
-    }
+    } catch (_) {}
   }
 
   toggleVoiceListening() {

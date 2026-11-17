@@ -82,21 +82,21 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Shell assets: Cache-first with network background revalidation
+  // Shell assets: Network-First with cache fallback so live updates apply immediately while remaining offline-ready
   event.respondWith(
-    caches.match(req).then(cached => {
-      const fetchPromise = fetch(req).then(networkRes => {
-        if (networkRes.ok && networkRes.status === 200 && url.origin === self.location.origin) {
-          const copy = networkRes.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
-        }
-        return networkRes;
-      }).catch(() => {
+    fetch(req).then(networkRes => {
+      if (networkRes.ok && networkRes.status === 200 && url.origin === self.location.origin) {
+        const copy = networkRes.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
+      }
+      return networkRes;
+    }).catch(() => {
+      return caches.match(req).then(cached => {
+        if (cached) return cached;
         if (req.mode === 'navigate') {
           return caches.match('./index.html');
         }
       });
-      return cached || fetchPromise;
     })
   );
 });
